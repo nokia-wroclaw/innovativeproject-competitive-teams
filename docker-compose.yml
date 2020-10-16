@@ -1,0 +1,38 @@
+version: "3.8"
+
+services:
+  frontend:
+    container_name: frontend
+    build: ./frontend
+    image: ./frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - network
+  
+  backend:
+    container_name: backend
+    build: ./backend
+    image: ./backend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/backend
+    depends_on:
+      - db
+    networks:
+      - network
+
+  db:
+    image: postgres:11.5-alpine
+    ports:
+      - "5432:5432"
+    
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data:cached
+
+networks:
+  network:
+    driver: bridge
