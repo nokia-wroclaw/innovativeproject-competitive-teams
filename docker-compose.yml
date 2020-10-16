@@ -13,8 +13,6 @@ services:
       - backend
     networks:
       - network
-    
-    
   
   backend:
     build: ./backend
@@ -36,6 +34,8 @@ services:
       - database.env # configure postgres
     volumes:
       - ./dbdata:/var/lib/postgresql/data:cached
+    networks:
+      - network
 
 networks:
   network:
