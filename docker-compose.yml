@@ -1,21 +1,24 @@
+
 version: "3.8"
 
 services:
   frontend:
-    container_name: frontend
     build: ./frontend
-    image: ./frontend
+    image: frontend
+    stdin_open: true
+    tty: true
     ports:
       - "3000:3000"
     depends_on:
       - backend
     networks:
       - network
+    
+    
   
   backend:
-    container_name: backend
     build: ./backend
-    image: ./backend
+    image: backend
     ports:
       - "8080:8080"
     volumes:
@@ -26,10 +29,11 @@ services:
       - network
 
   db:
-    image: postgres:11.5-alpine
+    image: postgres:latest
     ports:
       - "5432:5432"
-    
+    env_file:
+      - database.env # configure postgres
     volumes:
       - ./dbdata:/var/lib/postgresql/data:cached
 
