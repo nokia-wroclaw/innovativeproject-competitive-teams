@@ -6,7 +6,7 @@ matrix:
       before_install:
         - curl https://cli-assets.heroku.com/install.sh | sh  
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        - echo "$HEROKU_PASSWORD" | docker login -u "$HEROKU_USERNAME" --password-stdin registry.heroku.com
+        - echo "$HEROKU_API_KEY" | docker login -u "$HEROKU_USERNAME" --password-stdin registry.heroku.com
 
       script:
         - docker build -t $DOCKER_USERNAME:backend ./backend
@@ -26,7 +26,7 @@ matrix:
       before_install:
         - curl https://cli-assets.heroku.com/install.sh | sh  
         - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-        - echo "$HEROKU_PASSWORD" | docker login -u "$HEROKU_USERNAME" --password-stdin registry.heroku.com
+        - echo "$HEROKU_API_KEY" | docker login -u "$HEROKU_USERNAME" --password-stdin registry.heroku.com
 
       script:
         - docker build -t $DOCKER_USERNAME:frontend ./frontend
