@@ -15,8 +15,8 @@ matrix:
       deploy:
         provider: script
         script: 
-          docker push $DOCKER_USERNAME:frontend;
-          docker push registry.heroku.com/$HEROKU_FRONTEND_APP/web;
+          docker push $DOCKER_USERNAME:backend;
+          docker push registry.heroku.com/$HEROKU_BACKEND_APP/web;
         on:
           branch: feature/travis_integration
 
@@ -35,7 +35,7 @@ matrix:
       deploy:   
         provider: script
         script: 
-          docker push $DOCKER_USERNAME:backend;
-          docker push registry.heroku.com/$HEROKU_BACKEND_APP/web;
+          docker push $DOCKER_USERNAME:frontend;
+          docker push registry.heroku.com/$HEROKU_FRONTEND_APP/web;
         on:
           branch: feature/travis_integration
