@@ -1,34 +1,41 @@
-services:
-  - docker
+matrix:
+  include:
+    - language: python
+      services:
+        - docker
+      before_install:
+        - curl https://cli-assets.heroku.com/install.sh | sh  
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - echo "$HEROKU_PASSWORD" | docker login -u "$HEROKU_USERNAME" --password-stdin registry.heroku.com
 
-include:
-  - language: python
-    before_install:
-      - curl https://cli-assets.heroku.com/install.sh | sh  
-      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - echo "$HEROKU_PASSWORD" | docker login -u "$HEROKU_USERNAME" --password-stdin registry.heroku.com
+      script:
+        - docker build -t $DOCKER_USERNAME:backend ./backend
+        - docker tag $DOCKER_USERNAME:backend registry.heroku.com/$HEROKU_BACKEND_APP/web
 
-    script:
-      - docker build -t $DOCKER_USERNAME:backend ./backend
-      - docker tag $DOCKER_USERNAME:backend registry.heroku.com/$HEROKU_BACKEND_APP/web
+      deploy:
+              provider: script
+              script: 
+                docker push $DOCKER_USERNAME:frontend;
+                docker push registry.heroku.com/$HEROKU_FRONTEND_APP/web;
+              on:
+                branch: feature/travis_integration
 
-  - language: node_js
-    before_install:
-      - curl https://cli-assets.heroku.com/install.sh | sh  
-      - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-      - echo "$HEROKU_PASSWORD" | docker login -u "$HEROKU_USERNAME" --password-stdin registry.heroku.com
+    - language: node_js
+      services:
+        - docker
+      before_install:
+        - curl https://cli-assets.heroku.com/install.sh | sh  
+        - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+        - echo "$HEROKU_PASSWORD" | docker login -u "$HEROKU_USERNAME" --password-stdin registry.heroku.com
 
-    script:
-      - docker build -t $DOCKER_USERNAME:frontend ./frontend
-      - docker tag $DOCKER_USERNAME:frontend registry.heroku.com/$HEROKU_FRONTEND_APP/web
+      script:
+        - docker build -t $DOCKER_USERNAME:frontend ./frontend
+        - docker tag $DOCKER_USERNAME:frontend registry.heroku.com/$HEROKU_FRONTEND_APP/web
 
-  deploy:   
-          provider: script
-          script: 
-            docker push $DOCKER_USERNAME:backend;
-            docker push registry.heroku.com/$HEROKU_BACKEND_APP/web;
-
-            docker push $DOCKER_USERNAME:frontend;
-            docker push registry.heroku.com/$HEROKU_FRONTEND_APP/web;
-          on:
-            branch: feature/travis_integration
+      deploy:   
+              provider: script
+              script: 
+                docker push $DOCKER_USERNAME:backend;
+                docker push registry.heroku.com/$HEROKU_BACKEND_APP/web;
+              on:
+                branch: feature/travis_integration
