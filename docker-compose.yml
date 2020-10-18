@@ -16,7 +16,7 @@ services:
     image: backend
     restart: always
     ports:
-      - "8080:8080"
+      - "5000:5000"
     volumes:
       - ./backend:/backend
     depends_on:
