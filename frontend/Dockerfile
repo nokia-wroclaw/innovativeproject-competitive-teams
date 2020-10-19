@@ -19,9 +19,9 @@ RUN npm install react-scripts@3.4.1 -g
 COPY . ./
 
 # build production version
-RUN npm run build
-RUN npm install -g serve
+# RUN npm run build
+# RUN npm install -g serve
 
 # start app
-CMD serve -l $PORT -s build
-# CMD npm start
+# CMD serve -l $PORT -s build
+CMD npm start
