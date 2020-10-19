@@ -20,8 +20,8 @@ COPY . ./
 
 # build production version
 RUN npm run build
-
-WORKDIR /app/build
+RUN npm install -g serve
 
 # start app
-CMD npm start
+CMD serve -l $PORT -s build
+# CMD npm start

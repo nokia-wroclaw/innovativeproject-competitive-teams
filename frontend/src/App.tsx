@@ -1,26 +1,53 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { Component } from "react";
+import Api, { User } from "./api/Api";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+interface IProps {}
+
+interface IState {
+  users?: any;
+}
+
+class App extends Component<IProps, IState> {
+  constructor(props: IProps) {
+    super(props);
+    this.state = {
+      users: null,
+    };
+  }
+
+  componentDidMount() {
+    this.getUsers();
+  }
+
+  async getUsers() {
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    let backend: Api = new Api();
+    let result = await backend.getUsers();
+    this.setState({ users: result });
+  }
+
+  render() {
+    if (this.state.users) {
+      console.log(this.state.users);
+      const listItems = this.state.users.map((u: User) => (
+        <li key={u.id}>{u.email}</li>
+      ));
+      return (
+        <div>
+          <p>Hello World</p>
+          <p>Users:</p>
+          {listItems}
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        <p>Hello World </p>
+        <div>Loading...</div>
+      </div>
+    );
+  }
 }
 
 export default App;
