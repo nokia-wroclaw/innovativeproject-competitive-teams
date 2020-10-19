@@ -1,0 +1,43 @@
+matrix:
+  include:
+    - language: python
+      services:
+        - docker
+      before_install:
+        - curl https://cli-assets.heroku.com/install.sh | sh  
+        - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+        - docker login -u $HEROKU_USERNAME --password=$(heroku auth:token) registry.heroku.com
+
+      script:
+        - docker build -t $DOCKER_USERNAME:backend ./backend
+        - docker tag $DOCKER_USERNAME:backend registry.heroku.com/$HEROKU_BACKEND_APP/web
+
+      deploy:
+        provider: script
+        script: 
+          docker push $DOCKER_USERNAME:backend;
+          docker push registry.heroku.com/$HEROKU_BACKEND_APP/web;
+          heroku container:release web --app $HEROKU_BACKEND_APP
+        on:
+          branch: feature/travis_integration
+
+    - language: node_js
+      services:
+        - docker
+      before_install:
+        - curl https://cli-assets.heroku.com/install.sh | sh  
+        - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+        - docker login -u $HEROKU_USERNAME --password=$(heroku auth:token) registry.heroku.com
+
+      script:
+        - docker build -t $DOCKER_USERNAME:frontend ./frontend
+        - docker tag $DOCKER_USERNAME:frontend registry.heroku.com/$HEROKU_FRONTEND_APP/web
+
+      deploy:   
+        provider: script
+        script: 
+          docker push $DOCKER_USERNAME:frontend;
+          docker push registry.heroku.com/$HEROKU_FRONTEND_APP/web;
+          heroku container:release web --app $HEROKU_FRONTEND_APP
+        on:
+          branch: feature/travis_integration
