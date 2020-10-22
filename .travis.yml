@@ -30,7 +30,7 @@ matrix:
         - docker login -u $HEROKU_USERNAME --password=$(heroku auth:token) registry.heroku.com
 
       script:
-        - docker build -t $DOCKER_USERNAME/frontend ./frontend
+        - docker build --build-arg frontend_name=$FRONTEND_NAME --build-arg backend_url=$BACKEND_URL -t $DOCKER_USERNAME/frontend ./frontend
         - docker tag $DOCKER_USERNAME/frontend registry.heroku.com/$HEROKU_FRONTEND_APP/web
 
       deploy:   
