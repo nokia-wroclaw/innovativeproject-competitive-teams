@@ -42,7 +42,7 @@ class App extends Component<IProps, IState> {
 
     return (
       <div>
-        <p>Hello World test</p>
+        <p>Hello World</p>
         <div>Loading...</div>
       </div>
     );
