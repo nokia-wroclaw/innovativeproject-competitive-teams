@@ -4,8 +4,9 @@ import axios, { AxiosInstance, AxiosResponse } from "axios";
 var BACKEND_URL="/api"
 
 // check for local development backend url
-const env_url = process.env.REACT_APP_BACKEND_URL
-if (typeof env_url === "string")
+const env_url = process.env.REACT_APP_BACKEND_URL;
+const env = process.env.NODE_ENV;
+if (typeof env === "string" && env === "development" && typeof env_url === "string")
   BACKEND_URL = env_url
 
 export interface User {
