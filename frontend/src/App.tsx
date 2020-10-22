@@ -16,11 +16,14 @@ class App extends Component<IProps, IState> {
   }
 
   componentDidMount() {
+    if (typeof window !== 'undefined') {
+      var base = window.location.host;
+      console.log(base);
+    }
     this.getUsers();
   }
 
   async getUsers() {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
     let backend: Api = new Api();
     let result = await backend.getUsers();
     this.setState({ users: result });
@@ -43,7 +46,7 @@ class App extends Component<IProps, IState> {
 
     return (
       <div>
-        <p>Hello World </p>
+        <p>Hello World test</p>
         <div>Loading...</div>
       </div>
     );
