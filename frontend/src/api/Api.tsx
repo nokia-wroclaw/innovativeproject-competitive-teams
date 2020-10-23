@@ -1,14 +1,13 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 
-// Get db url from environment
-const env_url = process.env.REACT_APP_BACKEND_URL
-console.log(process.env)
-if (typeof env_url === "string")
-  var BACKEND_URL = env_url
-else if (env_url === undefined)
-  throw new Error('REACT_APP_BACKEND_URL environmental variable undefined')
-else
-  throw new Error('REACT_APP_BACKEND_URL environmental variable imported as wrong type')
+
+var BACKEND_URL="/api"
+
+// check for local development backend url
+const env_url = process.env.REACT_APP_BACKEND_URL;
+const env = process.env.NODE_ENV;
+if (typeof env === "string" && env === "development" && typeof env_url === "string")
+  BACKEND_URL = env_url
 
 export interface User {
   email: string;

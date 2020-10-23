@@ -20,15 +20,14 @@ class App extends Component<IProps, IState> {
   }
 
   async getUsers() {
-    await new Promise((resolve) => setTimeout(resolve, 1000));
     let backend: Api = new Api();
     let result = await backend.getUsers();
     this.setState({ users: result });
+    console.log(this.state.users);
   }
 
   render() {
     if (this.state.users) {
-      console.log(this.state.users);
       const listItems = this.state.users.map((u: User) => (
         <li key={u.id}>{u.email}</li>
       ));
@@ -43,7 +42,7 @@ class App extends Component<IProps, IState> {
 
     return (
       <div>
-        <p>Hello World </p>
+        <p>Hello World</p>
         <div>Loading...</div>
       </div>
     );

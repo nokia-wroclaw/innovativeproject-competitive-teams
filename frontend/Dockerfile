@@ -1,13 +1,8 @@
-FROM node:13.12.0-alpine
+# Stage 0, compile frontend to static html
+FROM node:13.12.0-alpine as build-stage
 
 # set working directory
 WORKDIR /app
-
-# add `/app/node_modules/.bin` to $PATH
-ENV PATH /app/node_modules/.bin:$PATH
-
-# run without an interactive shell
-ENV CI=true
 
 # install app dependencies
 COPY package.json ./
@@ -18,10 +13,24 @@ RUN npm install react-scripts@3.4.1 -g
 # add app
 COPY . ./
 
-# build production version
-# RUN npm run build
-# RUN npm install -g serve
+# build app
+RUN npm run build
 
-# start app
-# CMD serve -l $PORT -s build
-CMD npm start
+
+# Stage 1, run nginx
+FROM nginx:latest
+
+# Set up default env attributes
+ARG port=80
+ARG frontend_name=127.0.0.1
+ARG backend_url=http://127.0.0.1:8000
+
+ENV PORT=$port
+ENV FRONTEND_NAME=$frontend_name
+ENV BACKEND_URL=$backend_url
+
+COPY --from=build-stage /app/build/ /usr/share/nginx/html
+
+COPY --from=build-stage /app/nginx.conf /etc/nginx/conf.d/default.conf.template
+
+CMD /bin/bash -c "envsubst '\$PORT \$BACKEND_URL \$FRONTEND_NAME' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
