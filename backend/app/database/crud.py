@@ -15,11 +15,16 @@ def get_teams(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Team).offset(skip).limit(limit).all()
 
 def create_team(db: Session, team: schemas.TeamCreate):
-    db_team = models.Team(name=team.name, description=team.description, )
+    db_team = models.Team(name=team.name, description=team.description)
     db.add(db_team)
     db.commit()
     db.refresh(db_team)
     return db_team
+
+def delete_team(db: Session, team_id: int):
+    to_remove = db.query(models.Team).filter(models.Team.id == team_id).first()
+    db.delete(to_remove)
+    db.commit()
 
 # Players:
 
@@ -38,3 +43,8 @@ def create_player(db: Session, player: schemas.PlayerCreate):
     db.commit()
     db.refresh(db_player)
     return db_player
+
+def delete_player(db: Session, player_id: int):
+    to_remove = db.query(models.Player).filter(models.Player.id == player_id).first()
+    db.delete(to_remove)
+    db.commit()

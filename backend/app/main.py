@@ -36,6 +36,9 @@ def get_db():
 def create_team(team: schemas.TeamCreate, db: Session = Depends(get_db)):
     return crud.create_team(db=db, team=team)
 
+@app.delete("/api/teams/{team_id}")
+def delete_team(team_id: int, db: Session = Depends(get_db)):
+    crud.delete_team(db, team_id)
 
 @app.get("/api/teams/", response_model=List[schemas.Team])
 def read_teams(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -54,6 +57,10 @@ def read_team(team_id: int, db: Session = Depends(get_db)):
 def create_player(player: schemas.PlayerCreate, db: Session = Depends(get_db)):
     return crud.create_player(db=db, player=player)
 
+@app.delete("/api/players/{player_id}")
+def delete_player(player_id: int, db: Session = Depends(get_db)):
+    crud.delete_player(db, player_id)
+
 @app.get("/api/players/", response_model=List[schemas.Player])
 def read_players(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     players = crud.get_players(db, skip=skip, limit=limit)
@@ -65,7 +72,7 @@ def read_player(player_id: int, db: Session = Depends(get_db)):
     if db_player is None:
         raise HTTPException(status_code=404, detail="Player not found")
     return db_player
-    
+
 @app.get("/api")
 def greet():
     return {"message": "Hello world!"}
