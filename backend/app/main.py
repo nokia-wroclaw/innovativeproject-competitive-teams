@@ -32,42 +32,40 @@ def get_db():
     finally:
         db.close()
 
-
-@app.post("/api/users/", response_model=schemas.User)
-def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    db_user = crud.get_user_by_email(db, email=user.email)
-    if db_user:
-        raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_user(db=db, user=user)
+@app.post("/api/teams/", response_model=schemas.Team)
+def create_team(team: schemas.TeamCreate, db: Session = Depends(get_db)):
+    return crud.create_team(db=db, team=team)
 
 
-@app.get("/api/users/", response_model=List[schemas.User])
-def read_users(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    users = crud.get_users(db, skip=skip, limit=limit)
-    return users
+@app.get("/api/teams/", response_model=List[schemas.Team])
+def read_teams(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    teams = crud.get_teams(db, skip=skip, limit=limit)
+    return teams
 
 
-@app.get("/api/users/{user_id}", response_model=schemas.User)
-def read_user(user_id: int, db: Session = Depends(get_db)):
-    db_user = crud.get_user(db, user_id=user_id)
-    if db_user is None:
-        raise HTTPException(status_code=404, detail="User not found")
-    return db_user
+@app.get("/api/teams/{team_id}", response_model=schemas.Team)
+def read_team(team_id: int, db: Session = Depends(get_db)):
+    db_team = crud.get_team(db, team_id=team_id)
+    if db_team is None:
+        raise HTTPException(status_code=404, detail="Team not found")
+    return db_team
 
+@app.post("/api/players/", response_model=schemas.Player)
+def create_player(player: schemas.PlayerCreate, db: Session = Depends(get_db)):
+    return crud.create_player(db=db, player=player)
 
-@app.post("/api/users/{user_id}/items/", response_model=schemas.Item)
-def create_item_for_user(
-    user_id: int, item: schemas.ItemCreate, db: Session = Depends(get_db)
-):
-    return crud.create_user_item(db=db, item=item, user_id=user_id)
+@app.get("/api/players/", response_model=List[schemas.Player])
+def read_players(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    players = crud.get_players(db, skip=skip, limit=limit)
+    return players
 
-
-@app.get("/api/items/", response_model=List[schemas.Item])
-def read_items(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    items = crud.get_items(db, skip=skip, limit=limit)
-    return items
-
-
+@app.get("/api/players/{player_id}", response_model=schemas.Player)
+def read_player(player_id: int, db: Session = Depends(get_db)):
+    db_player = crud.get_player(db, player_id=player_id)
+    if db_player is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+    return db_player
+    
 @app.get("/api")
 def greet():
-    return {"message": "Hello world"}
+    return {"message": "Hello world!"}

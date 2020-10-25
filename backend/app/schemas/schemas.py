@@ -1,37 +1,31 @@
 from typing import List, Optional
-
 from pydantic import BaseModel
 
-
-class ItemBase(BaseModel):
-    title: str
+class PlayerBase(BaseModel):
+    name: str
     description: Optional[str] = None
 
-
-class ItemCreate(ItemBase):
+class PlayerCreate(PlayerBase):
     pass
 
-
-class Item(ItemBase):
+class Player(PlayerBase):
     id: int
-    owner_id: int
+    team_id: Optional[int] = None
 
     class Config:
         orm_mode = True
 
+class TeamBase(BaseModel):
+    name: str
+    description: Optional[str] = None
 
-class UserBase(BaseModel):
-    email: str
+class TeamCreate(TeamBase):
+    pass
 
-
-class UserCreate(UserBase):
-    password: str
-
-
-class User(UserBase):
+class Team(TeamBase):
     id: int
-    is_active: bool
-    items: List[Item] = []
+    captain_id: Optional[int] = None
+    players: List[Player] = []
 
     class Config:
         orm_mode = True
