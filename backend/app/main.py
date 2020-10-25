@@ -38,6 +38,8 @@ def create_team(team: schemas.TeamCreate, db: Session = Depends(get_db)):
 
 @app.delete("/api/teams/{team_id}")
 def delete_team(team_id: int, db: Session = Depends(get_db)):
+    if crud.get_team(db, team_id=team_id) is None:
+        raise HTTPException(status_code=404, detail="Team not found")
     crud.delete_team(db, team_id)
 
 @app.get("/api/teams/", response_model=List[schemas.Team])
@@ -59,6 +61,8 @@ def create_player(player: schemas.PlayerCreate, db: Session = Depends(get_db)):
 
 @app.delete("/api/players/{player_id}")
 def delete_player(player_id: int, db: Session = Depends(get_db)):
+    if crud.get_player(db, player_id=player_id) is None:
+        raise HTTPException(status_code=404, detail="Player not found")
     crud.delete_player(db, player_id)
 
 @app.get("/api/players/", response_model=List[schemas.Player])
