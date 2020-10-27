@@ -3,8 +3,9 @@ import * as React from "react";
 import { withRouter, Redirect } from "react-router";
 import app from "./base";
 import { AuthContext } from "./Auth";
+import firebase from 'firebase/app';
 
-const Login /*React.FC<{}>*/ = ({ history }) => {
+const Login = ({ history }) => {
 const handleLogin = useCallback(
 async event => {
 event.preventDefault();
@@ -21,6 +22,8 @@ alert(error);
 [history]
 );
 
+
+  
 const { currentUser } = useContext(AuthContext);
 
 if (currentUser) {
