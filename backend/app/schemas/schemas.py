@@ -10,7 +10,7 @@ class PlayerCreate(PlayerBase):
 
 class Player(PlayerBase):
     id: int
-    team_id: Optional[int] = None
+    teams: List[Team] = []
 
     class Config:
         orm_mode = True
@@ -24,7 +24,7 @@ class TeamCreate(TeamBase):
 
 class Team(TeamBase):
     id: int
-    captain_id: Optional[int] = None
+    captain: Optional[Player] = None
     players: List[Player] = []
 
     class Config:
