@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import ForwardRef, List, Optional
 from pydantic import BaseModel
 
 class PlayerBase(BaseModel):
@@ -8,9 +8,11 @@ class PlayerBase(BaseModel):
 class PlayerCreate(PlayerBase):
     pass
 
+List_of_teams = ForwardRef("List[Team]")
+
 class Player(PlayerBase):
     id: int
-    teams: List[Team] = []
+    teams: List_of_teams = []
 
     class Config:
         orm_mode = True
@@ -29,3 +31,5 @@ class Team(TeamBase):
 
     class Config:
         orm_mode = True
+
+Player.update_forward_refs()

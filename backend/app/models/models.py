@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 
 from app.database.database import Base
 
-association_table = Table('association', Base,
+association_table = Table('association', Base.metadata,
     Column('teams_id', Integer, ForeignKey('teams.id')),
     Column('players_id', Integer, ForeignKey('players.id'))
 )
