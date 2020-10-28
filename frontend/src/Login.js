@@ -4,6 +4,7 @@ import { withRouter, Redirect } from "react-router";
 import app from "./base";
 import { AuthContext } from "./Auth";
 import firebase from 'firebase/app';
+import { signInWithGoogle } from './base';
 
 const Login = ({ history }) => {
 const handleLogin = useCallback(
@@ -43,6 +44,7 @@ Password
 <input name="password" type="password" placeholder="Password" />
 </label>
 <button type="submit">Log in</button>
+<button onClick={signInWithGoogle}>SIGN IN WITH GOOGLE</button>
 </form>
 </div>
 );
