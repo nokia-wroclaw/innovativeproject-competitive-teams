@@ -14,8 +14,8 @@ class Team(Base):
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
     description = Column(String, index=True)
-
-    captain = relationship("Player")
+    captain_id = Column(Integer, ForeignKey("players.id"), index=True)
+    captain = relationship("Player", back_populates="captain_teams")
     players = relationship(
         "Player",
         secondary=association_table,

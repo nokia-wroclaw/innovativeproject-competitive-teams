@@ -12,6 +12,7 @@ List_of_teams = ForwardRef("List[Team]")
 
 class Player(PlayerBase):
     id: int
+    captain_teams: List_of_teams = []
     teams: List_of_teams = []
 
     class Config:
