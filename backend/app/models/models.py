@@ -3,34 +3,28 @@ from sqlalchemy.orm import relationship
 
 from app.database.database import Base
 
-association_table = Table('association', Base.metadata,
-    Column('teams_id', Integer, ForeignKey('teams.id')),
-    Column('players_id', Integer, ForeignKey('players.id'))
-)
+class PlayerTeam(Base):
+    __tablename__ = 'players_teams'
+
+    player_id = Column('players_id', ForeignKey('players.id'), primary_key=True)
+    team_id = Column('teams_id', ForeignKey('teams.id'), primary_key=True)
 
 class Team(Base):
     __tablename__ = "teams"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    description = Column(String, index=True)
-    captain_id = Column(Integer, ForeignKey("players.id"), index=True)
-    captain = relationship("Player", back_populates="captain_teams")
-    players = relationship(
-        "Player",
-        secondary=association_table,
-        back_populates="teams"
-    )
+    id = Column(Integer, primary_key=True, nullable=False)
+    name = Column(String, nullable=False)
+    description = Column(String)
+
+    players = relationship("Player", secondary=PlayerTeam.__tablename__)
 
 class Player(Base):
     __tablename__ = "players"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, index=True)
     description = Column(String, index=True)
 
-    captain_teams = relationship("Team", back_populates="captain")
-    teams = relationship(
-        "Team",
-        secondary=association_table,
-        back_populates="players")
+    teams = relationship("Team", secondary=PlayerTeam.__tablename__)
+
+    

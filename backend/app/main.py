@@ -77,6 +77,10 @@ def read_player(player_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Player not found")
     return db_player
 
+@app.put("/api/teams/{team_id}")
+def link_player_to_team(team_id: int, player_id: int, db: Session = Depends(get_db)):
+    crud.link_player_to_team_with_id(db, team_id, player_id)
+
 @app.get("/api")
 def greet():
     return {"message": "Hello world!"}

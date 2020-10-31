@@ -8,12 +8,9 @@ class PlayerBase(BaseModel):
 class PlayerCreate(PlayerBase):
     pass
 
-List_of_teams = ForwardRef("List[Team]")
-
 class Player(PlayerBase):
     id: int
-    captain_teams: List_of_teams = []
-    teams: List_of_teams = []
+    # teams_id: List[Integer] = []
 
     class Config:
         orm_mode = True
@@ -27,10 +24,7 @@ class TeamCreate(TeamBase):
 
 class Team(TeamBase):
     id: int
-    captain: Optional[Player] = None
     players: List[Player] = []
 
     class Config:
         orm_mode = True
-
-Player.update_forward_refs()
