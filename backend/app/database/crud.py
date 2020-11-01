@@ -30,8 +30,6 @@ def delete_team(db: Session, team_id: int):
 
 def get_player(db: Session, player_id: int):
     player = db.query(models.Player).filter(models.Player.id == player_id).first()
-    print(player)
-    print(type(player))
     return player
 
 def get_player_by_name(db: Session, name: str):
@@ -56,9 +54,20 @@ def delete_player(db: Session, player_id: int):
 
 def link_player_to_team_with_id(db: Session, team_id: int, player_id: int):
     db_team = db.query(models.Team).filter(models.Team.id == team_id).first()
-    db_team.players.append(db.query(models.Player).filter(models.Player.id == player_id).first())
+    db_player = db.query(models.Player).filter(models.Player.id == player_id).first()
+    db_team.players.append(db_player)
     db.commit()
-    
+
+def is_player_in_team(db: Session, player_id: int, team_id: int):
+    db_team = db.query(models.Team).filter(models.Team.id == team_id).first()
+    db_player = db.query(models.Player).filter(models.Player.id == player_id).first()
+    return db_player in db_team.players
+
+def set_team_captain(db:Session, player_id: int, team_id: int):
+    db_team = db.query(models.Team).filter(models.Team.id == team_id).first()
+    db_player = db.query(models.Player).filter(models.Player.id == player_id).first()
+    db_team.captain = db_player
+    db.commit()
 
 def link_player_to_team_with_name():
     pass

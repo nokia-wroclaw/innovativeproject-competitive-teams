@@ -77,9 +77,23 @@ def read_player(player_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Player not found")
     return db_player
 
-@app.put("/api/teams/{team_id}")
+@app.put("/api/players/{team_id}")
 def link_player_to_team(team_id: int, player_id: int, db: Session = Depends(get_db)):
+    if crud.get_player(db, player_id=player_id) is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+    if crud.get_team(db, team_id=team_id) is None:
+        raise HTTPException(status_code=404, detail="Team not found")
     crud.link_player_to_team_with_id(db, team_id, player_id)
+
+@app.put("/api/teams/{team_id}")
+def set_team_captain(team_id: int, player_id: int, db: Session = Depends(get_db)):
+    if crud.get_player(db, player_id=player_id) is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+    if crud.get_team(db, team_id=team_id) is None:
+        raise HTTPException(status_code=404, detail="Team not found")
+    if crud.is_player_in_team(db, player_id=player_id, team_id=team_id) is None:
+        raise HTTPException(status_code=404, detail="Player not in team")
+    crud.set_team_captain(db, player_id=player_id, team_id=team_id)
 
 @app.get("/api")
 def greet():

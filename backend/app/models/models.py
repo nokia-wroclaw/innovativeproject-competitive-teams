@@ -16,6 +16,10 @@ class Team(Base):
     name = Column(String, nullable=False)
     description = Column(String)
 
+    captain_id = Column(Integer, ForeignKey('players.id'))
+    captain = relationship("Player", back_populates='captain_teams')
+
+
     players = relationship("Player", secondary=PlayerTeam.__tablename__)
 
 class Player(Base):
@@ -25,6 +29,7 @@ class Player(Base):
     name = Column(String, index=True)
     description = Column(String, index=True)
 
+    captain_teams = relationship("Team", back_populates='captain')
     teams = relationship("Team", secondary=PlayerTeam.__tablename__)
 
     
