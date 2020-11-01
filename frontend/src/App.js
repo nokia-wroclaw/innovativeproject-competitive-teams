@@ -1,5 +1,5 @@
 import React from "react";
-import LoggedInHeader from "./Components/LoggedInHeader";
+import Header from "./Components/Header";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import "./App.css";
 
@@ -7,7 +7,7 @@ const App = () => (
   <div className="app">
     <Router>
       <Switch>
-        <Route path="/dashboard" component={LoggedInHeader} />
+        <Route path="/dashboard" component={Header} />
       </Switch>
     </Router>
   </div>
