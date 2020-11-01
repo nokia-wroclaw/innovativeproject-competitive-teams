@@ -1,10 +1,8 @@
 import { useCallback, useContext } from "react";
 import * as React from "react";
 import { withRouter, Redirect } from "react-router";
-import app from "./base";
-import { AuthContext } from "./Auth";
-import firebase from "firebase/app";
-import { signInWithGoogle } from "./base";
+import { AuthContext } from "../Auth/Auth";
+import app, { signInWithGoogle } from "../base/base";
 
 const Login = ({ history }) => {
   const handleLogin = useCallback(
@@ -42,8 +40,8 @@ const Login = ({ history }) => {
           <input name="password" type="password" placeholder="Password" />
         </label>
         <button type="submit">Log in</button>
-        <button onClick={signInWithGoogle}>SIGN IN WITH GOOGLE</button>
       </form>
+      <button onClick={signInWithGoogle}>SIGN IN WITH GOOGLE</button>
     </div>
   );
 };
