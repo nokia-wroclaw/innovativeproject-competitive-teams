@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from app.database.database import Base
 
 class PlayerTeam(Base):
-    __tablename__ = 'players_teams'
+    __tablename__ = "players_teams"
 
     player_id = Column('players_id', ForeignKey('players.id'), primary_key=True)
     team_id = Column('teams_id', ForeignKey('teams.id'), primary_key=True)

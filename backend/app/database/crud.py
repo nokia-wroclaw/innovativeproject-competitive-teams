@@ -52,6 +52,10 @@ def delete_player(db: Session, player_id: int):
 
 # Team - Player functionality
 
+def get_player_teams(db: Session, player_id: int, skip: int = 0, limit: int = 100):
+    db_teams = db.query(models.Team).filter(models.Team.players.any(models.Player.id.in_([player_id]))).all()
+    return db_teams
+
 def link_player_to_team_with_id(db: Session, team_id: int, player_id: int):
     db_team = db.query(models.Team).filter(models.Team.id == team_id).first()
     db_player = db.query(models.Player).filter(models.Player.id == player_id).first()

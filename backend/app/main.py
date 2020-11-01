@@ -77,6 +77,13 @@ def read_player(player_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Player not found")
     return db_player
 
+@app.get("/api/players/teams/{player_id}", response_model=List[schemas.Team])
+def read_player_teams(player_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    if crud.get_player(db, player_id=player_id) is None:
+        raise HTTPException(status_code=404, detail="Player not found")
+    db_teams = crud.get_player_teams(db, player_id=player_id, skip=skip, limit=limit)
+    return db_teams
+
 @app.put("/api/players/{team_id}")
 def link_player_to_team(team_id: int, player_id: int, db: Session = Depends(get_db)):
     if crud.get_player(db, player_id=player_id) is None:

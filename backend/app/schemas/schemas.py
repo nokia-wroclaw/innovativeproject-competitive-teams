@@ -11,17 +11,9 @@ class PlayerCreate(PlayerBase):
 class Player(PlayerBase):
     id: int
     
-    # teams_id: List[int]
-    # captain_teams = List[int]
-
     class Config:
         orm_mode = True
 
-'''
-class PlayerInfo(PlayerBase):
-    id: int
-    teams: "List[TeamBase]"
-'''
 class TeamBase(BaseModel):
     name: str
     description: Optional[str] = None
