@@ -1,7 +1,7 @@
 import { useCallback } from "react";
 import React from "react";
 import { withRouter } from "react-router";
-import app from "../base/base";
+import app from "../Base/base";
 
 const SignUp = ({ history }) => {
   const handleSignUp = useCallback(

@@ -1,5 +1,5 @@
 import React from "react";
-import app from "../base/base";
+import app from "../Base/base";
 const Home = () => {
   return (
     <>
