@@ -9,9 +9,6 @@ const Profile = (props) => {
     setUserid(props.userid);
   }, [props.userid]);
 
-  console.log(props);
-  console.log(props.userid);
-
   return <Title>Profile: {userid}</Title>;
 };
 

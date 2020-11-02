@@ -1,7 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 
-export function is_logged() {
+export function loggedIn() {
   var user = firebase.auth().currentUser;
   if (user) {
     return true;
@@ -10,11 +10,11 @@ export function is_logged() {
   }
 }
 
-export function user_id() {
+export function loggedInUserID() {
   var user = firebase.auth().currentUser;
   if (user) {
     return user.uid;
   } else {
-    return false;
+    return null;
   }
 }

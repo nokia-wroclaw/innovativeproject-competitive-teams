@@ -90,10 +90,10 @@ const DashboardSider = () => {
                 <Team />
               </Route>
               <Route path="/dashboard/profile">
-                <Profile props={{ userid: "userid" }} />
+                <Profile userid={"userid"} />
               </Route>
               <Route exact path="/dashboard">
-                <Profile props={{ userid: "userid" }} />
+                <Profile userid={"userid"} />
               </Route>
               <Route>
                 <NotFound />
