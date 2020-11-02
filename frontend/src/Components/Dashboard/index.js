@@ -13,7 +13,7 @@ import Team from "../Team";
 import NotFound from "../NotFound";
 import { getUserID } from "../Firebase_funcs/firebase_funcs";
 
-const DashboardSider = () => {
+const Dashboard = () => {
   const { Content, Sider } = Layout;
   const { SubMenu } = Menu;
   const [collapsed, setCollapsed] = useState(false);
@@ -104,4 +104,4 @@ const DashboardSider = () => {
   );
 };
 
-export default DashboardSider;
+export default Dashboard;
