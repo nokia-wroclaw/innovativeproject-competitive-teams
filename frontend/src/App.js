@@ -9,6 +9,7 @@ import { AuthProvider } from "./Components/Auth/Auth";
 import PrivateRoute from "./Components/PrivateRoute/PrivateRoute";
 import Dashboard from "./Components/Dashboard";
 import Header from "./Components/Header";
+import LoggedOut from "./Components/LoggedOut";
 
 const App = () => (
   <AuthProvider>
@@ -20,6 +21,7 @@ const App = () => (
             <Route exact path="/" component={Home} />
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={SignUp} />
+            <Route exact path="/logged-out" component={LoggedOut} />
             <PrivateRoute path="/dashboard" component={Dashboard} />
           </Switch>
         </Layout>

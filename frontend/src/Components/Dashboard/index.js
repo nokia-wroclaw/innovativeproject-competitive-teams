@@ -11,11 +11,13 @@ import "./index.css";
 import Profile from "../Profile";
 import Team from "../Team";
 import NotFound from "../NotFound";
+import { getUserID } from "../Firebase_funcs/firebase_funcs";
 
 const DashboardSider = () => {
   const { Content, Sider } = Layout;
   const { SubMenu } = Menu;
   const [collapsed, setCollapsed] = useState(false);
+  const userid = getUserID();
 
   const onCollapse = (collapsed) => {
     setCollapsed(collapsed);
@@ -90,10 +92,10 @@ const DashboardSider = () => {
                 <Team />
               </Route>
               <Route path="/dashboard/profile">
-                <Profile userid={"userid"} />
+                <Profile userid={userid} />
               </Route>
               <Route exact path="/dashboard">
-                <Profile userid={"userid"} />
+                <Profile userid={userid} />
               </Route>
               <Route>
                 <NotFound />

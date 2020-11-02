@@ -10,7 +10,7 @@ export function loggedIn() {
   }
 }
 
-export function loggedInUserID() {
+export function getUserID() {
   var user = firebase.auth().currentUser;
   if (user) {
     return user.uid;
