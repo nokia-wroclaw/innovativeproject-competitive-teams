@@ -1,12 +1,8 @@
 import React from "react";
-import app from "../Base/base";
+import "./index.css";
+
 const Home = () => {
-  return (
-    <>
-      <h1>Home</h1>
-      <button onClick={() => app.auth().signOut()}>Sign out</button>
-    </>
-  );
+  return <h1>Home</h1>;
 };
 
 export default Home;
