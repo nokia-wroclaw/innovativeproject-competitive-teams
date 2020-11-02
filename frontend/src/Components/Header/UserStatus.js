@@ -14,6 +14,7 @@ const UserStatus = (props) => {
 
   const { currentUser } = useContext(AuthContext);
 
+  // Update userid on AuthContext change
   useEffect(() => {
     const rgb = Math.floor(Math.random() * 16777215);
     const random_color = "#" + rgb.toString(16);
@@ -61,8 +62,10 @@ const UserStatus = (props) => {
     </Link>
   );
 
+  // Show avatar + sign out button when logged out, sign out button when logged out
   const av = userid ? avatar : null;
   const button = userid ? logout_button : login_button;
+
   return (
     <Col span={props.span} align={props.align} style={props.style}>
       {av}

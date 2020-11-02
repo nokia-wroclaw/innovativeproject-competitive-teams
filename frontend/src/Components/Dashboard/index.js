@@ -19,10 +19,6 @@ const DashboardSider = () => {
   const [collapsed, setCollapsed] = useState(false);
   const userid = getUserID();
 
-  const onCollapse = (collapsed) => {
-    setCollapsed(collapsed);
-  };
-
   return (
     <Router>
       <Layout>
@@ -30,7 +26,7 @@ const DashboardSider = () => {
           theme="dark"
           collapsible
           collapsed={collapsed}
-          onCollapse={onCollapse}
+          onCollapse={(collapsed) => setCollapsed(collapsed)}
           width={250}
           className="site-layout-background"
         >

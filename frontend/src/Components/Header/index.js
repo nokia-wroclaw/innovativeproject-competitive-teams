@@ -11,6 +11,7 @@ const Header = () => {
   const location = useLocation();
   const [selected_keys, setSelected_keys] = useState(["0"]);
 
+  // Update menu selection based on current path
   useEffect(() => {
     const currentPath = location.pathname;
     let first_dir = currentPath.substr(1).split("/")[0];
