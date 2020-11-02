@@ -1,26 +1,35 @@
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
+from sqlalchemy import Table, Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
 from app.database.database import Base
 
+class PlayerTeam(Base):
+    __tablename__ = "players_teams"
 
-class User(Base):
-    __tablename__ = "users"
+    player_id = Column('players_id', ForeignKey('players.id'), primary_key=True)
+    team_id = Column('teams_id', ForeignKey('teams.id'), primary_key=True)
 
-    id = Column(Integer, primary_key=True, index=True)
-    email = Column(String, unique=True, index=True)
-    hashed_password = Column(String)
-    is_active = Column(Boolean, default=True)
+class Team(Base):
+    __tablename__ = "teams"
 
-    items = relationship("Item", back_populates="owner")
+    id = Column(Integer, primary_key=True, nullable=False)
+    name = Column(String, nullable=False)
+    description = Column(String)
+
+    captain_id = Column(Integer, ForeignKey('players.id'))
+    captain = relationship("Player", back_populates='captain_teams')
 
 
-class Item(Base):
-    __tablename__ = "items"
+    players = relationship("Player", secondary=PlayerTeam.__tablename__)
 
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, index=True)
+class Player(Base):
+    __tablename__ = "players"
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    name = Column(String, index=True)
     description = Column(String, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id"))
 
-    owner = relationship("User", back_populates="items") 
+    captain_teams = relationship("Team", back_populates='captain')
+    teams = relationship("Team", secondary=PlayerTeam.__tablename__)
+
+    

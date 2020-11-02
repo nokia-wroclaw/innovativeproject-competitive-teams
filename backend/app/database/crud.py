@@ -3,35 +3,97 @@ from sqlalchemy.orm import Session
 from app.models import models
 from app.schemas import schemas
 
+# Teams:
 
-def get_user(db: Session, user_id: int):
-    return db.query(models.User).filter(models.User.id == user_id).first()
+def get_team(db: Session, team_id: int):
+    return db.query(models.Team).filter(models.Team.id == team_id).first() 
 
+def get_team_by_name(db: Session, name: str):
+    return db.query(models.Team).filter(models.Team.name == name).first()
 
-def get_user_by_email(db: Session, email: str):
-    return db.query(models.User).filter(models.User.email == email).first()
+def get_teams(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Team).offset(skip).limit(limit).all()
 
-
-def get_users(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.User).offset(skip).limit(limit).all()
-
-
-def create_user(db: Session, user: schemas.UserCreate):
-    fake_hashed_password = user.password + "notreallyhashed"
-    db_user = models.User(email=user.email, hashed_password=fake_hashed_password)
-    db.add(db_user)
+def create_team(db: Session, team: schemas.TeamCreate):
+    db_team = models.Team(name=team.name, description=team.description)
+    db.add(db_team)
     db.commit()
-    db.refresh(db_user)
-    return db_user
+    db.refresh(db_team)
+    return db_team
 
-
-def get_items(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Item).offset(skip).limit(limit).all()
-
-
-def create_user_item(db: Session, item: schemas.ItemCreate, user_id: int):
-    db_item = models.Item(**item.dict(), owner_id=user_id)
-    db.add(db_item)
+def delete_team(db: Session, team_id: int):
+    to_remove = db.query(models.Team).filter(models.Team.id == team_id).first()
+    db.delete(to_remove)
     db.commit()
-    db.refresh(db_item)
-    return db_item 
+
+# Players:
+
+def get_player(db: Session, player_id: int):
+    player = db.query(models.Player).filter(models.Player.id == player_id).first()
+    return player
+
+def get_player_by_name(db: Session, name: str):
+    return db.query(models.Player).filter(models.Player.name == name).first()
+
+def get_players(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Player).offset(skip).limit(limit).all()
+
+def create_player(db: Session, player: schemas.PlayerCreate):
+    db_player = models.Player(**player.dict())
+    db.add(db_player)
+    db.commit()
+    db.refresh(db_player)
+    return db_player
+
+def delete_player(db: Session, player_id: int):
+    to_remove = db.query(models.Player).filter(models.Player.id == player_id).first()
+    db.delete(to_remove)
+    db.commit()
+
+# Team - Player functionality
+
+def get_player_teams(db: Session, player_id: int, skip: int = 0, limit: int = 100):
+    db_teams = db.query(models.Team).filter(models.Team.players.any(models.Player.id.in_([player_id]))).all()
+    return db_teams
+
+def get_player_captain_teams(db: Session, player_id: int, skip: int = 0, limit: int = 100):
+    db_teams = db.query(models.Team).filter(models.Team.captain_id == player_id).all()
+    return db_teams
+
+def link_player_to_team_with_id(db: Session, team_id: int, player_id: int):
+    db_team = db.query(models.Team).filter(models.Team.id == team_id).first()
+    db_player = db.query(models.Player).filter(models.Player.id == player_id).first()
+    db_team.players.append(db_player)
+    db.commit()
+
+def is_player_in_team(db: Session, player_id: int, team_id: int):
+    db_team = db.query(models.Team).filter(models.Team.id == team_id).first()
+    db_player = db.query(models.Player).filter(models.Player.id == player_id).first()
+    return db_player in db_team.players
+
+def set_team_captain(db:Session, player_id: int, team_id: int):
+    db_team = db.query(models.Team).filter(models.Team.id == team_id).first()
+    db_player = db.query(models.Player).filter(models.Player.id == player_id).first()
+    db_team.captain = db_player
+    db.commit()
+
+def link_player_to_team_with_name():
+    pass
+
+def unlink_player_to_team_with_id():
+    pass
+
+def unlink_player_to_team_with_name():
+    pass
+
+def link_captain_to_team_with_id():
+    pass
+
+def link_captain_to_team_with_name():
+    pass
+
+def unlink_captain_to_team_with_id():
+    pass
+
+def unlink_captain_to_team_with_name():
+    pass

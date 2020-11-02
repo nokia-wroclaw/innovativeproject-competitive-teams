@@ -1,37 +1,32 @@
-from typing import List, Optional
-
+from typing import ForwardRef, List, Optional
 from pydantic import BaseModel
 
-
-class ItemBase(BaseModel):
-    title: str
+class PlayerBase(BaseModel):
+    name: str
     description: Optional[str] = None
 
-
-class ItemCreate(ItemBase):
+class PlayerCreate(PlayerBase):
     pass
 
-
-class Item(ItemBase):
+class Player(PlayerBase):
     id: int
-    owner_id: int
+    
+    class Config:
+        orm_mode = True
+
+class TeamBase(BaseModel):
+    name: str
+    description: Optional[str] = None
+
+class TeamCreate(TeamBase):
+    pass
+
+class Team(TeamBase):
+    id: int
+    captain_id: Optional[int] = None
+    players: List[Player] = []
 
     class Config:
         orm_mode = True
 
-
-class UserBase(BaseModel):
-    email: str
-
-
-class UserCreate(UserBase):
-    password: str
-
-
-class User(UserBase):
-    id: int
-    is_active: bool
-    items: List[Item] = []
-
-    class Config:
-        orm_mode = True
+Player.update_forward_refs()
