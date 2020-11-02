@@ -13,7 +13,7 @@ const Login = ({ history }) => {
         await app
           .auth()
           .signInWithEmailAndPassword(email.value, password.value);
-        history.goBack();
+        history.replace("/dashboard/profile");
       } catch (error) {
         alert(error);
       }
@@ -24,7 +24,7 @@ const Login = ({ history }) => {
   const { currentUser } = useContext(AuthContext);
 
   if (currentUser) {
-    return <Redirect to="/" />;
+    return <Redirect to="/dashboard/profile" />;
   }
 
   return (
@@ -42,6 +42,9 @@ const Login = ({ history }) => {
         <button type="submit">Log in</button>
       </form>
       <button onClick={signInWithGoogle}>SIGN IN WITH GOOGLE</button>
+      <button onClick={() => history.replace("/signup")}>
+        SIGNUP WITH EMAIL
+      </button>
     </div>
   );
 };

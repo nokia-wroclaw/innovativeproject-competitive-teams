@@ -3,7 +3,6 @@ import { Row, Col, Layout, Menu, Typography } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import "./index.css";
 
-import { getUserID } from "../Firebase_funcs/firebase_funcs";
 import UserStatus from "./UserStatus";
 
 const Header = () => {
@@ -11,12 +10,10 @@ const Header = () => {
   const { Title } = Typography;
   const location = useLocation();
   const [selected_keys, setSelected_keys] = useState(["0"]);
-  const [userid, setUserid] = useState(null);
 
   useEffect(() => {
     const currentPath = location.pathname;
     let first_dir = currentPath.substr(1).split("/")[0];
-    setUserid(getUserID());
     switch (String(first_dir)) {
       case "":
         setSelected_keys(["0"]);
@@ -32,10 +29,6 @@ const Header = () => {
         break;
       case "creator":
         setSelected_keys(["4"]);
-        break;
-      case "logged-out":
-        setUserid(null);
-        setSelected_keys([]);
         break;
       default:
         setSelected_keys([]);
@@ -80,7 +73,6 @@ const Header = () => {
           span={4}
           align={"right"}
           style={{ padding: "0px 25px 0px 0px" }}
-          userid={userid}
         />
       </Row>
     </Header>

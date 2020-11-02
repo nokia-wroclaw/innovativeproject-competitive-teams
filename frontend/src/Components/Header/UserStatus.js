@@ -2,12 +2,30 @@ import React, { useEffect, useState } from "react";
 import app from "../Base/base";
 import { Avatar, Button, Col, Tooltip } from "antd";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
 import "./index.css";
+
+import { AuthContext } from "../Auth/Auth";
 
 const UserStatus = (props) => {
   const [color, setColor] = useState("#3f3f3f");
-  const userid = props.userid;
-  const user_letter = userid ? userid[0] : "";
+  const [userid, setUserid] = useState(null);
+  const [user_letter, setUser_letter] = useState("");
+
+  const { currentUser } = useContext(AuthContext);
+
+  useEffect(() => {
+    const rgb = Math.floor(Math.random() * 16777215);
+    const random_color = "#" + rgb.toString(16);
+    setColor(random_color);
+    if (currentUser == null) {
+      setUser_letter("");
+      setUserid(null);
+    } else {
+      setUserid(currentUser.uid);
+      setUser_letter(currentUser.uid[0]);
+    }
+  }, [currentUser]);
 
   const avatar = (
     <Tooltip title={userid}>
@@ -24,12 +42,6 @@ const UserStatus = (props) => {
     </Tooltip>
   );
 
-  useEffect(() => {
-    const rgb = Math.floor(Math.random() * 16777215);
-    const random_color = "#" + rgb.toString(16);
-    setColor(random_color);
-  }, [props.userid]);
-
   const login_button = (
     <Link to="/login">
       <Button type="primary">Sign in</Button>
@@ -44,7 +56,7 @@ const UserStatus = (props) => {
           app.auth().signOut();
         }}
       >
-        Log out
+        Sign out
       </Button>
     </Link>
   );
