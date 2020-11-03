@@ -17,7 +17,12 @@ const SignUp = ({ history }) => {
         var user = app.auth().currentUser;
         var user_uid = user.uid;
         console.log(user_uid);
-        Api.post("/")
+
+        Api.post("/players", {
+          name: user_uid.substr(0, 5),
+          description: user_uid.substr(5),
+          firebase_id: user_uid,
+        })
           .then((response) => console.log(response.data))
           .catch((error) => console.log(error));
 

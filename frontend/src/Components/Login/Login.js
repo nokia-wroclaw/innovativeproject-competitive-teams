@@ -14,15 +14,16 @@ const Login = ({ history }) => {
         await app
           .auth()
           .signInWithEmailAndPassword(email.value, password.value);
-        ////////////////////////////////////////
         var user = app.auth().currentUser;
         var user_uid = user.uid;
         console.log(user_uid);
-        Api.post("/node")
+        Api.post("/players", {
+          name: user_uid.substr(0, 5),
+          description: user_uid.substr(5),
+          firebase_id: user_uid,
+        })
           .then((response) => console.log(response.data))
           .catch((error) => console.log(error));
-
-        /////////////////////////////////zapytanie do backendu o stworzenie gracza
         history.replace("/dashboard/profile");
       } catch (error) {
         alert(error);
