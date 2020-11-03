@@ -35,11 +35,14 @@ def get_player(db: Session, player_id: int):
 def get_player_by_name(db: Session, name: str):
     return db.query(models.Player).filter(models.Player.name == name).first()
 
+def get_player_by_firebase_id(db: Session, firebase_id: str):
+    return db.query(models.Player).filter(models.Player.firebase_id == firebase_id).first()
+
 def get_players(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Player).offset(skip).limit(limit).all()
 
 def create_player(db: Session, player: schemas.PlayerCreate):
-    db_player = models.Player(**player.dict())
+    db_player = models.Player(name=player.name, description=player.description, firebase_id=player.firebase_id)
     db.add(db_player)
     db.commit()
     db.refresh(db_player)

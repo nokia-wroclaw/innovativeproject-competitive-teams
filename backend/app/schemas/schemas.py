@@ -6,7 +6,7 @@ class PlayerBase(BaseModel):
     description: Optional[str] = None
 
 class PlayerCreate(PlayerBase):
-    pass
+    firebase_id: str
 
 class Player(PlayerBase):
     id: int
