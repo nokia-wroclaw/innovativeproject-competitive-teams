@@ -56,7 +56,13 @@ def read_team(team_id: int, db: Session = Depends(get_db)):
 
 @app.post("/api/players/", response_model=schemas.Player)
 def create_player(player: schemas.PlayerCreate, db: Session = Depends(get_db)):
-    return crud.create_player(db=db, player=player)
+    db_player = crud.get_player_by_firebase_id(db, firebase_id=player.firebase_id)
+    db_player_name = crud.get_player_by_name(db, name=player.name)
+    if db_player is None and db_player_name is None:
+        return crud.create_player(db=db, player=player)
+    if db_player is None:
+        raise HTTPException(status_code=404, detail="Name already used")
+    return db_player
 
 @app.delete("/api/players/{player_id}")
 def delete_player(player_id: int, db: Session = Depends(get_db)):
