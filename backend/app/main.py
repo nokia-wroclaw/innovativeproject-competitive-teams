@@ -2,15 +2,14 @@
     main.py
 """
 from typing import List
-
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
-
 from app.database import crud
 from app.models import models
 from app.schemas import schemas
 from app.database.database import SessionLocal, engine
+from app.firebase import firebase
 
 models.Base.metadata.create_all(bind=engine)
 

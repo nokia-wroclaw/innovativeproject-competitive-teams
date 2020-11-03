@@ -2,6 +2,7 @@ import { useCallback } from "react";
 import React from "react";
 import { withRouter } from "react-router";
 import app from "../Base/base";
+import { Api } from "../../Api";
 
 const SignUp = ({ history }) => {
   const handleSignUp = useCallback(
@@ -12,6 +13,15 @@ const SignUp = ({ history }) => {
         await app
           .auth()
           .createUserWithEmailAndPassword(email.value, password.value);
+        ////////////////////////////////////////
+        var user = app.auth().currentUser;
+        var user_uid = user.uid;
+        console.log(user_uid);
+        Api.post("/")
+          .then((response) => console.log(response.data))
+          .catch((error) => console.log(error));
+
+        /////////////////////////////////zapytanie do backendu o stworzenie gracza
         history.push("/");
       } catch (error) {
         alert(error);

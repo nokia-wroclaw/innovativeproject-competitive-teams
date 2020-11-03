@@ -3,6 +3,7 @@ import * as React from "react";
 import { withRouter, Redirect } from "react-router";
 import { AuthContext } from "../Auth/Auth";
 import app, { signInWithGoogle } from "../Base/base";
+import { Api } from "../../Api";
 
 const Login = ({ history }) => {
   const handleLogin = useCallback(
@@ -13,6 +14,15 @@ const Login = ({ history }) => {
         await app
           .auth()
           .signInWithEmailAndPassword(email.value, password.value);
+        ////////////////////////////////////////
+        var user = app.auth().currentUser;
+        var user_uid = user.uid;
+        console.log(user_uid);
+        Api.post("/node")
+          .then((response) => console.log(response.data))
+          .catch((error) => console.log(error));
+
+        /////////////////////////////////zapytanie do backendu o stworzenie gracza
         history.replace("/dashboard/profile");
       } catch (error) {
         alert(error);
@@ -21,6 +31,30 @@ const Login = ({ history }) => {
     [history]
   );
 
+  /*
+  const GooglehandleLogin = useCallback(
+    async (event) => {
+      event.preventDefault();
+      try {
+        await app.auth();
+        signInWithGoogle();
+        ////////////////////////////////////////
+        var user = app.auth().currentUser;
+        var user_uid = user.uid;
+        console.log(user_uid);
+        Api.post("/node")
+          .then((response) => console.log(response.data))
+          .catch((error) => console.log(error));
+
+        /////////////////////////////////zapytanie do backendu o stworzenie gracza
+        history.replace("/dashboard/profile");
+      } catch (error) {
+        alert(error);
+      }
+    },
+    [history]
+  );
+*/
   const { currentUser } = useContext(AuthContext);
 
   if (currentUser) {
