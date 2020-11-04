@@ -11,6 +11,7 @@ import PrivateRoute from "./Components/PrivateRoute/PrivateRoute";
 import Dashboard from "./Components/Dashboard";
 import Header from "./Components/Header";
 import LoggedOut from "./Components/LoggedOut";
+import Teams from "./Components/Teams";
 
 const App = () => {
   return (
@@ -25,6 +26,7 @@ const App = () => {
               <Route exact path="/signup" component={SignUp} />
               <Route exact path="/logged-out" component={LoggedOut} />
               <PrivateRoute path="/dashboard" component={Dashboard} />
+              <Route exact path="/teams" component={Teams} />
             </Switch>
           </Layout>
         </Router>
