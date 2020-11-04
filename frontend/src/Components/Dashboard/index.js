@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Card } from "antd";
 import {
   UserOutlined,
   LaptopOutlined,
@@ -39,16 +39,16 @@ const Dashboard = () => {
           >
             <SubMenu key="sub1" icon={<UserOutlined />} title="Your teams">
               <Menu.Item key="1">
-                <Link to="/dashboard/team/team1">team1</Link>
+                <Link to="/dashboard/team/1">team1</Link>
               </Menu.Item>
               <Menu.Item key="2">
-                <Link to="/dashboard/team/team2">team2</Link>
+                <Link to="/dashboard/team/2">team2</Link>
               </Menu.Item>
               <Menu.Item key="3">
-                <Link to="/dashboard/team/team3">team3</Link>
+                <Link to="/dashboard/team/3">team3</Link>
               </Menu.Item>
               <Menu.Item key="4">
-                <Link to="/dashboard/team/team4">team4</Link>
+                <Link to="/dashboard/team/4">team4</Link>
               </Menu.Item>
             </SubMenu>
             <SubMenu
@@ -57,16 +57,16 @@ const Dashboard = () => {
               title="Teams you lead"
             >
               <Menu.Item key="5">
-                <Link to="/dashboard/team/team5">team5</Link>
+                <Link to="/dashboard/team/5">team5</Link>
               </Menu.Item>
               <Menu.Item key="6">
-                <Link to="/dashboard/team/team6">team6</Link>
+                <Link to="/dashboard/team/6">team6</Link>
               </Menu.Item>
               <Menu.Item key="7">
-                <Link to="/dashboard/team/team7">team7</Link>
+                <Link to="/dashboard/team/7">team7</Link>
               </Menu.Item>
               <Menu.Item key="8">
-                <Link to="/dashboard/team/team8">team8</Link>
+                <Link to="/dashboard/team/8">team8</Link>
               </Menu.Item>
             </SubMenu>
             <Menu.Item key="0" icon={<NotificationOutlined />}>
@@ -75,28 +75,23 @@ const Dashboard = () => {
           </Menu>
         </Sider>
         <Layout style={{ padding: "24px 24px 24px" }}>
-          <Content
-            className="site-layout-background"
-            style={{
-              padding: 24,
-              margin: 0,
-              minHeight: 280,
-            }}
-          >
-            <Switch>
-              <Route path="/dashboard/team/:teamid">
-                <Team />
-              </Route>
-              <Route path="/dashboard/profile">
-                <Profile userid={userid} />
-              </Route>
-              <Route exact path="/dashboard">
-                <Profile userid={userid} />
-              </Route>
-              <Route>
-                <NotFound />
-              </Route>
-            </Switch>
+          <Content className="site-layout-background">
+            <Card>
+              <Switch>
+                <Route path="/dashboard/team/:teamid">
+                  <Team />
+                </Route>
+                <Route path="/dashboard/profile">
+                  <Profile userid={userid} />
+                </Route>
+                <Route exact path="/dashboard">
+                  <Profile userid={userid} />
+                </Route>
+                <Route>
+                  <NotFound />
+                </Route>
+              </Switch>
+            </Card>
           </Content>
         </Layout>
       </Layout>
