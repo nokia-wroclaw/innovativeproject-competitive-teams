@@ -1,4 +1,4 @@
-import { useCallback, useContext } from "react";
+import { useContext } from "react";
 import * as React from "react";
 import { withRouter, Redirect } from "react-router";
 import { AuthContext } from "../Auth/Auth";
@@ -7,7 +7,6 @@ import { Space, Card, Row, Form, Input, Button } from "antd";
 import { Api } from "../../Api";
 import { Anchor } from "antd";
 
-const { Link } = Anchor;
 const layout = {
   labelCol: {
     span: 8,
@@ -113,9 +112,3 @@ const LogIn = ({ history }) => {
 };
 
 export default withRouter(LogIn);
-
-/*
-<Button onClick={() => history.replace("/signup")}>
-        Sign up with email
-      </Button>
-      */
