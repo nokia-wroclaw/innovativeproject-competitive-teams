@@ -5,7 +5,6 @@ import { AuthContext } from "../Auth/Auth";
 import app, { signInWithGoogle } from "../Base/base";
 import { Space, Card, Row, Form, Input, Button } from "antd";
 import { Api } from "../../Api";
-import { Anchor } from "antd";
 
 const layout = {
   labelCol: {
