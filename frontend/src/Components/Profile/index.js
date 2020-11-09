@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Typography } from "antd";
 
-const Profile = (props) => {
-  const { Title } = Typography;
-  const [userid, setUserid] = useState("");
+const { Title } = Typography;
 
-  useEffect(() => {
-    setUserid(props.userid);
-  }, [props.userid]);
-
+const Profile = ({ userid }) => {
   return <Title>Profile: {userid}</Title>;
 };
 
