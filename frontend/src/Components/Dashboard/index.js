@@ -13,11 +13,24 @@ import Team from "../Team";
 import NotFound from "../NotFound";
 import { getUserID } from "../Firebase_funcs/firebase_funcs";
 
+const { Content, Sider } = Layout;
+const { SubMenu } = Menu;
+
 const Dashboard = () => {
-  const { Content, Sider } = Layout;
-  const { SubMenu } = Menu;
   const [collapsed, setCollapsed] = useState(false);
   const userid = getUserID();
+  const mock_teams = [
+    { id: 1, name: "team1" },
+    { id: 2, name: "team2" },
+    { id: 3, name: "team3" },
+    { id: 4, name: "team4" },
+  ];
+  const mock_cap_teams = [
+    { id: 5, name: "team5" },
+    { id: 6, name: "team6" },
+    { id: 7, name: "team7" },
+    { id: 8, name: "team8" },
+  ];
 
   return (
     <Router>
@@ -38,36 +51,22 @@ const Dashboard = () => {
             style={{ height: "100%", borderRight: 0 }}
           >
             <SubMenu key="sub1" icon={<UserOutlined />} title="Your teams">
-              <Menu.Item key="1">
-                <Link to="/dashboard/team/1">team1</Link>
-              </Menu.Item>
-              <Menu.Item key="2">
-                <Link to="/dashboard/team/2">team2</Link>
-              </Menu.Item>
-              <Menu.Item key="3">
-                <Link to="/dashboard/team/3">team3</Link>
-              </Menu.Item>
-              <Menu.Item key="4">
-                <Link to="/dashboard/team/4">team4</Link>
-              </Menu.Item>
+              {mock_teams.map((team) => (
+                <Menu.Item key={team.id}>
+                  <Link to={"/dashboard/team/" + team.id}>{team.name}</Link>
+                </Menu.Item>
+              ))}
             </SubMenu>
             <SubMenu
               key="sub2"
               icon={<LaptopOutlined />}
               title="Teams you lead"
             >
-              <Menu.Item key="5">
-                <Link to="/dashboard/team/5">team5</Link>
-              </Menu.Item>
-              <Menu.Item key="6">
-                <Link to="/dashboard/team/6">team6</Link>
-              </Menu.Item>
-              <Menu.Item key="7">
-                <Link to="/dashboard/team/7">team7</Link>
-              </Menu.Item>
-              <Menu.Item key="8">
-                <Link to="/dashboard/team/8">team8</Link>
-              </Menu.Item>
+              {mock_cap_teams.map((team) => (
+                <Menu.Item key={team.id}>
+                  <Link to={"/dashboard/team/" + team.id}>{team.name}</Link>
+                </Menu.Item>
+              ))}
             </SubMenu>
             <Menu.Item key="0" icon={<NotificationOutlined />}>
               <Link to="/dashboard/profile">Your profile</Link>
@@ -82,9 +81,6 @@ const Dashboard = () => {
                   <Team />
                 </Route>
                 <Route path="/dashboard/profile">
-                  <Profile userid={userid} />
-                </Route>
-                <Route exact path="/dashboard">
                   <Profile userid={userid} />
                 </Route>
                 <Route>
