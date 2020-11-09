@@ -36,7 +36,7 @@ def get_teams(db: Session, skip: int = 0, limit: int = 100):
 
 def create_player(db: Session, player: schemas.PlayerCreate):
     db_player = models.Player(name=player.name, description=player.description, 
-    firebase_id=player.firebase_id, colour=player.colour)
+    firebase_id=player.firebase_id, colour=player.colour, rank="player")
     db.add(db_player)
     db.commit()
     db.refresh(db_player)
