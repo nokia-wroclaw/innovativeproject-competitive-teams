@@ -26,6 +26,12 @@ def delete_team(db: Session, team_id: int):
     db.delete(to_remove)
     db.commit()
 
+def update_team(db: Session, team_id: int, team: schemas.TeamUpdate):
+    db_team = db.query(models.Team).filter(models.Team.id == team_id).first()
+    db_team.colour = team.colour
+    db_team.description = team.description
+    db.commit()
+
 # Players:
 
 def get_player(db: Session, player_id: int):

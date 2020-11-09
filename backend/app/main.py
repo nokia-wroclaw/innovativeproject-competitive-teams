@@ -42,6 +42,12 @@ def delete_team(team_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Team not found")
     crud.delete_team(db, team_id)
 
+@app.patch("/api/teams/{player_id}")
+def update_team(team_id: int, team: schemas.TeamUpdate, db: Session = Depends(get_db)):
+    if crud.get_team(db, team_id=team_id) is None:
+        raise HTTPException(status_code=404, detail="Team not found")
+    crud.update_team(db, team_id=team_id, team=team)
+
 @app.get("/api/teams/", response_model=List[schemas.Team])
 def read_teams(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     teams = crud.get_teams(db, skip=skip, limit=limit)

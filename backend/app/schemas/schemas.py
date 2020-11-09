@@ -25,6 +25,10 @@ class TeamBase(BaseModel):
     description: Optional[str] = None
     colour: Optional[str] = None
 
+class TeamUpdate(BaseModel):
+    description: Optional[str] = None
+    colour: Optional[str] = None
+
 class TeamCreate(TeamBase):
     pass
 
