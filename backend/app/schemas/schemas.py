@@ -6,6 +6,10 @@ class PlayerBase(BaseModel):
     description: Optional[str] = None
     colour: Optional[str] = None
 
+class PlayerUpdate(BaseModel):
+    description: Optional[str] = None
+    colour: Optional[str] = None
+
 class PlayerCreate(PlayerBase):
     firebase_id: str
 
