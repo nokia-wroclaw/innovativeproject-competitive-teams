@@ -13,9 +13,10 @@ import Team from "../Team";
 import NotFound from "../NotFound";
 import { getUserID } from "../Firebase_funcs/firebase_funcs";
 
+const { Content, Sider } = Layout;
+const { SubMenu } = Menu;
+
 const Dashboard = () => {
-  const { Content, Sider } = Layout;
-  const { SubMenu } = Menu;
   const [collapsed, setCollapsed] = useState(false);
   const userid = getUserID();
 
@@ -88,9 +89,6 @@ const Dashboard = () => {
                 <Team />
               </Route>
               <Route path="/dashboard/profile">
-                <Profile userid={userid} />
-              </Route>
-              <Route exact path="/dashboard">
                 <Profile userid={userid} />
               </Route>
               <Route>
