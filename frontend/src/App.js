@@ -9,7 +9,7 @@ import SignUp from "./Components/SignUp/SignUp";
 import { AuthProvider } from "./Components/Auth/Auth";
 import PrivateRoute from "./Components/PrivateRoute/PrivateRoute";
 import Dashboard from "./Components/Dashboard";
-import Header from "./Components/Header";
+import TeamsHeader from "./Components/TeamsHeader";
 import LoggedOut from "./Components/LoggedOut";
 
 const App = () => {
@@ -18,7 +18,7 @@ const App = () => {
       <div className="app">
         <Router>
           <Layout style={{ height: "100vh" }}>
-            <Header />
+            <TeamsHeader />
             <Switch>
               <Route exact path="/" component={Home} />
               <Route exact path="/login" component={Login} />

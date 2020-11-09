@@ -5,34 +5,42 @@ import "./index.css";
 
 import UserStatus from "./UserStatus";
 
-const Header = () => {
-  const { Header } = Layout;
-  const { Title } = Typography;
+const { Header } = Layout;
+const { Title } = Typography;
+
+const TeamsHeader = () => {
   const location = useLocation();
-  const [selected_keys, setSelected_keys] = useState(["0"]);
+  const [selectedKeys, setSelectedKeys] = useState(["0"]);
+  const menu = [
+    { link: "/", tabName: "Home" },
+    { link: "/dashboard/profile", tabName: "Dashboard" },
+    { link: "/teams", tabName: "Teams" },
+    { link: "/players", tabName: "Players" },
+    { link: "/creator", tabName: "Team creation" },
+  ];
 
   // Update menu selection based on current path
   useEffect(() => {
     const currentPath = location.pathname;
-    let first_dir = currentPath.substr(1).split("/")[0];
-    switch (String(first_dir)) {
+    const firstDir = currentPath.substr(1).split("/")[0];
+    switch (String(firstDir)) {
       case "":
-        setSelected_keys(["0"]);
+        setSelectedKeys(["0"]);
         break;
       case "dashboard":
-        setSelected_keys(["1"]);
+        setSelectedKeys(["1"]);
         break;
       case "teams":
-        setSelected_keys(["2"]);
+        setSelectedKeys(["2"]);
         break;
       case "players":
-        setSelected_keys(["3"]);
+        setSelectedKeys(["3"]);
         break;
       case "creator":
-        setSelected_keys(["4"]);
+        setSelectedKeys(["4"]);
         break;
       default:
-        setSelected_keys([]);
+        setSelectedKeys([]);
     }
   }, [location]);
 
@@ -52,22 +60,12 @@ const Header = () => {
           </Title>
         </Col>
         <Col span={12} align="left">
-          <Menu theme="dark" mode="horizontal" selectedKeys={selected_keys}>
-            <Menu.Item key="0">
-              <Link to="/">Home</Link>
-            </Menu.Item>
-            <Menu.Item key="1">
-              <Link to="/dashboard/profile">Dashboard</Link>
-            </Menu.Item>
-            <Menu.Item key="2">
-              <Link to="/teams">Teams</Link>
-            </Menu.Item>
-            <Menu.Item key="3">
-              <Link to="/players">Players</Link>
-            </Menu.Item>
-            <Menu.Item key="4">
-              <Link to="/creator">Team creation</Link>
-            </Menu.Item>
+          <Menu theme="dark" mode="horizontal" selectedKeys={selectedKeys}>
+            {menu.map((menuItem, i) => (
+              <Menu.Item key={i}>
+                <Link to={menuItem.link}>{menuItem.tabName}</Link>
+              </Menu.Item>
+            ))}
           </Menu>
         </Col>
         <UserStatus
@@ -80,4 +78,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default TeamsHeader;
