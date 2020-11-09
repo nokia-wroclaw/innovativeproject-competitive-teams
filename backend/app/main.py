@@ -48,17 +48,17 @@ def update_team(team_id: int, team: schemas.TeamUpdate, db: Session = Depends(ge
         raise HTTPException(status_code=404, detail="Team not found")
     crud.update_team(db, team_id=team_id, team=team)
 
-@app.get("/api/teams/", response_model=List[schemas.Team])
-def read_teams(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    teams = crud.get_teams(db, skip=skip, limit=limit)
-    return teams
-
 @app.get("/api/teams/{team_id}", response_model=schemas.Team)
 def read_team(team_id: int, db: Session = Depends(get_db)):
     db_team = crud.get_team(db, team_id=team_id)
     if db_team is None:
         raise HTTPException(status_code=404, detail="Team not found")
     return db_team
+
+@app.get("/api/teams/", response_model=List[schemas.Team])
+def read_teams(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    teams = crud.get_teams(db, skip=skip, limit=limit)
+    return teams
 
 # Players
 @app.post("/api/players/", response_model=schemas.Player)
