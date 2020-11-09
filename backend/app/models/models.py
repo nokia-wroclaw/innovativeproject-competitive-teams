@@ -15,6 +15,7 @@ class Team(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False, unique=True)
     description = Column(String)
+    colour = Column(String, index=True)
 
     captain_id = Column(Integer, ForeignKey('players.id'))
     captain = relationship("Player", back_populates='captain_teams')
@@ -29,6 +30,7 @@ class Player(Base):
     name = Column(String, index=True, unique=True)
     firebase_id = Column(String, unique=True, nullable=False, index=True)
     description = Column(String, index=True)
+    colour = Column(String, index=True)
 
     captain_teams = relationship("Team", back_populates='captain')
     teams = relationship("Team", secondary=PlayerTeam.__tablename__)

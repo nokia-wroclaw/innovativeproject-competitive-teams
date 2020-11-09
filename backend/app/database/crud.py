@@ -15,7 +15,7 @@ def get_teams(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Team).offset(skip).limit(limit).all()
 
 def create_team(db: Session, team: schemas.TeamCreate):
-    db_team = models.Team(name=team.name, description=team.description)
+    db_team = models.Team(name=team.name, description=team.description, colour=team.colour)
     db.add(db_team)
     db.commit()
     db.refresh(db_team)
@@ -42,7 +42,8 @@ def get_players(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Player).offset(skip).limit(limit).all()
 
 def create_player(db: Session, player: schemas.PlayerCreate):
-    db_player = models.Player(name=player.name, description=player.description, firebase_id=player.firebase_id)
+    db_player = models.Player(name=player.name, description=player.description, 
+    firebase_id=player.firebase_id, colour=player.colour)
     db.add(db_player)
     db.commit()
     db.refresh(db_player)
