@@ -116,7 +116,7 @@ def set_team_captain(team_id: int, player_id: int, db: Session = Depends(get_db)
         raise HTTPException(status_code=404, detail="Player not found")
     if crud.get_team(db, team_id=team_id) is None:
         raise HTTPException(status_code=404, detail="Team not found")
-    if crud.is_player_in_team(db, player_id=player_id, team_id=team_id) is None:
+    if not crud.is_player_in_team(db, player_id=player_id, team_id=team_id):
         raise HTTPException(status_code=404, detail="Player not in team")
     crud.set_team_captain(db, player_id=player_id, team_id=team_id)
 
