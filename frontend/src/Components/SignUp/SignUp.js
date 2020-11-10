@@ -3,6 +3,7 @@ import React from "react";
 import { withRouter } from "react-router";
 import app from "../Base/base";
 import { Api } from "../../Api";
+import { CreatePlayer } from "../Util/CreatePlayer";
 
 const SignUp = ({ history }) => {
   const handleSignUp = useCallback(
@@ -13,20 +14,7 @@ const SignUp = ({ history }) => {
         await app
           .auth()
           .createUserWithEmailAndPassword(email.value, password.value);
-        ////////////////////////////////////////
-        var user = app.auth().currentUser;
-        var user_uid = user.uid;
-        console.log(user_uid);
-
-        Api.post("/players", {
-          name: user_uid.substr(0, 5),
-          description: user_uid.substr(5),
-          firebase_id: user_uid,
-        })
-          .then((response) => console.log(response.data))
-          .catch((error) => console.log(error));
-
-        /////////////////////////////////zapytanie do backendu o stworzenie gracza
+        CreatePlayer();
         history.push("/");
       } catch (error) {
         alert(error);
