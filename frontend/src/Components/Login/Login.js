@@ -29,6 +29,7 @@ const LogIn = ({ history }) => {
     });
   };
 
+
   const onFinishGoogle = () => {
     signInWithGoogle();
     app.auth().onAuthStateChanged((user) => {

@@ -29,6 +29,7 @@ const SignUp = ({ history }) => {
     });
   };
 
+
   return (
     <Row
       type="flex"
