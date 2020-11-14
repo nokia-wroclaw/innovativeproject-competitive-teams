@@ -5,6 +5,7 @@ import { AuthContext } from "../Auth/Auth";
 import app, { signInWithGoogle } from "../Base/base";
 import { Space, Card, Row, Form, Input, Button } from "antd";
 import { Api } from "../../Api";
+import { CreatePlayer } from "../Util/CreatePlayer";
 
 const layout = {
   labelCol: {
@@ -22,6 +23,7 @@ const tailLayout = {
 };
 
 const LogIn = ({ history }) => {
+  /*
   const onFinish = (values) => {
     app.auth().signInWithEmailAndPassword(values.username, values.password);
     history.replace("/dashboard/profile");
@@ -44,7 +46,19 @@ const LogIn = ({ history }) => {
   if (currentUser) {
     return <Redirect to="/dashboard/profile" />;
   }
+ */
 
+  const onFinish = (values) => {
+    app.auth().signInWithEmailAndPassword(values.username, values.password);
+    app.auth().onAuthStateChanged((user) => {
+      CreatePlayer(user);
+      history.replace("/dashboard/profile");
+    });
+  };
+
+  const onFinishFailed = (errorInfo) => {
+    console.log("Failed:", errorInfo);
+  };
   return (
     <Row
       type="flex"
@@ -65,7 +79,7 @@ const LogIn = ({ history }) => {
             remember: true,
           }}
           onFinish={onFinish}
-          onFinishFailed={console.log("error")}
+          onFinishFailed={onFinishFailed}
         >
           <Form.Item
             label="Username"
