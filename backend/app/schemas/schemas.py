@@ -4,12 +4,18 @@ from pydantic import BaseModel
 class PlayerBase(BaseModel):
     name: str
     description: Optional[str] = None
+    colour: Optional[str] = None
+
+class PlayerUpdate(BaseModel):
+    description: Optional[str] = None
+    colour: Optional[str] = None
 
 class PlayerCreate(PlayerBase):
-    pass
+    firebase_id: str
 
 class Player(PlayerBase):
     id: int
+    rank: Optional[str] = None
     
     class Config:
         orm_mode = True
@@ -17,6 +23,11 @@ class Player(PlayerBase):
 class TeamBase(BaseModel):
     name: str
     description: Optional[str] = None
+    colour: Optional[str] = None
+
+class TeamUpdate(BaseModel):
+    description: Optional[str] = None
+    colour: Optional[str] = None
 
 class TeamCreate(TeamBase):
     pass
