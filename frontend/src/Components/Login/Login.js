@@ -1,10 +1,7 @@
-import { useContext } from "react";
 import * as React from "react";
-import { withRouter, Redirect } from "react-router";
-import { AuthContext } from "../Auth/Auth";
+import { withRouter } from "react-router";
 import app, { signInWithGoogle } from "../Base/base";
 import { Space, Card, Row, Form, Input, Button } from "antd";
-import { Api } from "../../Api";
 import { CreatePlayer } from "../Util/CreatePlayer";
 
 const layout = {
@@ -23,33 +20,17 @@ const tailLayout = {
 };
 
 const LogIn = ({ history }) => {
-  /*
   const onFinish = (values) => {
+    console.log("XXX");
     app.auth().signInWithEmailAndPassword(values.username, values.password);
-    history.replace("/dashboard/profile");
-    ///basic fireb-db connection:
-
-    var user = app.auth().currentUser;
-    var user_uid = user.uid;
-    console.log(user_uid);
-
-    Api.post("/players", {
-      name: user_uid.substr(0, 5),
-      description: user_uid.substr(5),
-      firebase_id: user_uid,
-    })
-      .then((response) => console.log(response.data))
-      .catch((error) => console.log(error));
+    app.auth().onAuthStateChanged((user) => {
+      CreatePlayer(user);
+      history.replace("/dashboard/profile");
+    });
   };
-  const { currentUser } = useContext(AuthContext);
 
-  if (currentUser) {
-    return <Redirect to="/dashboard/profile" />;
-  }
- */
-
-  const onFinish = (values) => {
-    app.auth().signInWithEmailAndPassword(values.username, values.password);
+  const onFinishGoogle = () => {
+    signInWithGoogle();
     app.auth().onAuthStateChanged((user) => {
       CreatePlayer(user);
       history.replace("/dashboard/profile");
@@ -113,7 +94,7 @@ const LogIn = ({ history }) => {
                 <Button type="primary" htmlType="submit">
                   Sign in
                 </Button>
-                <Button onClick={signInWithGoogle}>Sign in with Google</Button>
+                <Button onClick={onFinishGoogle}>Sign in with Google</Button>
               </Space>
               <a href="/SignUp">Sign Up</a>
             </Space>

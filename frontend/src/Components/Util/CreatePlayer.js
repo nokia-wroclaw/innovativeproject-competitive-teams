@@ -1,4 +1,3 @@
-import app from "../Base/base";
 import { Api } from "../../Api";
 
 export function CreatePlayer(user) {
@@ -9,6 +8,5 @@ export function CreatePlayer(user) {
       description: user_uid.substr(5),
       firebase_id: user_uid,
     });
-    console.log("XXX");
   }
 }

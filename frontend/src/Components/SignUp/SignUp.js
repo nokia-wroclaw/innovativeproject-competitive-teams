@@ -2,7 +2,7 @@ import React from "react";
 import { withRouter } from "react-router";
 import app from "../Base/base";
 import { Card, Row, Form, Input, Button } from "antd";
-import { Api } from "../../Api";
+import { CreatePlayer } from "../Util/CreatePlayer";
 
 const layout = {
   labelCol: {
@@ -23,18 +23,10 @@ const tailLayout = {
 const SignUp = ({ history }) => {
   const onFinish = (values) => {
     app.auth().createUserWithEmailAndPassword(values.username, values.password);
-    history.push("/");
-    var user = app.auth().currentUser;
-    var user_uid = user.uid;
-    console.log(user_uid);
-
-    Api.post("/players", {
-      name: user_uid.substr(0, 5),
-      description: user_uid.substr(5),
-      firebase_id: user_uid,
-    })
-      .then((response) => console.log(response.data))
-      .catch((error) => console.log(error));
+    app.auth().onAuthStateChanged((user) => {
+      CreatePlayer(user);
+      history.replace("/dashboard/profile");
+    });
   };
 
   return (
