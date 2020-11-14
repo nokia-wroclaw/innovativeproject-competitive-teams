@@ -3,7 +3,6 @@ import * as React from "react";
 import { withRouter, Redirect } from "react-router";
 import { AuthContext } from "../Auth/Auth";
 import app, { signInWithGoogle } from "../Base/base";
-import { Api } from "../../Api";
 import { CreatePlayer } from "../Util/CreatePlayer";
 
 const Login = ({ history }) => {

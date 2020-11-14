@@ -2,7 +2,6 @@ import { useCallback } from "react";
 import React from "react";
 import { withRouter } from "react-router";
 import app from "../Base/base";
-import { Api } from "../../Api";
 import { CreatePlayer } from "../Util/CreatePlayer";
 
 const SignUp = ({ history }) => {
