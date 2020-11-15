@@ -9,27 +9,27 @@ import SignUp from "./Components/SignUp/SignUp";
 import { AuthProvider } from "./Components/Auth/Auth";
 import PrivateRoute from "./Components/PrivateRoute/PrivateRoute";
 import Dashboard from "./Components/Dashboard";
-import TeamsHeader from "./Components/TeamsHeader";
+import Header from "./Components/Header";
 import LoggedOut from "./Components/LoggedOut";
-import Teams from "./Components/Teams";
 
-const App = () => (
-  <AuthProvider>
-    <div className="app">
-      <Router>
-        <Layout style={{ height: "100vh" }}>
-          <TeamsHeader />
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/signup" component={SignUp} />
-            <Route exact path="/logged-out" component={LoggedOut} />
-            <PrivateRoute path="/dashboard" component={Dashboard} />
-            <Route exact path="/teams" component={Teams} />
-          </Switch>
-        </Layout>
-      </Router>
-    </div>
-  </AuthProvider>
-);
+const App = () => {
+  return (
+    <AuthProvider>
+      <div className="app">
+        <Router>
+          <Layout style={{ height: "100vh" }}>
+            <Header />
+            <Switch>
+              <Route exact path="/" component={Home} />
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/signup" component={SignUp} />
+              <Route exact path="/logged-out" component={LoggedOut} />
+              <PrivateRoute path="/dashboard" component={Dashboard} />
+            </Switch>
+          </Layout>
+        </Router>
+      </div>
+    </AuthProvider>
+  );
+};
 export default App;

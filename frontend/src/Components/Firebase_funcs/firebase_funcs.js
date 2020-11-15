@@ -2,11 +2,19 @@ import firebase from "firebase/app";
 import "firebase/auth";
 
 export function loggedIn() {
-  let user = firebase.auth().currentUser;
-  return user !== null;
+  var user = firebase.auth().currentUser;
+  if (user) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 export function getUserID() {
-  let user = firebase.auth().currentUser;
-  return user?.uid || null;
+  var user = firebase.auth().currentUser;
+  if (user) {
+    return user.uid;
+  } else {
+    return null;
+  }
 }
