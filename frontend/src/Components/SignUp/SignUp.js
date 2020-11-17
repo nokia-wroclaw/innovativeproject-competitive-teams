@@ -2,7 +2,6 @@ import React from "react";
 import { withRouter } from "react-router";
 import app from "../Base/base";
 import { Card, Row, Form, Input, Button } from "antd";
-import { CreatePlayer } from "../Util/CreatePlayer";
 
 const layout = {
   labelCol: {
@@ -24,7 +23,6 @@ const SignUp = ({ history }) => {
   const onFinish = (values) => {
     app.auth().createUserWithEmailAndPassword(values.username, values.password);
     app.auth().onAuthStateChanged((user) => {
-      CreatePlayer(user);
       history.replace("/dashboard/profile");
     });
   };
