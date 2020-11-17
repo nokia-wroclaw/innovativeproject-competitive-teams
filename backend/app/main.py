@@ -93,16 +93,24 @@ def create_player(player: schemas.PlayerCreate, db: Session = Depends(get_db)):
     return db_player
 
 @app.delete("/api/players/{player_id}")
-def delete_player(player_id: int, db: Session = Depends(get_db)):
-    if crud.get_player(db, player_id=player_id) is None:
-        raise HTTPException(status_code=404, detail="Player not found")
-    crud.delete_player(db, player_id)
+def delete_player(firebase_id: str, player_id: int, db: Session = Depends(get_db)):
+    access = permissions.is_accessible(db=db, firebase_id=firebase_id, clearance='admin')
+    if access:
+        if crud.get_player(db, player_id=player_id) is None:
+            raise HTTPException(status_code=404, detail="Player not found")
+        crud.delete_player(db, player_id)
+    else:
+        raise HTTPException(status_code=404, detail="Permission denied, requires at least: admin")
 
 @app.patch("/api/players/{player_id}")
-def update_player(player_id: int, player: schemas.PlayerUpdate, db: Session = Depends(get_db)):
-    if crud.get_player(db, player_id=player_id) is None:
-        raise HTTPException(status_code=404, detail="Player not found")
-    crud.update_player(db, player_id=player_id, player=player)
+def update_player(firebase_id: str, player_id: int, player: schemas.PlayerUpdate, db: Session = Depends(get_db)):
+    access = permissions.is_accessible(db=db, firebase_id=firebase_id, clearance='admin')
+    if access:
+        if crud.get_player(db, player_id=player_id) is None:
+            raise HTTPException(status_code=404, detail="Player not found")
+        crud.update_player(db, player_id=player_id, player=player)
+    else:
+        raise HTTPException(status_code=404, detail="Permission denied, requires at least: admin")
 
 @app.get("/api/players/", response_model=List[schemas.Player])
 def read_players(firebase_id: str, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
