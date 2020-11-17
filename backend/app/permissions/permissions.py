@@ -1,4 +1,3 @@
-
 from app.database import crud
 from fastapi import HTTPException
 
@@ -21,5 +20,3 @@ def is_accessible(db, firebase_id, clearance='player'):
         raise HTTPException(status_code=404, detail="User not found")
     db_role = db_player.role
     return is_higher_role(db_role, clearance)
-    
-

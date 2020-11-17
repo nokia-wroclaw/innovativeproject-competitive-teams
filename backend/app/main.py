@@ -121,7 +121,6 @@ def read_players(firebase_id: str = Header(None), skip: int = 0, limit: int = 10
     else:
         raise HTTPException(status_code=404, detail="Permission denied, requires at least: player")
     
-
 @app.get("/api/players/{player_id}", response_model=schemas.Player)
 def read_player(player_id: int, firebase_id: str = Header(None), db: Session = Depends(get_db)):
     access = permissions.is_accessible(db=db, firebase_id=firebase_id, clearance='player')
@@ -132,7 +131,6 @@ def read_player(player_id: int, firebase_id: str = Header(None), db: Session = D
         return db_player
     else:
         raise HTTPException(status_code=404, detail="Permission denied, requires at least: player")
-    
 
 @app.get("/api/players/firebase_id/{firebase_id}", response_model=schemas.Player)
 def read_player_by_firebase_id(wanted_firebase_id: str, firebase_id: str = Header(None), db: Session = Depends(get_db)):
@@ -144,7 +142,6 @@ def read_player_by_firebase_id(wanted_firebase_id: str, firebase_id: str = Heade
         return db_player
     else:
         raise HTTPException(status_code=404, detail="Permission denied, requires at least: admin")
-
 
 @app.get("/api/players/teams/{player_id}", response_model=List[schemas.Team])
 def read_player_teams(player_id: int, firebase_id: str = Header(None), skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
@@ -167,7 +164,6 @@ def read_player_captain_teams(player_id: int, firebase_id: str = Header(None), s
         return db_teams
     else:
         raise HTTPException(status_code=404, detail="Permission denied, requires at least: player")
-
 
 # Team - Player operations
 @app.put("/api/players/{team_id}")
@@ -218,7 +214,6 @@ def read_matches(firebase_id: str = Header(None), skip: int = 0, limit: int = 10
         return matches
     else:
         raise HTTPException(status_code=404, detail="Permission denied, requires at least: player")
-    
 
 @app.get("/api/matches/{match_id}", response_model=schemas.Match)
 def read_match(match_id: int = Header(None), firebase_id: str = Header(None), db: Session = Depends(get_db)):

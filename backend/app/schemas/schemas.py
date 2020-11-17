@@ -63,6 +63,4 @@ class Match(MatchBase):
     class Config:
         orm_mode = True
 
-
-
 Player.update_forward_refs()

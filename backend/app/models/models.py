@@ -20,7 +20,6 @@ class Team(Base):
     captain_id = Column(Integer, ForeignKey('players.id'))
     captain = relationship("Player", back_populates='captain_teams')
 
-
     players = relationship("Player", secondary=PlayerTeam.__tablename__)
 
 class Player(Base):
