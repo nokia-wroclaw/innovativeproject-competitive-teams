@@ -10,6 +10,7 @@ from app.models import models
 from app.schemas import schemas
 from app.database.database import SessionLocal, engine
 from app.firebase import firebase
+from app.permissions import permissions
 
 models.Base.metadata.create_all(bind=engine)
 
