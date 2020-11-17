@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Typography, Card, Table, Spin } from "antd";
 import { useParams } from "react-router-dom";
 import "./index.css";
+import {AuthContext} from "../Auth/Auth";
 
 import { Api } from "../../Api";
 
@@ -10,6 +11,9 @@ const { Column, ColumnGroup } = Table;
 const { Meta } = Card;
 
 const Team = ({ id }) => {
+  let { currentUser } = useContext(AuthContext);
+  let fbId = currentUser.uid;
+
   // If no id has been passed, check router params
   const { teamid } = useParams();
   if (id === null || id === undefined) id = teamid;
@@ -21,7 +25,7 @@ const Team = ({ id }) => {
   useEffect(() => {
     if (id === null || id === undefined) setErr("No team id passed.");
     else {
-      Api.get("/teams/" + id)
+      Api.get("/teams/" + id, {headers: {"firebase-id" : fbId}})
         .then((response) => {
           if (response.status === 200) {
             setTeamdata(response.data);

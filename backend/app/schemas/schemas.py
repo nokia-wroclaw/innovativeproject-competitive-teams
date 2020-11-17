@@ -15,7 +15,7 @@ class PlayerCreate(PlayerBase):
 
 class Player(PlayerBase):
     id: int
-    rank: Optional[str] = None
+    role: Optional[str] = None
     
     class Config:
         orm_mode = True

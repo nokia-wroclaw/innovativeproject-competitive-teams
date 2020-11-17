@@ -31,7 +31,7 @@ class Player(Base):
     firebase_id = Column(String, unique=True, nullable=False, index=True)
     description = Column(String, index=True)
     colour = Column(String, index=True)
-    rank = Column(String, index=True)
+    role = Column(String, index=True)
 
     captain_teams = relationship("Team", back_populates='captain')
     teams = relationship("Team", secondary=PlayerTeam.__tablename__)
