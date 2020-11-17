@@ -23,7 +23,6 @@ const LogIn = ({ history }) => {
   const onFinish = (values) => {
     app.auth().signInWithEmailAndPassword(values.username, values.password);
     app.auth().onAuthStateChanged((user) => {
-      CreatePlayer(user);
       history.replace("/dashboard/profile");
     });
   };
