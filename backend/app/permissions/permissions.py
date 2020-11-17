@@ -1,4 +1,3 @@
-
 from app.database import crud
 from fastapi import HTTPException
 
@@ -6,6 +5,7 @@ from fastapi import HTTPException
 def is_higher_role(role1, role2):
     roles = {}
     roles['admin'] = 10
+    roles['moderator'] = 5
     roles['player'] = 1
     if role1 not in roles:
         raise Exception('role1 is not a role')
@@ -20,5 +20,3 @@ def is_accessible(db, firebase_id, clearance='player'):
         raise HTTPException(status_code=404, detail="User not found")
     db_role = db_player.role
     return is_higher_role(db_role, clearance)
-    
-
