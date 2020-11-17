@@ -225,3 +225,13 @@ def read_match(match_id: int = Header(None), firebase_id: str = Header(None), db
         return db_match
     else:
         raise HTTPException(status_code=404, detail="Permission denied, requires at least: player")
+
+@app.patch("/api/matches/{player_id}")
+def update_match(match: schemas.MatchUpdate, match_id: int = None, firebase_id: str = Header(None), db: Session = Depends(get_db)):
+    access = permissions.is_accessible(db=db, firebase_id=firebase_id, clearance='moderator')
+    if access:
+        if crud.get_match(db, match_id=match_id) is None:
+            raise HTTPException(status_code=404, detail="Player not found")
+        crud.update_match(db, match_id=match_id, match=match)
+    else:
+        raise HTTPException(status_code=404, detail="Permission denied, requires at least: moderator")

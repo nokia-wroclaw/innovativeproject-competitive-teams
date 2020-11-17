@@ -106,7 +106,17 @@ def get_matches(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Match).offset(skip).limit(limit).all()
 
 def get_match(db: Session, match_id: int):
-    return db.query(models.Match).filter(models.Match.id == match_id).first() 
+    return db.query(models.Match).filter(models.Match.id == match_id).first()
+
+def update_match(db: Session, match_id: int, match: schemas.MatchUpdate):
+    db_match = db.query(models.Match).filter(models.Match.id == match_id).first()
+    db_match.name = match.name
+    db_match.description = match.description
+    db_match.start_time = match.start_time
+    db_match.finished = match.finished
+    db_match.score1 = match.score1
+    db_match.score2 = match.score2
+    db.commit()
 
 # TODO
 def link_player_to_team_with_name():

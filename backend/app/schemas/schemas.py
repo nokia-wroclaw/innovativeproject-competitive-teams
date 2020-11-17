@@ -41,13 +41,22 @@ class Team(TeamBase):
         orm_mode = True
 
 class MatchBase(BaseModel):
-    name: str
+    name: Optional[str] = None
     description: Optional[str] = None
     start_time: Optional[str] = None
     finished: Optional[bool] = False
     score1: Optional[int] = 0
     score2: Optional[int] = 0
     
+class MatchUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    start_time: Optional[str] = None
+    finished: Optional[bool] = False
+    score1: Optional[int] = 0
+    score2: Optional[int] = 0
+
+
 class MatchCreate(MatchBase):
     pass
 
