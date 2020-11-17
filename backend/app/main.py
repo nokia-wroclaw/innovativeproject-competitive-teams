@@ -195,3 +195,38 @@ def set_team_captain(team_id: int, player_id: int, firebase_id: str = Header(Non
         crud.set_team_captain(db, player_id=player_id, team_id=team_id)
     else:
         raise HTTPException(status_code=404, detail="Permission denied, requires at least: admin")
+
+@app.post("/api/matches/", response_model=schemas.Match)
+def create_match(match: schemas.MatchCreate, team1_id: int = Header(None), team2_id: int = Header(None), firebase_id: str = Header(None), db: Session = Depends(get_db)):
+    access = permissions.is_accessible(db=db, firebase_id=firebase_id, clearance='moderator')
+    if access:
+        db_team1 = crud.get_team(db, team_id=team1_id)
+        db_team2 = crud.get_team(db, team_id=team2_id)
+        if db_team1 is None or db_team2 is None:
+            raise HTTPException(status_code=404, detail="Team not found")
+        db_match = crud.create_match(db=db, match=match, team1_id=team1_id, team2_id=team2_id)
+        return db_match
+
+    else:
+        raise HTTPException(status_code=404, detail="Permission denied, requires at least: moderator")
+
+@app.get("/api/matches/", response_model=List[schemas.Match])
+def read_matches(firebase_id: str = Header(None), skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    access = permissions.is_accessible(db=db, firebase_id=firebase_id, clearance='player')
+    if access:
+        matches = crud.get_matches(db, skip=skip, limit=limit)
+        return matches
+    else:
+        raise HTTPException(status_code=404, detail="Permission denied, requires at least: player")
+    
+
+@app.get("/api/matches/{match_id}", response_model=schemas.Match)
+def read_match(match_id: int = Header(None), firebase_id: str = Header(None), db: Session = Depends(get_db)):
+    access = permissions.is_accessible(db=db, firebase_id=firebase_id, clearance='player')
+    if access:
+        db_match = crud.get_match(db, match_id=match_id)
+        if db_match is None:
+            raise HTTPException(status_code=404, detail="Match not found")
+        return db_match
+    else:
+        raise HTTPException(status_code=404, detail="Permission denied, requires at least: player")

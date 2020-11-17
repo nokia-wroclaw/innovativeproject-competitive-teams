@@ -93,6 +93,22 @@ def set_team_captain(db:Session, player_id: int, team_id: int):
     db_team.captain = db_player
     db.commit()
 
+# Matches
+
+def create_match(db: Session, match: schemas.MatchCreate, team1_id: int, team2_id: int):
+    db_match = models.Match(**match.dict(), team1_id=team1_id, team2_id=team2_id)
+    db.add(db_match)
+    db.commit()
+    db.refresh(db_match)
+    return db_match
+
+def get_matches(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Match).offset(skip).limit(limit).all()
+
+def get_match(db: Session, match_id: int):
+    return db.query(models.Match).filter(models.Match.id == match_id).first() 
+
+# TODO
 def link_player_to_team_with_name():
     pass
 

@@ -40,4 +40,29 @@ class Team(TeamBase):
     class Config:
         orm_mode = True
 
+class MatchBase(BaseModel):
+    name: str
+    description: Optional[str] = None
+    start_time: Optional[str] = None
+    finished: Optional[bool] = False
+    score1: Optional[int] = 0
+    score2: Optional[int] = 0
+    
+class MatchCreate(MatchBase):
+    pass
+
+class Match(MatchBase):
+    id: int
+    
+    team1_id: Optional[int] = None
+    team2_id: Optional[int] = None
+
+    team1: Team
+    team2: Team
+
+    class Config:
+        orm_mode = True
+
+
+
 Player.update_forward_refs()

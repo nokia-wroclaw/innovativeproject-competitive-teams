@@ -6,6 +6,7 @@ from fastapi import HTTPException
 def is_higher_role(role1, role2):
     roles = {}
     roles['admin'] = 10
+    roles['moderator'] = 5
     roles['player'] = 1
     if role1 not in roles:
         raise Exception('role1 is not a role')
