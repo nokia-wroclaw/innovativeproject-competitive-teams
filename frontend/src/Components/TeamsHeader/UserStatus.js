@@ -9,27 +9,27 @@ import { AuthContext } from "../Auth/Auth";
 
 const UserStatus = (props) => {
   const [color, setColor] = useState("#3f3f3f");
-  const [userid, setUserid] = useState(null);
+  const [username, setUsername] = useState(null);
   const [userLetter, setUserLetter] = useState("");
 
-  const { currentUser } = useContext(AuthContext);
+  const { currentUser, userData } = useContext(AuthContext);
 
   // Update userid on AuthContext change
   useEffect(() => {
     const rgb = Math.floor(Math.random() * 16777215);
     const random_color = "#" + rgb.toString(16);
     setColor(random_color);
-    if (currentUser === null) {
+    if (currentUser === null || userData === null) {
       setUserLetter("");
-      setUserid(null);
+      setUsername(null);
     } else {
-      setUserid(currentUser.uid);
-      setUserLetter(currentUser.uid[0]);
+      setUsername(userData.name);
+      setUserLetter(userData.name[0]);
     }
-  }, [currentUser]);
+  }, [currentUser, userData]);
 
   const avatar = (
-    <Tooltip title={userid}>
+    <Tooltip title={username}>
       <Avatar
         style={{
           backgroundColor: color,
@@ -58,8 +58,8 @@ const UserStatus = (props) => {
   );
 
   // Show avatar + sign out button when logged out, sign out button when logged out
-  const av = userid ? avatar : null;
-  const button = userid ? logoutButton : loginButton;
+  const av = username ? avatar : null;
+  const button = username ? logoutButton : loginButton;
 
   return (
     <Col span={props.span} align={props.align} style={props.style}>
