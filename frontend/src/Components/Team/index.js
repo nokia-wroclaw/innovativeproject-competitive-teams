@@ -2,9 +2,10 @@ import React, { useContext, useEffect, useState } from "react";
 import { Typography, Card, Table, Spin } from "antd";
 import { useParams } from "react-router-dom";
 import "./index.css";
-import { AuthContext } from "../Auth/Auth";
 
+import { AuthContext } from "../Auth/Auth";
 import { Api } from "../../Api";
+import AddPlayer from "./AddPlayer";
 
 const { Title } = Typography;
 const { Column, ColumnGroup } = Table;
@@ -78,7 +79,9 @@ const Team = ({ id }) => {
           />
         </ColumnGroup>
       </Table>
-
+      <Card>
+        <AddPlayer teamid={id} />
+      </Card>
       <Card>
         <Meta title="Description" description={teamdata.description} />
       </Card>
