@@ -14,6 +14,7 @@ import Profile from "../Profile";
 import Team from "../Team";
 import NotFound from "../NotFound";
 import TeamCreator from "../TeamCreator";
+import MatchCreator from "../MatchCreator";
 
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -83,6 +84,17 @@ const Dashboard = () => {
             (userData.role === "admin" || userData.role === "organizer") ? (
               <Menu.Item disabled key="team_creator" className="cursor-regular">
                 <TeamCreator />
+              </Menu.Item>
+            ) : null}
+
+            {userData !== null &&
+            (userData.role === "admin" || userData.role === "organizer") ? (
+              <Menu.Item
+                disabled
+                key="match_creator"
+                className="cursor-regular"
+              >
+                <MatchCreator />
               </Menu.Item>
             ) : null}
           </Menu>
