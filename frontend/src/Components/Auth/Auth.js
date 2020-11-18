@@ -20,10 +20,7 @@ export const AuthContext = React.createContext();
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null);
   const [pending, setPending] = useState(true);
-  const [username, setUsername] = useState(null);
-  const [colour, setColour] = useState(null);
-  const [description, setDescription] = useState(null);
-  const [rank, setRank] = useState(null);
+  const [userData, setUserData] = useState(null);
   useEffect(() => {
     app.auth().onAuthStateChanged((user) => {
       setCurrentUser(user);
@@ -31,13 +28,11 @@ export const AuthProvider = ({ children }) => {
       setPending(false);
       if (user) {
         Api.get(`/players/firebase_id/${user.uid}`, {
-          name: user.uid.substr(0, 5),
+          headers: { "firebase-id": user.uid },
         })
           .then(function (response) {
-            setUsername(response.data["name"]);
-            setColour(response.data["colour"]);
-            setDescription(response.data["description"]);
-            setRank(response.data["rank"]);
+            setUserData(response.data);
+            console.log(response.data);
           })
           .catch(function (error) {
             console.log(error);
@@ -54,10 +49,7 @@ export const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         currentUser,
-        username,
-        colour,
-        description,
-        rank,
+        userData,
       }}
     >
       {children}
