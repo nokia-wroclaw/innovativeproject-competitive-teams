@@ -1,5 +1,14 @@
 import React, { useContext, useState } from "react";
-import { Popover, notification, Button, Col, Form, Input, Space } from "antd";
+import {
+  Popover,
+  notification,
+  Button,
+  Col,
+  Form,
+  Input,
+  Space,
+  DatePicker,
+} from "antd";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
 
@@ -86,18 +95,11 @@ const MatchCreator = () => {
       <Form.Item name="name" label="Name" rules={[{ required: true }]}>
         <Input />
       </Form.Item>
-      <Form.Item
-        name="creatorid"
-        label="Creator ID"
-        rules={[{ required: true }]}
-      >
-        <Input />
-      </Form.Item>
       <Form.Item name="desc" label="Description">
         <TextArea />
       </Form.Item>
-      <Form.Item name="starttime" label="Start time">
-        <Input />
+      <Form.Item name="starttime" label="Start Time">
+        <DatePicker showTime format="YYYY-MM-DD HH:mm" />
       </Form.Item>
       <Form.Item name="team1id" label="Team 1 ID" rules={[{ required: true }]}>
         <Input />
