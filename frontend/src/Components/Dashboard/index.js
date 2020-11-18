@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { Layout, Menu, Card } from "antd";
 import {
@@ -8,30 +8,37 @@ import {
 } from "@ant-design/icons";
 import "./index.css";
 
+import { AuthContext } from "../Auth/Auth";
+import { Api } from "../../Api";
 import Profile from "../Profile";
 import Team from "../Team";
 import NotFound from "../NotFound";
 import TeamCreator from "../TeamCreator";
-import { getUserID } from "../Firebase_funcs/firebase_funcs";
 
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
 
 const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const userid = getUserID();
-  const mock_teams = [
-    { id: 1, name: "team1" },
-    { id: 2, name: "team2" },
-    { id: 3, name: "team3" },
-    { id: 4, name: "team4" },
-  ];
-  const mock_cap_teams = [
-    { id: 5, name: "team5" },
-    { id: 6, name: "team6" },
-    { id: 7, name: "team7" },
-    { id: 8, name: "team8" },
-  ];
+  const [teams, setTeams] = useState([]);
+  const [capTeams, setCapTeams] = useState([]);
+  const { currentUser, userData } = useContext(AuthContext);
+
+  useEffect(() => {
+    const hdrs = { headers: { "firebase-id": currentUser.uid } };
+    if (userData) {
+      Api.get("/players/teams/" + userData.id, hdrs)
+        .then((response) => setTeams(response.data))
+        .catch((err) => {
+          console.log(err);
+        });
+      Api.get("/captain/teams/" + userData.id, hdrs)
+        .then((response) => setCapTeams(response.data))
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  }, [currentUser, userData]);
 
   return (
     <Router>
@@ -47,12 +54,12 @@ const Dashboard = () => {
           <Menu
             theme="dark"
             mode="inline"
-            defaultSelectedKeys={["0"]}
-            defaultOpenKeys={["sub1"]}
+            defaultSelectedKeys={["profile"]}
+            defaultOpenKeys={[]}
             style={{ height: "100%", borderRight: 0 }}
           >
             <SubMenu key="sub1" icon={<UserOutlined />} title="Your teams">
-              {mock_teams.map((team) => (
+              {teams.map((team) => (
                 <Menu.Item key={team.id}>
                   <Link to={"/dashboard/team/" + team.id}>{team.name}</Link>
                 </Menu.Item>
@@ -63,7 +70,7 @@ const Dashboard = () => {
               icon={<LaptopOutlined />}
               title="Teams you lead"
             >
-              {mock_cap_teams.map((team) => (
+              {capTeams.map((team) => (
                 <Menu.Item key={team.id}>
                   <Link to={"/dashboard/team/" + team.id}>{team.name}</Link>
                 </Menu.Item>
@@ -85,7 +92,7 @@ const Dashboard = () => {
                   <Team />
                 </Route>
                 <Route path="/dashboard/profile">
-                  <Profile userid={userid} />
+                  <Profile userid={currentUser.uid} />
                 </Route>
                 <Route>
                   <NotFound />
