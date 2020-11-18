@@ -50,7 +50,7 @@ const AddPlayer = ({ teamid }) => {
       .catch((err) => {
         openNotificationWithIcon(
           "error",
-          "Eror when adding player " +
+          "Error when adding player " +
             values.playerid +
             " to team " +
             teamid +
