@@ -16,7 +16,6 @@ const TeamsHeader = () => {
     { link: "/dashboard/profile", tabName: "Dashboard" },
     { link: "/teams", tabName: "Teams" },
     { link: "/players", tabName: "Players" },
-    { link: "/creator", tabName: "Team creation" },
   ];
 
   // Update menu selection based on current path

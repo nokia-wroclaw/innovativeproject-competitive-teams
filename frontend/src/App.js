@@ -17,7 +17,7 @@ const App = () => (
   <AuthProvider>
     <div className="app">
       <Router>
-        <Layout style={{ height: "100vh" }}>
+        <Layout style={{ height: "100%", minHeight: "100vh" }}>
           <TeamsHeader />
           <Switch>
             <Route exact path="/" component={Home} />

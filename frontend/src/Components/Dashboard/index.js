@@ -11,6 +11,7 @@ import "./index.css";
 import Profile from "../Profile";
 import Team from "../Team";
 import NotFound from "../NotFound";
+import TeamCreator from "../TeamCreator";
 import { getUserID } from "../Firebase_funcs/firebase_funcs";
 
 const { Content, Sider } = Layout;
@@ -68,8 +69,11 @@ const Dashboard = () => {
                 </Menu.Item>
               ))}
             </SubMenu>
-            <Menu.Item key="0" icon={<NotificationOutlined />}>
+            <Menu.Item key="profile" icon={<NotificationOutlined />}>
               <Link to="/dashboard/profile">Your profile</Link>
+            </Menu.Item>
+            <Menu.Item disabled key="team_creator" className="cursor-regular">
+              <TeamCreator />
             </Menu.Item>
           </Menu>
         </Sider>

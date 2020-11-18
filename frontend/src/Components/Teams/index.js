@@ -1,11 +1,11 @@
-import React, { useEffect, useState, useContext} from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { Layout, Card, Collapse, Typography, Spin } from "antd";
 import "./index.css";
 
 import { Api } from "../../Api";
 import Team from "../Team";
 
-import {AuthContext} from "../Auth/Auth"
+import { AuthContext } from "../Auth/Auth";
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -19,7 +19,7 @@ const Teams = () => {
   const [err, setErr] = useState(null);
 
   useEffect(() => {
-    Api.get("/teams/", {headers: {"firebase-id" : fbId}})
+    Api.get("/teams/", { headers: { "firebase-id": fbId } })
       .then((result) => {
         setTeams(result.data);
       })
@@ -27,7 +27,7 @@ const Teams = () => {
         setTeams(null);
         setErr(err.toString());
       });
-  }, []);
+  }, [fbId]);
 
   return teams ? (
     <Layout style={{ padding: "24px 24px 24px" }}>
@@ -51,7 +51,13 @@ const Teams = () => {
       {err}
     </Title>
   ) : (
-    <Spin />
+    <Layout style={{ padding: "24px 24px 24px" }}>
+      <Content className="site-layout-background">
+        <Card>
+          <Spin />
+        </Card>
+      </Content>
+    </Layout>
   );
 };
 
