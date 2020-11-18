@@ -3,3 +3,6 @@
 .cursor-regular {
   cursor: default;
 }
+.ant-menu-item-disabled {
+  opacity: 1 !important;
+}
