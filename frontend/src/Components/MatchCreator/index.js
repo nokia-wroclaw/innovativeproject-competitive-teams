@@ -136,8 +136,7 @@ const MatchCreator = () => {
             setVisible(true);
           }}
         >
-          {" "}
-          Create a match{" "}
+          Create a match
         </Button>
       </Popover>
     </Col>
