@@ -11,8 +11,7 @@ const UserStatus = (props) => {
   const [color, setColor] = useState("#3f3f3f");
   const [username, setUsername] = useState(null);
   const [userLetter, setUserLetter] = useState("");
-
-  const { currentUser, userData } = useContext(AuthContext);
+  let { currentUser, userData } = useContext(AuthContext);
 
   // Update userid on AuthContext change
   useEffect(() => {

@@ -22,7 +22,7 @@ const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [teams, setTeams] = useState([]);
   const [capTeams, setCapTeams] = useState([]);
-  const { currentUser, userData } = useContext(AuthContext);
+  let { currentUser, userData } = useContext(AuthContext);
 
   useEffect(() => {
     const hdrs = { headers: { "firebase-id": currentUser.uid } };
