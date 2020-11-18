@@ -37,23 +37,20 @@ const MatchCreator = () => {
         "team2-id": values.team2id,
       },
     };
-    // Verify that the player exists
-    Api.get("/players/" + values.creatorid, hdrs)
-      .then(() =>
-        Api.post(
-          "/matches/",
-          {
-            name: values.name,
-            description: values.desc,
-            color: "ffffff",
-            start_time: values.starttime,
-            finished: false,
-            score1: 0,
-            score2: 0,
-          },
-          hdrs
-        )
-      )
+
+    Api.post(
+      "/matches/",
+      {
+        name: values.name,
+        description: values.desc,
+        color: "ffffff",
+        start_time: values.starttime,
+        finished: false,
+        score1: 0,
+        score2: 0,
+      },
+      hdrs
+    )
 
       .then(() => {
         openNotificationWithIcon(
