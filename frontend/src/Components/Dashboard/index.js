@@ -79,9 +79,12 @@ const Dashboard = () => {
             <Menu.Item key="profile" icon={<NotificationOutlined />}>
               <Link to="/dashboard/profile">Your profile</Link>
             </Menu.Item>
-            <Menu.Item disabled key="team_creator" className="cursor-regular">
-              <TeamCreator />
-            </Menu.Item>
+            {userData !== null &&
+            (userData.role === "admin" || userData.role === "organizer") ? (
+              <Menu.Item disabled key="team_creator" className="cursor-regular">
+                <TeamCreator />
+              </Menu.Item>
+            ) : null}
           </Menu>
         </Sider>
         <Layout style={{ padding: "24px 24px 24px" }}>
