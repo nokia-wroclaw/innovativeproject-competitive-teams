@@ -42,14 +42,24 @@ const Team = ({ id }) => {
     <div className="team-info">
       <Table
         dataSource={
-          teamdata.captain_id ? [{ captain_id: teamdata.captain_id }] : null
+          teamdata.captain_id
+            ? teamdata.players.filter(
+                (player) => player.id === teamdata.captain_id
+              )
+            : null
         }
         size="small"
         pagination={false}
         bordered={true}
       >
         <ColumnGroup title="Captain" align="center">
-          <Column title="Player ID" dataIndex="captain_id" key="playerid" />
+          <Column title="Player ID" dataIndex="id" key="playerid" />
+          <Column title="Name" dataIndex="name" key="playername" />
+          <Column
+            title="Description"
+            dataIndex="description"
+            key="playerdesc"
+          />
         </ColumnGroup>
       </Table>
       <Table
