@@ -16,8 +16,6 @@ const TeamsHeader = () => {
     { link: "/dashboard/profile", tabName: "Dashboard" },
     { link: "/teams", tabName: "Teams" },
     { link: "/players", tabName: "Players" },
-    { link: "/creator", tabName: "Team creation" },
-    { link: "/matchcreator", tabName: "Match creation" },
     { link: "/matches", tabName: "Matches" },
   ];
 
@@ -40,9 +38,6 @@ const TeamsHeader = () => {
         break;
       case "matches":
         setSelectedKeys(["4"]);
-        break;
-      case "matchcreator":
-        setSelectedKeys(["5"]);
         break;
       default:
         setSelectedKeys([]);
