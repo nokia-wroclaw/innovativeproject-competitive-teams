@@ -3,9 +3,8 @@ import { Typography, Card, Spin, Col, Row } from "antd";
 import { useParams } from "react-router-dom";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
-
 import { Api } from "../../Api";
-
+import Team from "../Team";
 const { Title } = Typography;
 
 const Match = ({ id }) => {
@@ -36,20 +35,40 @@ const Match = ({ id }) => {
     }
   }, [id, fbId]);
 
+  function color(matchd) {
+    if (matchd.finished) {
+      return "#8c8c8c";
+    }
+    return "#b7eb8f";
+  }
   return matchdata ? (
     <div className="match-info">
-      <Card title={matchdata.name}>
-        <Row title="Start Time"> Start Time: {matchdata.start_time}</Row>
+      <Card
+        title={<Title level={2}> {matchdata.name}</Title>}
+        style={{ backgroundColor: color(matchdata), border: 0 }}
+      >
+        <Row>
+          <Title level={3}> Starting Time: {matchdata.start_time}</Title>
+        </Row>
         <Row gutter={16}></Row>
         <Row gutter={16}>
           <Col span={8}>
-            <Card title="Team 1 ID" bordered={false}>
-              {matchdata.team1_id}
+            <Card bordered={false}>
+              <Team id={matchdata.team1_id} />
             </Card>
           </Col>
+
           <Col span={8}>
-            <Card title="Team 2 ID" bordered={false}>
-              {matchdata.team2_id}
+            <Card bordered={false} align="center">
+              <Title level={3}>
+                {matchdata.score1}:{matchdata.score2}
+              </Title>
+            </Card>
+          </Col>
+
+          <Col span={8}>
+            <Card bordered={false}>
+              <Team id={matchdata.team2_id} />
             </Card>
           </Col>
         </Row>
