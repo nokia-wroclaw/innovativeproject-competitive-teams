@@ -12,6 +12,8 @@ import Dashboard from "./Components/Dashboard";
 import TeamsHeader from "./Components/TeamsHeader";
 import LoggedOut from "./Components/LoggedOut";
 import Teams from "./Components/Teams";
+import Matches from "./Components/Matches";
+import MatchCreation from "./Components/MatchCreation/MatchCreation";
 
 const App = () => (
   <AuthProvider>
@@ -26,6 +28,8 @@ const App = () => (
             <Route exact path="/logged-out" component={LoggedOut} />
             <PrivateRoute path="/dashboard" component={Dashboard} />
             <Route exact path="/teams" component={Teams} />
+            <Route exact path="/matches" component={Matches} />
+            <Route exact path="/matchcreator" component={MatchCreation} />
           </Switch>
         </Layout>
       </Router>
