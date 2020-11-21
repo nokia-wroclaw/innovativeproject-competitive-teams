@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Typography, Card, Table, Spin, Col, Row } from "antd";
+import { Typography, Card, Spin, Col, Row } from "antd";
 import { useParams } from "react-router-dom";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
