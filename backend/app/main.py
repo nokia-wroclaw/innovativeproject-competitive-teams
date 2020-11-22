@@ -426,7 +426,12 @@ def create_tournament(
     )
     if access:
         teams_ids = tournament.teams_ids
-        print(teams_ids) # TODO: check this out!
+        for team_id in teams_ids:
+            check = crud.get_team(db, team_id)
+            if check is None:
+                raise HTTPException(
+                    status_code=404, detail="Team " + str(team_id) + " not found"
+                )
 
         return crud.create_tournament(db=db, tournament=tournament)
     else:
