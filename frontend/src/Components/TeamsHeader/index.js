@@ -16,6 +16,7 @@ const TeamsHeader = () => {
     { link: "/dashboard/profile", tabName: "Dashboard" },
     { link: "/teams", tabName: "Teams" },
     { link: "/players", tabName: "Players" },
+    { link: "/matches", tabName: "Matches" },
   ];
 
   // Update menu selection based on current path
@@ -35,7 +36,7 @@ const TeamsHeader = () => {
       case "players":
         setSelectedKeys(["3"]);
         break;
-      case "creator":
+      case "matches":
         setSelectedKeys(["4"]);
         break;
       default:

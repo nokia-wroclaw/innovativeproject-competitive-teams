@@ -13,6 +13,8 @@ import TeamsHeader from "./Components/TeamsHeader";
 import LoggedOut from "./Components/LoggedOut";
 import Teams from "./Components/Teams";
 import Players from "./Components/Players";
+import Matches from "./Components/Matches";
+
 
 const App = () => (
   <AuthProvider>
@@ -28,6 +30,8 @@ const App = () => (
             <PrivateRoute path="/dashboard" component={Dashboard} />
             <Route exact path="/teams" component={Teams} />
             <Route exact path="/players" component={Players} />
+            <Route exact path="/matches" component={Matches} />
+
           </Switch>
         </Layout>
       </Router>
