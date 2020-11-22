@@ -328,7 +328,7 @@ def set_team_captain(
             status_code=404, detail="Permission denied, requires at least: admin"
         )
 
-
+# matches
 @app.post("/api/matches/", response_model=schemas.Match)
 def create_match(
     match: schemas.MatchCreate,
@@ -414,3 +414,40 @@ def update_match(
             status_code=404, detail="Permission denied, requires at least: moderator"
         )
 
+# tournaments
+@app.post("/api/tournaments/", response_model=schemas.Tournament)
+def create_tournament(
+    tournament: schemas.TournamentCreate,
+    firebase_id: str = Header(None),
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="moderator"
+    )
+    if access:
+        teams_ids = tournament.teams_ids
+        print(teams_ids) # TODO: check this out!
+
+        return crud.create_tournament(db=db, tournament=tournament)
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: moderator"
+        )
+
+@app.get("/api/tournaments/", response_model=List[schemas.Tournament])
+def read_tournaments(
+    firebase_id: str = Header(None),
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        tournaments = crud.get_tournaments(db, skip=skip, limit=limit)
+        return tournaments
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )

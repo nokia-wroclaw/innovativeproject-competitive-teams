@@ -80,10 +80,9 @@ class TournamentBase(BaseModel):
 class TournamentUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
-    teams_ids: List[int] = []
 
 class TournamentCreate(TournamentBase):
-    pass
+    teams_ids: List[int] = []
 
 class Tournament(TournamentBase):
     id: int

@@ -118,6 +118,26 @@ def update_match(db: Session, match_id: int, match: schemas.MatchUpdate):
     db_match.score2 = match.score2
     db.commit()
 
+# Tournaments
+
+def create_tournament(db: Session, tournament: schemas.TournamentCreate):
+    teams_ids = tournament.teams_ids
+    db_tournament = models.Tournament(name=tournament.name, description=tournament.description,
+    tournament_type=tournament.tournament_type, teams=[])
+    for element in teams_ids:
+        db_team = db.query(models.Team).filter(models.Team.id == element).first()
+        db_tournament.teams.append(db_team)
+    db.add(db_tournament)
+    db.commit()
+    db.refresh(db_tournament)
+    return db_tournament
+
+def get_tournaments(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Tournament).offset(skip).limit(limit).all()
+
+def get_tournament(db: Session, tournament_id: int):
+    return db.query(models.Tournament).filter(models.Tournament.id == tournament_id).first()
+
 # TODO
 def link_player_to_team_with_name():
     pass
