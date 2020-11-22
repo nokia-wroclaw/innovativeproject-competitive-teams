@@ -13,15 +13,15 @@ const Player = ({ id }) => {
   let fbId = currentUser.uid;
 
   // If no id has been passed, check router params
-  const { teamid } = useParams();
-  if (id === null || id === undefined) id = teamid;
+  const { playerid } = useParams();
+  if (id === null || id === undefined) id = playerid;
 
   const [playerdata, setPlayerdata] = useState(null);
   const [err, setErr] = useState(null);
 
-  // Get team data
+  // Get player data
   useEffect(() => {
-    if (id === null || id === undefined) setErr("No team id passed.");
+    if (id === null || id === undefined) setErr("No player id passed.");
     else {
       Api.get("/players/" + id, { headers: { "firebase-id": fbId } })
         .then((response) => {
