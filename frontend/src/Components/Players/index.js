@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Layout, Card, Collapse, Typography, Spin } from "antd";
 import "./index.css";
-
 import { Api } from "../../Api";
-import Team from "../Team";
+import Player from "../Player";
 
 import { AuthContext } from "../Auth/Auth";
 
@@ -11,33 +10,33 @@ const { Content } = Layout;
 const { Panel } = Collapse;
 const { Title } = Typography;
 
-const Teams = () => {
+const Players = () => {
   let { currentUser } = useContext(AuthContext);
   let fbId = currentUser.uid;
 
-  const [teams, setTeams] = useState(null);
+  const [players, setPlayers] = useState(null);
   const [err, setErr] = useState(null);
 
   useEffect(() => {
-    Api.get("/teams/", { headers: { "firebase-id": fbId } })
+    Api.get("/players/", { headers: { "firebase-id": fbId } })
       .then((result) => {
-        setTeams(result.data);
+        setPlayers(result.data);
       })
       .catch((err) => {
-        setTeams(null);
+        setPlayers(null);
         setErr(err.toString());
       });
   }, [fbId]);
 
-  return teams ? (
+  return players ? (
     <Layout className="list-background">
       <Content className="site-layout-background">
         <Card>
-          <Title> List of teams </Title>
+          <Title> List of players </Title>
           <Collapse>
-            {teams.map((team) => (
-              <Panel header={"Team " + team.name} key={team.id}>
-                <Team id={team.id} />
+            {players.map((player) => (
+              <Panel header={"Player " + player.name} key={player.id}>
+                <Player id={player.id} />
               </Panel>
             ))}
           </Collapse>
@@ -46,12 +45,12 @@ const Teams = () => {
     </Layout>
   ) : err ? (
     <Title>
-      Api request failed for the list of teams.
+      Api request failed for the list of players.
       <br />
       {err}
     </Title>
   ) : (
-    <Layout className="list-background">
+    <Layout>
       <Content className="site-layout-background">
         <Card>
           <Spin />
@@ -61,4 +60,4 @@ const Teams = () => {
   );
 };
 
-export default Teams;
+export default Players;
