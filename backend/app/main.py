@@ -451,3 +451,22 @@ def read_tournaments(
         raise HTTPException(
             status_code=404, detail="Permission denied, requires at least: player"
         )
+
+@app.get("/api/tournaments/{tournament_id}", response_model=schemas.Tournament)
+def read_tournament(
+    tournament_id: int = Header(None),
+    firebase_id: str = Header(None),
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        db_tournament = crud.get_tournament(db, tournament_id=tournament_id)
+        if db_tournament is None:
+            raise HTTPException(status_code=404, detail="Tournament not found")
+        return db_tournament
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
