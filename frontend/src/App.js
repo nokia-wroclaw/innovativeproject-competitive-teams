@@ -12,6 +12,7 @@ import Dashboard from "./Components/Dashboard";
 import TeamsHeader from "./Components/TeamsHeader";
 import LoggedOut from "./Components/LoggedOut";
 import Teams from "./Components/Teams";
+import Players from "./Components/Players";
 
 const App = () => (
   <AuthProvider>
@@ -26,6 +27,7 @@ const App = () => (
             <Route exact path="/logged-out" component={LoggedOut} />
             <PrivateRoute path="/dashboard" component={Dashboard} />
             <Route exact path="/teams" component={Teams} />
+            <Route exact path="/players" component={Players} />
           </Switch>
         </Layout>
       </Router>
