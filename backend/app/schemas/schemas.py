@@ -72,4 +72,24 @@ class Match(MatchBase):
     class Config:
         orm_mode = True
 
+class TournamentBase(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    tournament_type: Optional[str] = None
+
+class TournamentUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    teams_ids: List[int] = []
+
+class TournamentCreate(TournamentBase):
+    pass
+
+class Tournament(TournamentBase):
+    id: int
+    teams: List[Team] = []
+
+    class Config:
+        orm_mode = True
+
 Player.update_forward_refs()
