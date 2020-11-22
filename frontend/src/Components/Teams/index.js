@@ -30,7 +30,7 @@ const Teams = () => {
   }, [fbId]);
 
   return teams ? (
-    <Layout style={{ padding: "24px 24px 24px" }}>
+    <Layout className="list-background">
       <Content className="site-layout-background">
         <Card>
           <Title> List of teams </Title>
@@ -51,7 +51,7 @@ const Teams = () => {
       {err}
     </Title>
   ) : (
-    <Layout style={{ padding: "24px 24px 24px" }}>
+    <Layout className="list-background">
       <Content className="site-layout-background">
         <Card>
           <Spin />

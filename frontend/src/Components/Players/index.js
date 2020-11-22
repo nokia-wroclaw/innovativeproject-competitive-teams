@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Layout, Card, Collapse, Typography, Spin, Pagination } from "antd";
+import { Layout, Card, Collapse, Typography, Spin } from "antd";
 import "./index.css";
-
 import { Api } from "../../Api";
 import Player from "../Player";
 
@@ -30,7 +29,7 @@ const Players = () => {
   }, [fbId]);
 
   return players ? (
-    <Layout style={{ padding: "24px 24px 24px" }}>
+    <Layout className="list-background">
       <Content className="site-layout-background">
         <Card>
           <Title> List of players </Title>
@@ -51,7 +50,7 @@ const Players = () => {
       {err}
     </Title>
   ) : (
-    <Layout style={{ padding: "24px 24px 24px" }}>
+    <Layout>
       <Content className="site-layout-background">
         <Card>
           <Spin />
