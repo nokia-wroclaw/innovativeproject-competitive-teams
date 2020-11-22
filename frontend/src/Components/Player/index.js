@@ -58,7 +58,7 @@ const Player = ({ id }) => {
     </div>
   ) : err ? (
     <Title>
-      Api request failed for team with id: {id}
+      Api request failed for player with id: {id}
       <br />
       {err}
     </Title>
