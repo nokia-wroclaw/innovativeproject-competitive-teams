@@ -2,17 +2,19 @@ import React, { useContext, useEffect, useState } from "react";
 import { Typography, Card, Table, Spin } from "antd";
 import { useParams } from "react-router-dom";
 import "./index.css";
-import { AuthContext } from "../Auth/Auth";
 
+import { AuthContext } from "../Auth/Auth";
 import { Api } from "../../Api";
+import AddPlayer from "./AddPlayer";
 
 const { Title } = Typography;
 const { Column, ColumnGroup } = Table;
 const { Meta } = Card;
 
 const Team = ({ id }) => {
-  let { currentUser } = useContext(AuthContext);
+  let { currentUser, userData } = useContext(AuthContext);
   let fbId = currentUser.uid;
+  console.log(userData);
 
   // If no id has been passed, check router params
   const { teamid } = useParams();
@@ -78,7 +80,14 @@ const Team = ({ id }) => {
           />
         </ColumnGroup>
       </Table>
-
+      {userData &&
+      (teamdata.captain_id === userData.id ||
+        userData.role === "admin" ||
+        userData.role === "manager") ? (
+        <Card>
+          <AddPlayer teamid={id} />
+        </Card>
+      ) : null}
       <Card>
         <Meta title="Description" description={teamdata.description} />
       </Card>

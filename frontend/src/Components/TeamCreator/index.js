@@ -33,6 +33,7 @@ const TeamCreator = () => {
   const onFinish = (values) => {
     // Verify that the player exists
     Api.get("/players/" + values.capid, hdrs)
+      // Create the team
       .then(() =>
         Api.post(
           "/teams/",
@@ -44,7 +45,7 @@ const TeamCreator = () => {
           hdrs
         )
       )
-      // Create the team
+      // Add the player to the team
       .then((response) => {
         values.teamid = response.data.id;
         return Api.put(
@@ -53,7 +54,7 @@ const TeamCreator = () => {
           hdrs
         );
       })
-      // Add the player to the team
+      // Set the player as team captain
       .then(() =>
         Api.put(
           "/teams/" + values.teamid + "?player_id=" + values.capid,
@@ -61,7 +62,7 @@ const TeamCreator = () => {
           hdrs
         )
       )
-      // Set the player as team captain
+      // Handle notifications
       .then(() => {
         openNotificationWithIcon(
           "success",
@@ -126,8 +127,7 @@ const TeamCreator = () => {
             setVisible(true);
           }}
         >
-          {" "}
-          Create a team{" "}
+          Create a team
         </Button>
       </Popover>
     </Col>

@@ -1,20 +1,9 @@
 import React, { useContext, useState } from "react";
-import {
-  Popover,
-  notification,
-  Button,
-  Col,
-  Form,
-  Input,
-  Space,
-  DatePicker,
-} from "antd";
+import { Popover, notification, Button, Col, Form, Input, Space } from "antd";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
 
 import { Api } from "../../Api";
-
-const { TextArea } = Input;
 
 const layout = {
   labelCol: { span: 8 },
@@ -33,50 +22,39 @@ const openNotificationWithIcon = (type, title, msg) => {
   });
 };
 
-const MatchCreator = () => {
+const AddPlayer = ({ teamid }) => {
   let { currentUser } = useContext(AuthContext);
   let fbId = currentUser.uid;
+  const hdrs = { headers: { "firebase-id": fbId } };
   const [visible, setVisible] = useState(false);
 
   const onFinish = (values) => {
-    const hdrs = {
-      headers: {
-        "firebase-id": fbId,
-        "team1-id": values.team1id,
-        "team2-id": values.team2id,
-      },
-    };
-
-    Api.post(
-      "/matches/",
-      {
-        name: values.name,
-        description: values.desc,
-        color: "ffffff",
-        start_time: values.starttime,
-        finished: false,
-        score1: 0,
-        score2: 0,
-      },
-      hdrs
-    )
-
+    // Verify that the player exists
+    Api.get("/players/" + values.playerid, hdrs)
+      // Add the player to the team
+      .then((response) => {
+        values.player = response.data.name;
+        return Api.put(
+          "/players/" + teamid + "?player_id=" + values.playerid,
+          {},
+          hdrs
+        );
+      })
       .then(() => {
         openNotificationWithIcon(
           "success",
           "Success.",
-          "Match " +
-            values.name +
-            " between " +
-            values.team1id +
-            values.team2id +
-            " created successfully."
+          "Player " + values.player + " has been added to the team."
         );
       })
       .catch((err) => {
         openNotificationWithIcon(
           "error",
-          "Eror when creating team " + values.name,
+          "Error when adding player " +
+            values.playerid +
+            " to team " +
+            teamid +
+            ".",
           err.response && err.response.data.detail
             ? err.response.data.detail
             : err.message
@@ -85,26 +63,14 @@ const MatchCreator = () => {
     setVisible(false);
   };
 
-  const matchForm = (
+  const playerForm = (
     <Form
       {...layout}
       name="nest-messages"
       onFinish={onFinish}
       validateMessages={validateMessages}
     >
-      <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-        <Input />
-      </Form.Item>
-      <Form.Item name="desc" label="Description">
-        <TextArea />
-      </Form.Item>
-      <Form.Item name="starttime" label="Start Time">
-        <DatePicker showTime format="YYYY-MM-DD HH:mm" />
-      </Form.Item>
-      <Form.Item name="team1id" label="Team 1 ID" rules={[{ required: true }]}>
-        <Input />
-      </Form.Item>
-      <Form.Item name="team2id" label="Team 2 ID" rules={[{ required: true }]}>
+      <Form.Item name="playerid" label="Player ID" rules={[{ required: true }]}>
         <Input />
       </Form.Item>
       <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
@@ -124,10 +90,10 @@ const MatchCreator = () => {
     <Col align="center">
       <Popover
         placement="right"
-        title="Create a new match"
+        title="Add a player to the team"
         trigger="click"
         display="inline-block"
-        content={matchForm}
+        content={playerForm}
         visible={visible}
       >
         <Button
@@ -136,11 +102,11 @@ const MatchCreator = () => {
             setVisible(true);
           }}
         >
-          Create a match
+          Add a player
         </Button>
       </Popover>
     </Col>
   );
 };
 
-export default MatchCreator;
+export default AddPlayer;

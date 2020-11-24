@@ -295,7 +295,10 @@ def link_player_to_team(
             raise HTTPException(status_code=404, detail="Player not found")
         if crud.get_team(db, team_id=team_id) is None:
             raise HTTPException(status_code=404, detail="Team not found")
-        crud.link_player_to_team_with_id(db, team_id, player_id)
+        if not crud.is_player_in_team(db, player_id=player_id, team_id=team_id):
+            crud.link_player_to_team_with_id(db, team_id, player_id)
+        else:
+            raise HTTPException(status_code=404, detail="Player already in the team")
     else:
         raise HTTPException(
             status_code=404, detail="Permission denied, requires at least: admin"
