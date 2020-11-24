@@ -81,14 +81,14 @@ const Dashboard = () => {
               <Link to="/dashboard/profile">Your profile</Link>
             </Menu.Item>
             {userData !== null &&
-            (userData.role === "admin" || userData.role === "organizer") ? (
+            (userData.role === "admin" || userData.role === "manager") ? (
               <Menu.Item disabled key="team_creator" className="cursor-regular">
                 <TeamCreator />
               </Menu.Item>
             ) : null}
 
             {userData !== null &&
-            (userData.role === "admin" || userData.role === "organizer") ? (
+            (userData.role === "admin" || userData.role === "manager") ? (
               <Menu.Item
                 disabled
                 key="match_creator"

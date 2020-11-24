@@ -12,8 +12,9 @@ const { Column, ColumnGroup } = Table;
 const { Meta } = Card;
 
 const Team = ({ id }) => {
-  let { currentUser } = useContext(AuthContext);
+  let { currentUser, userData } = useContext(AuthContext);
   let fbId = currentUser.uid;
+  console.log(userData);
 
   // If no id has been passed, check router params
   const { teamid } = useParams();
@@ -79,9 +80,14 @@ const Team = ({ id }) => {
           />
         </ColumnGroup>
       </Table>
-      <Card>
-        <AddPlayer teamid={id} />
-      </Card>
+      {userData &&
+      (teamdata.captain_id === userData.id ||
+        userData.role === "admin" ||
+        userData.role === "manager") ? (
+        <Card>
+          <AddPlayer teamid={id} />
+        </Card>
+      ) : null}
       <Card>
         <Meta title="Description" description={teamdata.description} />
       </Card>
