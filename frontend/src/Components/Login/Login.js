@@ -3,6 +3,7 @@ import { withRouter } from "react-router";
 import app, { signInWithGoogle } from "../Base/base";
 import { Space, Card, Row, Form, Input, Button } from "antd";
 import { CreatePlayer } from "../Util/CreatePlayer";
+import { Notification } from "../Util/Notification";
 
 const layout = {
   labelCol: {
@@ -21,10 +22,20 @@ const tailLayout = {
 
 const LogIn = ({ history }) => {
   const onFinish = (values) => {
-    app.auth().signInWithEmailAndPassword(values.username, values.password);
-    app.auth().onAuthStateChanged((user) => {
+    app.auth().onAuthStateChanged(() => {
       history.replace("/dashboard/profile");
     });
+    app
+      .auth()
+      .signInWithEmailAndPassword(values.email, values.password)
+      .then(() => {
+        history.replace("/dashboard/profile");
+        Notification("success", "Success!", "You have been signed in!");
+      })
+      .catch((error) => {
+        let errorMessage = error.message;
+        Notification("error", "Error", errorMessage);
+      });
   };
 
   const onFinishGoogle = () => {
@@ -61,12 +72,12 @@ const LogIn = ({ history }) => {
           onFinishFailed={onFinishFailed}
         >
           <Form.Item
-            label="Username"
-            name="username"
+            label="E-mail"
+            name="email"
             rules={[
               {
                 required: true,
-                message: "Please input your username!",
+                message: "Please input your e-mail!",
               },
             ]}
           >
