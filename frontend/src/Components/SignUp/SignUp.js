@@ -3,6 +3,7 @@ import { withRouter } from "react-router";
 import app from "../Base/base";
 import { Card, Row, Form, Input, Button } from "antd";
 import { Notification } from "../Util/Notification";
+import { SSL_OP_EPHEMERAL_RSA } from "constants";
 
 const layout = {
   labelCol: {
@@ -31,7 +32,7 @@ const SignUp = ({ history }) => {
           "Success!",
           "Your account has been created successfully!"
         );
-        history.replace("/login");
+        history.push("/login");
       })
       .catch((error) => {
         let errorMessage = error.message;

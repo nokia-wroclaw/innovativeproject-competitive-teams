@@ -2,8 +2,8 @@ import * as React from "react";
 import { withRouter } from "react-router";
 import app, { signInWithGoogle } from "../Base/base";
 import { Space, Card, Row, Form, Input, Button } from "antd";
-import { CreatePlayer } from "../Util/CreatePlayer";
 import { Notification } from "../Util/Notification";
+import { AuthContext } from "../Auth/Auth";
 
 const layout = {
   labelCol: {
@@ -21,16 +21,16 @@ const tailLayout = {
 };
 
 const LogIn = ({ history }) => {
+  let { currentUser } = React.useContext(AuthContext);
+  console.log(currentUser);
   const onFinish = (values) => {
-    app.auth().onAuthStateChanged(() => {
-      history.replace("/dashboard/profile");
-    });
     app
       .auth()
       .signInWithEmailAndPassword(values.email, values.password)
-      .then(() => {
-        history.replace("/dashboard/profile");
+      .then((response) => {
+        console.log(response.user);
         Notification("success", "Success!", "You have been signed in!");
+        history.push("dashboard/profile");
       })
       .catch((error) => {
         let errorMessage = error.message;
@@ -40,10 +40,6 @@ const LogIn = ({ history }) => {
 
   const onFinishGoogle = () => {
     signInWithGoogle();
-    app.auth().onAuthStateChanged((user) => {
-      CreatePlayer(user);
-      history.replace("/dashboard/profile");
-    });
   };
 
   const onFinishFailed = (errorInfo) => {
