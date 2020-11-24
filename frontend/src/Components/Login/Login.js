@@ -21,14 +21,11 @@ const tailLayout = {
 };
 
 const LogIn = ({ history }) => {
-  let { currentUser } = React.useContext(AuthContext);
-  console.log(currentUser);
   const onFinish = (values) => {
     app
       .auth()
       .signInWithEmailAndPassword(values.email, values.password)
       .then((response) => {
-        console.log(response.user);
         Notification("success", "Success!", "You have been signed in!");
         history.push("dashboard/profile");
       })
