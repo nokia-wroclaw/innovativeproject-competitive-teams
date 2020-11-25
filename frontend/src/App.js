@@ -15,7 +15,6 @@ import Teams from "./Components/Teams";
 import Players from "./Components/Players";
 import Matches from "./Components/Matches";
 
-
 const App = () => (
   <AuthProvider>
     <div className="app">
@@ -28,10 +27,9 @@ const App = () => (
             <Route exact path="/signup" component={SignUp} />
             <Route exact path="/logged-out" component={LoggedOut} />
             <PrivateRoute path="/dashboard" component={Dashboard} />
-            <Route exact path="/teams" component={Teams} />
-            <Route exact path="/players" component={Players} />
-            <Route exact path="/matches" component={Matches} />
-
+            <PrivateRoute exact path="/teams" component={Teams} />
+            <PrivateRoute exact path="/players" component={Players} />
+            <PrivateRoute exact path="/matches" component={Matches} />
           </Switch>
         </Layout>
       </Router>

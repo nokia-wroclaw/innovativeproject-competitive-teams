@@ -29,8 +29,20 @@ matrix:
         - echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
         - docker login -u $HEROKU_USERNAME --password=$(heroku auth:token) registry.heroku.com
 
+
       script:
-        - docker build --build-arg frontend_name=$FRONTEND_NAME --build-arg backend_url=$BACKEND_URL -t $DOCKER_USERNAME/frontend ./frontend
+        - >
+          docker build 
+          --build-arg react_app_firebase_key=$REACT_APP_FIREBASE_KEY
+          --build-arg react_app_firebase_domain=$REACT_APP_FIREBASE_DOMAIN
+          --build-arg react_app_firebase_database=$REACT_APP_FIREBASE_DATABASE
+          --build-arg react_app_firebase_project_id=$REACT_APP_FIREBASE_PROJECT_ID
+          --build-arg react_app_firebase_storage_bucket=$REACT_APP_FIREBASE_STORAGE_BUCKET
+          --build-arg react_app_firebase_sender_id=$REACT_APP_FIREBASE_SENDER_ID
+          --build-arg frontend_name=$FRONTEND_NAME
+          --build-arg backend_url=$BACKEND_URL
+          -t $DOCKER_USERNAME/frontend
+          ./frontend
         - docker tag $DOCKER_USERNAME/frontend registry.heroku.com/$HEROKU_FRONTEND_APP/web
 
       deploy:   
