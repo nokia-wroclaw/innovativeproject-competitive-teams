@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
-import { Popover, notification, Button, Col, Form, Input, Space } from "antd";
+import { Popover, Button, Col, Form, Input, Space } from "antd";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
-
+import { Notification } from "../Util/Notification";
 import { Api } from "../../Api";
 
 const { TextArea } = Input;
@@ -15,13 +15,6 @@ const layout = {
 const validateMessages = {
   // eslint-disable-next-line
   required: "${label} is required!",
-};
-
-const openNotificationWithIcon = (type, title, msg) => {
-  notification[type]({
-    message: title,
-    description: msg,
-  });
 };
 
 const TeamCreator = () => {
@@ -64,14 +57,14 @@ const TeamCreator = () => {
       )
       // Handle notifications
       .then(() => {
-        openNotificationWithIcon(
+        Notification(
           "success",
           "Success.",
           "Team " + values.name + " created successfully."
         );
       })
       .catch((err) => {
-        openNotificationWithIcon(
+        Notification(
           "error",
           "Eror when creating team " + values.name,
           err.response && err.response.data.detail

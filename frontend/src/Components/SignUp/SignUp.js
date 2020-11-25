@@ -2,6 +2,7 @@ import React from "react";
 import { withRouter } from "react-router";
 import app from "../Base/base";
 import { Card, Row, Form, Input, Button } from "antd";
+import { Notification } from "../Util/Notification";
 
 const layout = {
   labelCol: {
@@ -21,10 +22,23 @@ const tailLayout = {
 
 const SignUp = ({ history }) => {
   const onFinish = (values) => {
-    app.auth().createUserWithEmailAndPassword(values.username, values.password);
-    app.auth().onAuthStateChanged((user) => {
+    app.auth().onAuthStateChanged(() => {
       history.replace("/dashboard/profile");
     });
+    app
+      .auth()
+      .createUserWithEmailAndPassword(values.email, values.password)
+      .then(() => {
+        Notification(
+          "success",
+          "Success!",
+          "Your account has been created successfully!"
+        );
+      })
+      .catch((error) => {
+        let errorMessage = error.message;
+        Notification("error", "Error", errorMessage);
+      });
   };
 
   return (
@@ -50,12 +64,12 @@ const SignUp = ({ history }) => {
           onFinishFailed={console.log("error")}
         >
           <Form.Item
-            label="Username"
-            name="username"
+            label="E-mail"
+            name="email"
             rules={[
               {
                 required: true,
-                message: "Please input your username!",
+                message: "Please input your e-mail!",
               },
             ]}
           >

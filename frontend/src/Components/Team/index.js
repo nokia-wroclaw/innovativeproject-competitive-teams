@@ -14,7 +14,6 @@ const { Meta } = Card;
 const Team = ({ id }) => {
   let { currentUser, userData } = useContext(AuthContext);
   let fbId = currentUser.uid;
-  console.log(userData);
 
   // If no id has been passed, check router params
   const { teamid } = useParams();

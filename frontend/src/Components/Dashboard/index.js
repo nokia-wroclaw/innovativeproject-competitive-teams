@@ -5,6 +5,8 @@ import {
   UserOutlined,
   LaptopOutlined,
   NotificationOutlined,
+  CalendarOutlined,
+  HistoryOutlined,
 } from "@ant-design/icons";
 import "./index.css";
 
@@ -23,8 +25,8 @@ const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [teams, setTeams] = useState([]);
   const [capTeams, setCapTeams] = useState([]);
+  const [capTeamsIDs, setCapTeamsIDs] = useState([]);
   let { currentUser, userData } = useContext(AuthContext);
-
   useEffect(() => {
     const hdrs = { headers: { "firebase-id": currentUser.uid } };
     if (userData) {
@@ -34,7 +36,10 @@ const Dashboard = () => {
           console.log(err);
         });
       Api.get("/captain/teams/" + userData.id, hdrs)
-        .then((response) => setCapTeams(response.data))
+        .then((response) => {
+          setCapTeams(response.data);
+          setCapTeamsIDs(response.data.map((team) => team.id));
+        })
         .catch((err) => {
           console.log(err);
         });
@@ -59,15 +64,17 @@ const Dashboard = () => {
             defaultOpenKeys={[]}
             style={{ height: "100%", borderRight: 0 }}
           >
-            <SubMenu key="sub1" icon={<UserOutlined />} title="Your teams">
-              {teams.map((team) => (
-                <Menu.Item key={team.id}>
-                  <Link to={"/dashboard/team/" + team.id}>{team.name}</Link>
-                </Menu.Item>
-              ))}
+            <SubMenu key="teams" icon={<UserOutlined />} title="Your teams">
+              {teams
+                .filter((team) => !capTeamsIDs.includes(team.id))
+                .map((team) => (
+                  <Menu.Item key={team.id}>
+                    <Link to={"/dashboard/team/" + team.id}>{team.name}</Link>
+                  </Menu.Item>
+                ))}
             </SubMenu>
             <SubMenu
-              key="sub2"
+              key="capteams"
               icon={<LaptopOutlined />}
               title="Teams you lead"
             >
@@ -77,17 +84,27 @@ const Dashboard = () => {
                 </Menu.Item>
               ))}
             </SubMenu>
-            <Menu.Item key="profile" icon={<NotificationOutlined />}>
-              <Link to="/dashboard/profile">Your profile</Link>
+            <SubMenu
+              key="upcoming"
+              icon={<CalendarOutlined />}
+              title="Upcoming matches"
+            ></SubMenu>
+            <Menu.Item key="history" icon={<HistoryOutlined />}>
+              <Link to="/dashboard/history">Match history</Link>
             </Menu.Item>
-            {userData !== null &&
+            <Menu.Item key="profile" icon={<NotificationOutlined />}>
+              <Link to="/dashboard/profile">Profile</Link>
+            </Menu.Item>
+            {!collapsed &&
+            userData !== null &&
             (userData.role === "admin" || userData.role === "manager") ? (
               <Menu.Item disabled key="team_creator" className="cursor-regular">
                 <TeamCreator />
               </Menu.Item>
             ) : null}
 
-            {userData !== null &&
+            {!collapsed &&
+            userData !== null &&
             (userData.role === "admin" || userData.role === "manager") ? (
               <Menu.Item
                 disabled
