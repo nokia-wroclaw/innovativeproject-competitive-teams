@@ -5,6 +5,8 @@ import {
   UserOutlined,
   LaptopOutlined,
   NotificationOutlined,
+  CalendarOutlined,
+  HistoryOutlined,
 } from "@ant-design/icons";
 import "./index.css";
 
@@ -62,7 +64,7 @@ const Dashboard = () => {
             defaultOpenKeys={[]}
             style={{ height: "100%", borderRight: 0 }}
           >
-            <SubMenu key="sub1" icon={<UserOutlined />} title="Your teams">
+            <SubMenu key="teams" icon={<UserOutlined />} title="Your teams">
               {teams
                 .filter((team) => !capTeamsIDs.includes(team.id))
                 .map((team) => (
@@ -72,7 +74,7 @@ const Dashboard = () => {
                 ))}
             </SubMenu>
             <SubMenu
-              key="sub2"
+              key="capteams"
               icon={<LaptopOutlined />}
               title="Teams you lead"
             >
@@ -82,8 +84,16 @@ const Dashboard = () => {
                 </Menu.Item>
               ))}
             </SubMenu>
+            <SubMenu
+              key="upcoming"
+              icon={<CalendarOutlined />}
+              title="Upcoming matches"
+            ></SubMenu>
+            <Menu.Item key="history" icon={<HistoryOutlined />}>
+              <Link to="/dashboard/history">Match history</Link>
+            </Menu.Item>
             <Menu.Item key="profile" icon={<NotificationOutlined />}>
-              <Link to="/dashboard/profile">Your profile</Link>
+              <Link to="/dashboard/profile">Profile</Link>
             </Menu.Item>
             {!collapsed &&
             userData !== null &&
