@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import app from "../Base/base";
-import { CreatePlayer } from "../Util/CreatePlayer";
 import { Api } from "../../Api";
 
 export const AuthContext = React.createContext();
