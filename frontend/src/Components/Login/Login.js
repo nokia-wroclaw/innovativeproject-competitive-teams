@@ -2,7 +2,6 @@ import * as React from "react";
 import { withRouter } from "react-router";
 import app, { signInWithGoogle } from "../Base/base";
 import { Space, Card, Row, Form, Input, Button } from "antd";
-import { CreatePlayer } from "../Util/CreatePlayer";
 import { Notification } from "../Util/Notification";
 
 const layout = {
@@ -39,10 +38,11 @@ const LogIn = ({ history }) => {
   };
 
   const onFinishGoogle = () => {
-    signInWithGoogle();
-    app.auth().onAuthStateChanged((user) => {
-      CreatePlayer(user);
+    app.auth().onAuthStateChanged(() => {
       history.replace("/dashboard/profile");
+    });
+    signInWithGoogle().then(() => {
+      Notification("success", "Success!", "You have been signed in!");
     });
   };
 
