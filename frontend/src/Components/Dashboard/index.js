@@ -79,14 +79,16 @@ const Dashboard = () => {
             <Menu.Item key="profile" icon={<NotificationOutlined />}>
               <Link to="/dashboard/profile">Your profile</Link>
             </Menu.Item>
-            {userData !== null &&
+            {!collapsed &&
+            userData !== null &&
             (userData.role === "admin" || userData.role === "manager") ? (
               <Menu.Item disabled key="team_creator" className="cursor-regular">
                 <TeamCreator />
               </Menu.Item>
             ) : null}
 
-            {userData !== null &&
+            {!collapsed &&
+            userData !== null &&
             (userData.role === "admin" || userData.role === "manager") ? (
               <Menu.Item
                 disabled
