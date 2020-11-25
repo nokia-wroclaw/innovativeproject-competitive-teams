@@ -11,18 +11,24 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     app.auth().onAuthStateChanged((user) => {
       setCurrentUser(user);
-      CreatePlayer(user);
       setPending(false);
       if (user) {
-        Api.get(`/players/firebase_id/${user.uid}`, {
-          headers: { "firebase-id": user.uid },
-        })
-          .then(function (response) {
-            setUserData(response.data);
+        let user_uid = user.uid;
+        Api.post("/players", {
+          name: user_uid.substr(0, 5),
+          description: user_uid.substr(5),
+          firebase_id: user_uid,
+        }).then(() => {
+          Api.get(`/players/firebase_id/${user.uid}`, {
+            headers: { "firebase-id": user.uid },
           })
-          .catch(function (error) {
-            console.log(error);
-          });
+            .then(function (response) {
+              setUserData(response.data);
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        });
       }
     });
   }, []);

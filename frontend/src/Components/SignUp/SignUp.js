@@ -31,7 +31,7 @@ const SignUp = ({ history }) => {
           "Success!",
           "Your account has been created successfully!"
         );
-        history.replace("/login");
+        history.replace("/Home");
       })
       .catch((error) => {
         let errorMessage = error.message;
