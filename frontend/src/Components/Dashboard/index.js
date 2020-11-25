@@ -23,6 +23,7 @@ const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [teams, setTeams] = useState([]);
   const [capTeams, setCapTeams] = useState([]);
+  const [capTeamsIDs, setCapTeamsIDs] = useState([]);
   let { currentUser, userData } = useContext(AuthContext);
   useEffect(() => {
     const hdrs = { headers: { "firebase-id": currentUser.uid } };
@@ -33,7 +34,10 @@ const Dashboard = () => {
           console.log(err);
         });
       Api.get("/captain/teams/" + userData.id, hdrs)
-        .then((response) => setCapTeams(response.data))
+        .then((response) => {
+          setCapTeams(response.data);
+          setCapTeamsIDs(response.data.map((team) => team.id));
+        })
         .catch((err) => {
           console.log(err);
         });
@@ -59,11 +63,13 @@ const Dashboard = () => {
             style={{ height: "100%", borderRight: 0 }}
           >
             <SubMenu key="sub1" icon={<UserOutlined />} title="Your teams">
-              {teams.map((team) => (
-                <Menu.Item key={team.id}>
-                  <Link to={"/dashboard/team/" + team.id}>{team.name}</Link>
-                </Menu.Item>
-              ))}
+              {teams
+                .filter((team) => !capTeamsIDs.includes(team.id))
+                .map((team) => (
+                  <Menu.Item key={team.id}>
+                    <Link to={"/dashboard/team/" + team.id}>{team.name}</Link>
+                  </Menu.Item>
+                ))}
             </SubMenu>
             <SubMenu
               key="sub2"
