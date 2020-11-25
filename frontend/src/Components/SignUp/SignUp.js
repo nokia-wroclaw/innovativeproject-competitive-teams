@@ -22,6 +22,9 @@ const tailLayout = {
 
 const SignUp = ({ history }) => {
   const onFinish = (values) => {
+    app.auth().onAuthStateChanged(() => {
+      history.replace("/dashboard/profile");
+    });
     app
       .auth()
       .createUserWithEmailAndPassword(values.email, values.password)
@@ -31,7 +34,6 @@ const SignUp = ({ history }) => {
           "Success!",
           "Your account has been created successfully!"
         );
-        history.replace("/Home");
       })
       .catch((error) => {
         let errorMessage = error.message;
