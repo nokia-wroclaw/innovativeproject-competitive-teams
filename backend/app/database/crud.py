@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from datetime import datetime
 import iso8601
+import itertools
 
 from app.models import models
 from app.schemas import schemas
@@ -128,7 +129,7 @@ def update_match(db: Session, match_id: int, match: schemas.MatchUpdate):
 
 def create_tournament(db: Session, tournament: schemas.TournamentCreate):
     teams_ids = tournament.teams_ids
-    db_tournament = models.Tournament(name=tournament.name, description=tournament.description,
+    db_tournament = models.Tournament(name=tournament.name, description=tournament.description, start_time=tournament.start_time,
     tournament_type=tournament.tournament_type, teams=[])
     for element in teams_ids:
         db_team = db.query(models.Team).filter(models.Team.id == element).first()
@@ -136,7 +137,33 @@ def create_tournament(db: Session, tournament: schemas.TournamentCreate):
     db.add(db_tournament)
     db.commit()
     db.refresh(db_tournament)
+    if tournament.tournament_type == "round-robin":
+        comb = list(itertools.combinations(teams_ids, 2))
+        i = 0
+        for t1, t2 in comb:
+            i += 1
+            db_match = models.Match(
+                name = tournament.name + " match " + str(i),
+                description = "",
+                start_time = tournament.start_time,
+                finished = False,
+                score1 = 0,
+                score2 = 0,
+                team1_id = t1,
+                team2_id = t2,
+                tournament_place = i,
+                tournament_id = db_tournament.id
+            )
+            db.add(db_match)
+            db.commit()
+            db.refresh(db_match)
+
     return db_tournament
+
+def is_match_in_tournament(db: Session, tournament_id: int, match_id: int):
+    db_tournament = db.query(models.Tournament).filter(models.Tournament.id == tournament_id).first()
+    db_match = db.query(models.Match).filter(models.Match.id == match_id).first()
+    return db_match in db_tournament.matches
 
 def get_tournaments(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Tournament).offset(skip).limit(limit).all()

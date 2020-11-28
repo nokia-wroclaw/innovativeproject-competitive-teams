@@ -74,6 +74,8 @@ class Tournament(Base):
     name = Column(String)
     description = Column(String)
 
+    start_time = Column(String)
+
     tournament_type = Column(String)
 
     matches = relationship("Match", back_populates="tournament")

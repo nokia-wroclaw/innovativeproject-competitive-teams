@@ -416,7 +416,7 @@ def read_match(
             status_code=404, detail="Permission denied, requires at least: player")
 
 
-@app.patch("/api/matches/{player_id}")
+@app.patch("/api/matches/{match_id}")
 def update_match(
     match: schemas.MatchUpdate,
     match_id: int = None,
@@ -446,6 +446,8 @@ def create_tournament(
         db=db, firebase_id=firebase_id, clearance="moderator"
     )
     if access:
+        if tournament.tournament_type not in ["round-robin"]:
+            raise HTTPException(status_code=404, detail="Tournament type unknown")
         teams_ids = tournament.teams_ids
         for team_id in teams_ids:
             check = crud.get_team(db, team_id)

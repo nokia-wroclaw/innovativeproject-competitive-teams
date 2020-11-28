@@ -57,6 +57,9 @@ class MatchUpdate(BaseModel):
     score1: Optional[int] = 0
     score2: Optional[int] = 0
 
+class MatchResult(BaseModel):
+    score1: int
+    score2: int
 
 class MatchCreate(MatchBase):
     pass
@@ -80,10 +83,12 @@ class TournamentBase(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     tournament_type: Optional[str] = None
+    start_time: Optional[str] = None
 
 class TournamentUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
+    start_time: Optional[str] = None
 
 class TournamentCreate(TournamentBase):
     teams_ids: List[int] = []
