@@ -34,7 +34,6 @@ const Profile = () => {
   };
 
   const updateCol = (value) => {
-    console.log(value.hex);
     userData.colour = value.hex;
     setCol(value.hex);
     update(userData);
