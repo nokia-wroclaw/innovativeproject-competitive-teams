@@ -7,6 +7,7 @@ class PlayerBase(BaseModel):
     colour: Optional[str] = None
 
 class PlayerUpdate(BaseModel):
+    name: str
     description: Optional[str] = None
     colour: Optional[str] = None
 

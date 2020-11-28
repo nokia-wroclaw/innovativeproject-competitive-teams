@@ -58,6 +58,9 @@ class Match(Base):
     start_time = Column(String)
     finished = Column(Boolean)
 
+    # tournament_place = Column(Integer)
+
+
     score1 = Column(Integer)
     score2 = Column(Integer)
 
@@ -69,4 +72,7 @@ class Tournament(Base):
     description = Column(String)
 
     tournament_type = Column(String)
+
+    # matches = relationship
     teams = relationship("Team", secondary=TournamentTeam.__tablename__)
+

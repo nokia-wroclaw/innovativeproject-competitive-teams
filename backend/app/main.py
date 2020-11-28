@@ -167,6 +167,9 @@ def update_player(
     if access:
         if crud.get_player(db, player_id=player_id) is None:
             raise HTTPException(status_code=404, detail="Player not found")
+        player_check = crud.get_player_by_name(db, name=player.name)
+        if player_check is not None:
+            raise HTTPException(status_code=404, detail="Name already used")
         crud.update_player(db, player_id=player_id, player=player)
     else:
         raise HTTPException(
