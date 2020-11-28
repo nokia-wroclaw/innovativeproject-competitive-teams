@@ -44,9 +44,7 @@ def create_player(db: Session, player: schemas.PlayerCreate):
 
 def delete_player(db: Session, player_id: int):
     to_remove = db.query(models.Player).filter(models.Player.id == player_id).first()
-    db_player.name = player.name
-    db_player.colour = player.colour
-    db_player.description = player.description
+    db.delete(to_remove)
     db.commit()
 
 def update_player(db: Session, player_id: int, player: schemas.PlayerUpdate):
