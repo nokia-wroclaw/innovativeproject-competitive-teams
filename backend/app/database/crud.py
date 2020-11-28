@@ -106,6 +106,9 @@ def create_match(db: Session, match: schemas.MatchCreate, team1_id: int, team2_i
 def get_matches(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Match).offset(skip).limit(limit).all()
 
+def get_upcoming_matches(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Match).filter(models.Match.finished == False).order_by(models.Match.start_time).offset(skip).limit(limit).all()
+
 def get_match(db: Session, match_id: int):
     return db.query(models.Match).filter(models.Match.id == match_id).first()
 

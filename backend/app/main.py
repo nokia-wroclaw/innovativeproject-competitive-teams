@@ -378,6 +378,25 @@ def read_matches(
         )
 
 
+@app.get("/api/upcoming_matches/", response_model=List[schemas.Match])
+def read_upcoming_matches(
+    firebase_id: str = Header(None),
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        matches = crud.get_upcoming_matches(db, skip=skip, limit=limit)
+        return matches
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
+
+
 @app.get("/api/matches/{match_id}", response_model=schemas.Match)
 def read_match(
     match_id: int = Header(None),
@@ -394,8 +413,7 @@ def read_match(
         return db_match
     else:
         raise HTTPException(
-            status_code=404, detail="Permission denied, requires at least: player"
-        )
+            status_code=404, detail="Permission denied, requires at least: player")
 
 
 @app.patch("/api/matches/{player_id}")
