@@ -70,6 +70,9 @@ class Match(MatchBase):
     team1: Team
     team2: Team
 
+    tournament_id: Optional[int] = None
+    tournament_place: Optional[int] = None
+
     class Config:
         orm_mode = True
 
@@ -88,6 +91,7 @@ class TournamentCreate(TournamentBase):
 class Tournament(TournamentBase):
     id: int
     teams: List[Team] = []
+    matches: List[Match] = []
 
     class Config:
         orm_mode = True

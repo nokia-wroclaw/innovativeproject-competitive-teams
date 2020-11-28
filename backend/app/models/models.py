@@ -58,8 +58,11 @@ class Match(Base):
     start_time = Column(String)
     finished = Column(Boolean)
 
-    # tournament_place = Column(Integer)
 
+    tournament_place = Column(Integer)
+
+    tournament_id = Column(Integer, ForeignKey('tournaments.id'))
+    tournament = relationship("Tournament", back_populates="matches")
 
     score1 = Column(Integer)
     score2 = Column(Integer)
@@ -73,6 +76,6 @@ class Tournament(Base):
 
     tournament_type = Column(String)
 
-    # matches = relationship
+    matches = relationship("Match", back_populates="tournament")
     teams = relationship("Team", secondary=TournamentTeam.__tablename__)
 
