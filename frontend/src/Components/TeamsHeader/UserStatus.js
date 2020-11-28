@@ -15,15 +15,13 @@ const UserStatus = (props) => {
 
   // Update userid on AuthContext change
   useEffect(() => {
-    const rgb = Math.floor(Math.random() * 16777215);
-    const random_color = "#" + rgb.toString(16);
-    setColor(random_color);
     if (currentUser === null || userData === null) {
       setUserLetter("");
       setUsername(null);
     } else {
       setUsername(userData.name);
       setUserLetter(userData.name[0]);
+      setColor(userData.colour);
     }
   }, [currentUser, userData]);
 
