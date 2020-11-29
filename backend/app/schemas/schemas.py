@@ -93,6 +93,18 @@ class TournamentUpdate(BaseModel):
 class TournamentCreate(TournamentBase):
     teams_ids: List[int] = []
 
+class TeamResults(BaseModel):
+    team: Team
+    tournament_points: float
+    matches_points: int
+
+class TournamentResults(BaseModel):
+    matches_finished: int
+    matches_unfinished: int
+    matches_total: int
+
+    results: List[TeamResults] = []
+
 class Tournament(TournamentBase):
     id: int
     teams: List[Team] = []

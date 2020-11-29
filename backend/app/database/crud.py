@@ -162,8 +162,8 @@ def create_tournament(db: Session, tournament: schemas.TournamentCreate):
 
 def update_tournament_match(db: Session, tournament_id: int, match_id: int, match: schemas.MatchResult):
     db_match = db.query(models.Match).filter(models.Match.id == match_id).first()
-    db_match.score_1 = match.score1
-    db_match.score_2 = match.score2
+    db_match.score1 = match.score1
+    db_match.score2 = match.score2
     db_match.finished = True
     db.commit()
 
@@ -197,7 +197,8 @@ def get_tournament_scoreboard(db: Session, tournament_id: int):
     for team in db_tournament.teams:
         dic[team.id] = 0, 0
     for match in db_tournament.matches:
-        if match.finished:
+        if match.finished == True:
+            print(match.score1, match.score2, 'TTT!\n')
             TP, MP = dic[match.team1_id]
             nTP, nMP = aux(1, match.score1, match.score2)
             dic[match.team1_id] = TP + nTP, MP + nMP
@@ -205,8 +206,9 @@ def get_tournament_scoreboard(db: Session, tournament_id: int):
             TP, MP = dic[match.team2_id]
             nTP, nMP = aux(2, match.score1, match.score2)
             dic[match.team2_id] = TP + nTP, MP + nMP
-    
-    print(sorted(dic))
+
+
+    print(dic)
 
 
 def is_match_in_tournament(db: Session, tournament_id: int, match_id: int):
