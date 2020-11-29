@@ -194,10 +194,15 @@ def get_tournament_scoreboard(db: Session, tournament_id: int):
 
     db_tournament = db.query(models.Tournament).filter(models.Tournament.id == tournament_id).first()
     dic = {}
+    matches_total = 0
+    matches_finished = 0
+    matches_unfinished = 0
     for team in db_tournament.teams:
         dic[team.id] = 0, 0
     for match in db_tournament.matches:
+        matches_total += 1
         if match.finished == True:
+            matches_finished += 1
             print(match.score1, match.score2, 'TTT!\n')
             TP, MP = dic[match.team1_id]
             nTP, nMP = aux(1, match.score1, match.score2)
@@ -206,9 +211,16 @@ def get_tournament_scoreboard(db: Session, tournament_id: int):
             TP, MP = dic[match.team2_id]
             nTP, nMP = aux(2, match.score1, match.score2)
             dic[match.team2_id] = TP + nTP, MP + nMP
-
-
+        else:
+            matches_unfinished += 1
     print(dic)
+
+    res = schemas.TournamentResults(matches_finished=matches_finished, 
+                                    matches_unfinished = matches_unfinished, 
+                                    matches_total = matches_total, 
+                                    results=[])
+    return res
+    
 
 
 def is_match_in_tournament(db: Session, tournament_id: int, match_id: int):
