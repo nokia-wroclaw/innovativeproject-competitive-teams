@@ -160,6 +160,55 @@ def create_tournament(db: Session, tournament: schemas.TournamentCreate):
 
     return db_tournament
 
+def update_tournament_match(db: Session, tournament_id: int, match_id: int, match: schemas.MatchResult):
+    db_match = db.query(models.Match).filter(models.Match.id == match_id).first()
+    db_match.score_1 = match.score1
+    db_match.score_2 = match.score2
+    db_match.finished = True
+    db.commit()
+
+def get_tournament_matches(db: Session, tournament_id: int, skip: int = 0, limit: int = 100):
+    return db.query(models.Match).filter(models.Match.tournament_id == tournament_id).order_by(models.Match.tournament_place).offset(skip).limit(limit).all()
+
+def get_tournament_finished_matches(db: Session, tournament_id: int, skip: int = 0, limit: int = 100):
+    return db.query(models.Match).filter(models.Match.tournament_id == tournament_id).filter(models.Match.finished).order_by(models.Match.tournament_place).offset(skip).limit(limit).all()
+
+def get_tournament_unfinished_matches(db: Session, tournament_id: int, skip: int = 0, limit: int = 100):
+    return db.query(models.Match).filter(models.Match.tournament_id == tournament_id).filter(models.Match.finished == False).order_by(models.Match.tournament_place).offset(skip).limit(limit).all()
+
+def get_tournament_scoreboard(db: Session, tournament_id: int):
+    
+    def aux(team, score1, score2):
+        if team == 1:
+            if score1 == score2:
+                return 0.5, score1
+            if score1 > score2:
+                return 1, score1
+            return 0, score1
+        if team == 2:
+            if score1 == score2:
+                return 0.5, score2
+            if score1 > score2:
+                return 0, score2
+            return 1, score2
+
+    db_tournament = db.query(models.Tournament).filter(models.Tournament.id == tournament_id).first()
+    dic = {}
+    for team in db_tournament.teams:
+        dic[team.id] = 0, 0
+    for match in db_tournament.matches:
+        if match.finished:
+            TP, MP = dic[match.team1_id]
+            nTP, nMP = aux(1, match.score1, match.score2)
+            dic[match.team1_id] = TP + nTP, MP + nMP
+
+            TP, MP = dic[match.team2_id]
+            nTP, nMP = aux(2, match.score1, match.score2)
+            dic[match.team2_id] = TP + nTP, MP + nMP
+    
+    print(sorted(dic))
+
+
 def is_match_in_tournament(db: Session, tournament_id: int, match_id: int):
     db_tournament = db.query(models.Tournament).filter(models.Tournament.id == tournament_id).first()
     db_match = db.query(models.Match).filter(models.Match.id == match_id).first()

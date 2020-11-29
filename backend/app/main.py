@@ -428,7 +428,7 @@ def update_match(
     )
     if access:
         if crud.get_match(db, match_id=match_id) is None:
-            raise HTTPException(status_code=404, detail="Player not found")
+            raise HTTPException(status_code=404, detail="Match not found")
         crud.update_match(db, match_id=match_id, match=match)
     else:
         raise HTTPException(
@@ -494,6 +494,98 @@ def read_tournament(
         if db_tournament is None:
             raise HTTPException(status_code=404, detail="Tournament not found")
         return db_tournament
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
+
+
+# Tournament - Matches
+
+@app.patch("/api/tournaments/{tournament_id}/input_match_result")
+def update_tournament_match(
+    match: schemas.MatchResult,
+    match_id: int = None,
+    tournament_id: int = None,
+    firebase_id: str = Header(None),
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="moderator"
+    )
+    if access:
+        if crud.get_match(db, match_id=match_id) is None:
+            raise HTTPException(status_code=404, detail="Match not found")
+        if crud.get_tournament(db, tournament_id=tournament_id) is None:
+            raise HTTPException(status_code=404, detail="Tournament not found")
+        if not crud.is_match_in_tournament(db, tournament_id=tournament_id, match_id=match_id):
+            raise HTTPException(status_code=404, detail="Match not in tournament")
+        crud.update_tournament_match(db, tournament_id=tournament_id, match_id=match_id, match=match)
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: moderator"
+        )
+
+
+@app.get("/api/tournament/{tournament_id}/matches", response_model=List[schemas.Match])
+def read_tournament_matches(
+    tournament_id: int = Header(None),
+    firebase_id: str = Header(None),
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        if crud.get_tournament(db, tournament_id=tournament_id) is None:
+            raise HTTPException(status_code=404, detail="Tournament not found")
+        matches = crud.get_tournament_matches(db, tournament_id=tournament_id, skip=skip, limit=limit)
+        return matches
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
+
+@app.get("/api/tournament/{tournament_id}/finished_matches", response_model=List[schemas.Match])
+def read_tournament_finished_matches(
+    tournament_id: int = Header(None),
+    firebase_id: str = Header(None),
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        if crud.get_tournament(db, tournament_id=tournament_id) is None:
+            raise HTTPException(status_code=404, detail="Tournament not found")
+        matches = crud.get_tournament_finished_matches(db, tournament_id=tournament_id, skip=skip, limit=limit)
+        return matches
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
+
+
+@app.get("/api/tournament/{tournament_id}/unfinished_matches", response_model=List[schemas.Match])
+def read_tournament_unfinished_matches(
+    tournament_id: int = Header(None),
+    firebase_id: str = Header(None),
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        if crud.get_tournament(db, tournament_id=tournament_id) is None:
+            raise HTTPException(status_code=404, detail="Tournament not found")
+        matches = crud.get_tournament_unfinished_matches(db, tournament_id=tournament_id, skip=skip, limit=limit)
+        return matches
     else:
         raise HTTPException(
             status_code=404, detail="Permission denied, requires at least: player"
