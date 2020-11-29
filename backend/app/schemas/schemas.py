@@ -96,12 +96,13 @@ class TournamentCreate(TournamentBase):
 class TeamResults(BaseModel):
     team: Team
     tournament_points: float
-    matches_points: int
+    match_points: int
 
 class TournamentResults(BaseModel):
     matches_finished: int
     matches_unfinished: int
     matches_total: int
+    finished: bool
 
     results: List[TeamResults] = []
 
