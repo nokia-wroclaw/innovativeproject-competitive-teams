@@ -17,6 +17,7 @@ const TeamsHeader = () => {
     { link: "/teams", tabName: "Teams" },
     { link: "/players", tabName: "Players" },
     { link: "/matches", tabName: "Matches" },
+    { link: "/tournaments", tabName: "Tournaments" },
   ];
 
   // Update menu selection based on current path
@@ -38,6 +39,9 @@ const TeamsHeader = () => {
         break;
       case "matches":
         setSelectedKeys(["4"]);
+        break;
+      case "tournamnets":
+        setSelectedKeys(["5"]);
         break;
       default:
         setSelectedKeys([]);
