@@ -11,37 +11,44 @@ const { Content } = Layout;
 const { Panel } = Collapse;
 const { Title } = Typography;
 
-const Teams = () => {
+const Matches = () => {
   let { currentUser } = useContext(AuthContext);
   let fbId = currentUser.uid;
 
-  const [teams, setTeams] = useState(null);
+  const [matches, setMatches] = useState(null);
   const [err, setErr] = useState(null);
 
   useEffect(() => {
-    Api.get("/matches/?limit=3", { headers: { "firebase-id": fbId } })
+    Api.get("/matches/?limit=5", { headers: { "firebase-id": fbId } })
       .then((result) => {
-        setTeams(result.data);
+        setMatches(result.data);
       })
       .catch((err) => {
-        setTeams(null);
+        setMatches(null);
         setErr(err.toString());
       });
   }, [fbId]);
 
-  return teams ? (
+  return matches ? (
     <Layout className="list-background">
       <Content className="site-layout-background">
         <Card>
-          <Title align="center"> Upcoming matches </Title>
+          <Title level={1} align="center">
+            {" "}
+            Upcoming matches{" "}
+          </Title>
           <Collapse>
-            {teams.map((team) => (
+            {matches.map((match) => (
               <Panel
-                header={team.name + "       " + team.start_time}
-                key={team.id}
+                header={
+                  <Title level={3} align="center">
+                    {match.name + "  " + match.start_time}
+                  </Title>
+                }
+                key={match.id}
                 showArrow={false}
               >
-                <Match id={team.id} />
+                <Match id={match.id} />
               </Panel>
             ))}
           </Collapse>
@@ -50,7 +57,7 @@ const Teams = () => {
     </Layout>
   ) : err ? (
     <Title>
-      Api request failed for the list of teams.
+      Api request failed for the list of matches.
       <br />
       {err}
     </Title>
@@ -65,4 +72,4 @@ const Teams = () => {
   );
 };
 
-export default Teams;
+export default Matches;
