@@ -57,6 +57,9 @@ class MatchUpdate(BaseModel):
     score1: Optional[int] = 0
     score2: Optional[int] = 0
 
+class MatchResult(BaseModel):
+    score1: int
+    score2: int
 
 class MatchCreate(MatchBase):
     pass
@@ -69,6 +72,44 @@ class Match(MatchBase):
 
     team1: Team
     team2: Team
+
+    tournament_id: Optional[int] = None
+    tournament_place: Optional[int] = None
+
+    class Config:
+        orm_mode = True
+
+class TournamentBase(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    tournament_type: Optional[str] = None
+    start_time: Optional[str] = None
+
+class TournamentUpdate(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    start_time: Optional[str] = None
+
+class TournamentCreate(TournamentBase):
+    teams_ids: List[int] = []
+
+class TeamResults(BaseModel):
+    team: Team
+    tournament_points: float
+    match_points: int
+
+class TournamentResults(BaseModel):
+    matches_finished: int
+    matches_unfinished: int
+    matches_total: int
+    finished: bool
+
+    results: List[TeamResults] = []
+
+class Tournament(TournamentBase):
+    id: int
+    teams: List[Team] = []
+    matches: List[Match] = []
 
     class Config:
         orm_mode = True

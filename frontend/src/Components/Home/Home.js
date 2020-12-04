@@ -25,6 +25,7 @@ const Matches = () => {
       })
       .catch((err) => {
         setMatches(null);
+
         setErr(err.toString());
       });
   }, [fbId]);
