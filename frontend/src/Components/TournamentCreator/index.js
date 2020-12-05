@@ -47,8 +47,6 @@ const TournamentCreator = () => {
         }
       }
     }
-    console.log(tour_values);
-    console.log(teams_ids_list);
     const hdrs = {
       headers: {
         "firebase-id": fbId,
@@ -113,6 +111,7 @@ const TournamentCreator = () => {
         </Form>
       );
     }
+    // eslint-disable-next-line
   }, [teams_form_list]);
 
   const onFinish = (values) => {
