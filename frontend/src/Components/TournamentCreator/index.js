@@ -35,10 +35,14 @@ const TournamentCreator = () => {
     teams_ids_list.push(value);
   };
 
+  const cancel = () => {
+    setVisible(false);
+    settourForm(tournamentForm);
+  };
   const onFinish2 = (values) => {
     for (let prop in values) {
       if (Object.prototype.hasOwnProperty.call(values, prop)) {
-        if (prop.slice(0, 5) == "team_") {
+        if (prop.slice(0, 5) === "team_") {
           add_team(values[prop]);
         }
       }
@@ -82,13 +86,13 @@ const TournamentCreator = () => {
       settourForm(
         <Form
           {...layout}
-          size="large"
           onFinish={onFinish2}
           validateMessages={validateMessages}
         >
           {teams_form_list.map((item, index) => {
             return (
               <Form.Item
+                rules={[{ required: true }]}
                 name={"team_" + index}
                 label={"Team " + (index + 1) + " id"}
               >
@@ -96,12 +100,12 @@ const TournamentCreator = () => {
               </Form.Item>
             );
           })}
-          <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+          <Form.Item>
             <Space size="middle">
               <Button type="primary" htmlType="submit">
                 Submit
               </Button>
-              <Button type="primary" onClick={() => setVisible(false)}>
+              <Button type="primary" onClick={cancel}>
                 Cancel
               </Button>
             </Space>
@@ -124,7 +128,6 @@ const TournamentCreator = () => {
     <Form
       {...layout}
       name="nest-messages"
-      size="large"
       onFinish={onFinish}
       validateMessages={validateMessages}
     >
@@ -137,10 +140,18 @@ const TournamentCreator = () => {
       <Form.Item name="starttime" label="Start Time">
         <DatePicker showTime format="YYYY-MM-DD HH:mm" />
       </Form.Item>
-      <Form.Item name="tournament_type" label="Type of tournament:">
+      <Form.Item
+        name="tournament_type"
+        label="Type of tournament:"
+        rules={[{ required: true }]}
+      >
         <Input />
       </Form.Item>
-      <Form.Item name="number_of_teams" label="Number of teams:">
+      <Form.Item
+        name="number_of_teams"
+        label="Number of teams:"
+        rules={[{ required: true }]}
+      >
         <InputNumber />
       </Form.Item>
       <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
@@ -165,6 +176,7 @@ const TournamentCreator = () => {
         display="inline-block"
         content={tourForm}
         visible={visible}
+        size="large"
       >
         <Button
           type="primary"
