@@ -8,14 +8,16 @@ import {
   Space,
   DatePicker,
   InputNumber,
+  Select,
 } from "antd";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
 import { Notification } from "../Util/Notification";
 import { Api } from "../../Api";
 
+const { Option } = Select;
 const layout = {
-  labelCol: { span: 10 },
+  labelCol: { span: 11 },
   wrapperCol: { span: 16 },
 };
 
@@ -141,14 +143,18 @@ const TournamentCreator = () => {
       </Form.Item>
       <Form.Item
         name="tournament_type"
-        label="Type of tournament:"
+        label="Type:"
         rules={[{ required: true }]}
       >
-        <Input />
+        <Select defaultValue="round-robin">
+          <Option value="round-robin">round-robin</Option>
+          <Option value="swiss">swiss</Option>
+          <Option value="single-elimination"> single-elimination</Option>
+        </Select>
       </Form.Item>
       <Form.Item
         name="number_of_teams"
-        label="Number of teams:"
+        label="Number of teams: "
         rules={[{ required: true }]}
       >
         <InputNumber />
