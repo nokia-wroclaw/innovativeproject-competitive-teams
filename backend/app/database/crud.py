@@ -32,6 +32,16 @@ def get_team(db: Session, team_id: int):
 def get_team_by_name(db: Session, name: str):
     return db.query(models.Team).filter(models.Team.name == name).first()
 
+def search_teams_by_name(db: Session, name: str, skip: int = 0, limit: int = 100):
+    db_teams = db.query(models.Team).offset(skip).limit(limit).all()
+    ans = []
+    if name is None:
+        name = ""
+    for team in db_teams:
+        if name.lower() in team.name.lower():
+            ans.append(team)
+    return ans
+
 def get_teams(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Team).offset(skip).limit(limit).all()
 
@@ -69,6 +79,16 @@ def get_player_by_firebase_id(db: Session, firebase_id: str):
 
 def get_players(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Player).offset(skip).limit(limit).all()
+
+def search_players_by_name(db: Session, name: str, skip: int = 0, limit: int = 100):
+    db_players = db.query(models.Player).offset(skip).limit(limit).all()
+    ans = []
+    if name is None:
+        name = ""
+    for player in db_players:
+        if name.lower() in player.name.lower():
+            ans.append(player)
+    return ans
 
 # Team - Player functionality
 
