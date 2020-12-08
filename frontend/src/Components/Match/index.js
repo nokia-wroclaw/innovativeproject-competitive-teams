@@ -44,8 +44,23 @@ const Match = ({ id }) => {
   return matchdata ? (
     <div className="match-info">
       <Card
-        title={<Title level={2}> {matchdata.name}</Title>}
-        style={{ backgroundColor: color(matchdata), border: 0 }}
+        title={
+          <Title level={2}>
+            {" "}
+            <Row>
+              <Col align="left" span={8}>
+                {matchdata.team1.name}
+              </Col>
+              <Col align="center" span={8}>
+                vs
+              </Col>
+              <Col align="right" span={8}>
+                {matchdata.team2.name}
+              </Col>
+            </Row>
+          </Title>
+        }
+        style={{ borderColor: color(matchdata), borderWidth: 5 }}
       >
         <Row>
           <Title level={3}> Starting Time: {matchdata.start_time}</Title>
