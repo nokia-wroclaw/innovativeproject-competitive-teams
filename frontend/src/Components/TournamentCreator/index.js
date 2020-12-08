@@ -27,13 +27,13 @@ const validateMessages = {
 };
 
 const TournamentCreator = () => {
-  let { currentUser } = useContext(AuthContext);
-  let fbId = currentUser.uid;
+  const { currentUser } = useContext(AuthContext);
+  const fbId = currentUser.uid;
   const [visible, setVisible] = useState(false);
-  const [teams_form_list, setTeams_form_list] = useState(null);
-  const [tour_values, setTour_values] = useState({});
-  let teams_ids_list = [];
-  const add_team = (value) => {
+  const [teamsFormList, setTeamsFormList] = useState(null);
+  const [tourValues, setTourValues] = useState({});
+  const teams_ids_list = [];
+  const addTeam = (value) => {
     teams_ids_list.push(value);
   };
 
@@ -42,13 +42,10 @@ const TournamentCreator = () => {
     settourForm(tournamentForm);
   };
   const onFinish2 = (values) => {
-    for (let prop in values) {
-      if (Object.prototype.hasOwnProperty.call(values, prop)) {
-        if (prop.slice(0, 5) === "team_") {
-          add_team(values[prop]);
-        }
-      }
-    }
+    Object.keys(values)
+      .filter((prop) => prop.slice(0, 5) === "team_")
+      .forEach((team) => addTeam(values[team]));
+
     const hdrs = {
       headers: {
         "firebase-id": fbId,
@@ -57,11 +54,11 @@ const TournamentCreator = () => {
     Api.post(
       "/tournaments/",
       {
-        name: tour_values.name,
-        description: tour_values.desc,
+        name: tourValues.name,
+        description: tourValues.desc,
         color: "ffffff",
-        tournament_type: tour_values.tournament_type,
-        start_time: tour_values.starttime,
+        tournament_type: tourValues.tournament_type,
+        start_time: tourValues.starttime,
         teams_ids: teams_ids_list,
       },
       hdrs
@@ -73,33 +70,34 @@ const TournamentCreator = () => {
       .catch((err) => {
         Notification(
           "error",
-          "Eror when creating tournament " + values.name,
-          err.response && err.response.data.detail
-            ? err.response.data.detail
-            : err.message
+          `Eror when creating tournament  + ${
+            (values.name,
+            err.response && err.response.data.detail
+              ? err.response.data.detail
+              : err.message)
+          }`
         );
       });
     setVisible(false);
   };
   useEffect(() => {
-    if (teams_form_list) {
+    if (teamsFormList) {
       settourForm(
         <Form
           {...layout}
           onFinish={onFinish2}
           validateMessages={validateMessages}
         >
-          {teams_form_list.map((item, index) => {
-            return (
-              <Form.Item
-                rules={[{ required: true }]}
-                name={"team_" + index}
-                label={"Team " + (index + 1) + " id"}
-              >
-                <InputNumber />
-              </Form.Item>
-            );
-          })}
+          {teamsFormList.map((item, index) => (
+            <Form.Item
+              rules={[{ required: true }]}
+              name={`team_${index}`}
+              label={`Team ${index + 1} id`}
+            >
+              <InputNumber />
+            </Form.Item>
+          ))}
+
           <Form.Item>
             <Space size="middle">
               <Button type="primary" htmlType="submit">
@@ -114,15 +112,15 @@ const TournamentCreator = () => {
       );
     }
     // eslint-disable-next-line
-  }, [teams_form_list]);
+  }, [teamsFormList]);
 
   const onFinish = (values) => {
-    let help_list = [];
+    const helpList = [];
     for (let i = 0; i < values.number_of_teams; i++) {
-      help_list.push("team " + i);
+      helpList.push("team " + i);
     }
-    setTour_values(values);
-    setTeams_form_list(help_list);
+    setTourValues(values);
+    setTeamsFormList(helpList);
   };
 
   const tournamentForm = (
@@ -146,7 +144,7 @@ const TournamentCreator = () => {
         label="Type:"
         rules={[{ required: true }]}
       >
-        <Select defaultValue="round-robin">
+        <Select>
           <Option value="round-robin">round-robin</Option>
           <Option value="swiss">swiss</Option>
           <Option value="single-elimination"> single-elimination</Option>

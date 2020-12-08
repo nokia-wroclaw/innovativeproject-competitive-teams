@@ -96,37 +96,36 @@ const Dashboard = () => {
             <Menu.Item key="profile" icon={<NotificationOutlined />}>
               <Link to="/dashboard/profile">Profile</Link>
             </Menu.Item>
-            {!collapsed &&
-            userData !== null &&
-            (userData.role === "admin" || userData.role === "manager") ? (
-              <Menu.Item disabled key="team_creator" className="cursor-regular">
-                <TeamCreator />
-              </Menu.Item>
-            ) : null}
 
             {!collapsed &&
             userData !== null &&
-            (userData.role === "admin" || userData.role === "manager") ? (
-              <Menu.Item
-                disabled
-                key="match_creator"
-                className="cursor-regular"
-              >
-                <MatchCreator />
-              </Menu.Item>
-            ) : null}
+            (userData.role === "admin" || userData.role === "manager")
+              ? [
+                  <Menu.Item
+                    disabled
+                    key="team_creator"
+                    className="cursor-regular"
+                  >
+                    <TeamCreator />
+                  </Menu.Item>,
 
-            {!collapsed &&
-            userData !== null &&
-            (userData.role === "admin" || userData.role === "manager") ? (
-              <Menu.Item
-                disabled
-                key="tournament_creator"
-                className="cursor-regular"
-              >
-                <TournamentCreator />
-              </Menu.Item>
-            ) : null}
+                  <Menu.Item
+                    disabled
+                    key="match_creator"
+                    className="cursor-regular"
+                  >
+                    <MatchCreator />
+                  </Menu.Item>,
+
+                  <Menu.Item
+                    disabled
+                    key="tournament_creator"
+                    className="cursor-regular"
+                  >
+                    <TournamentCreator />
+                  </Menu.Item>,
+                ]
+              : null}
           </Menu>
         </Sider>
         <Layout style={{ padding: "24px 24px 24px" }}>
