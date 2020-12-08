@@ -125,6 +125,26 @@ def read_teams(
         )
 
 
+@app.get("/api/teams/search/", response_model=List[schemas.Team])
+def search_teams(
+    firebase_id: str = Header(None),
+    name: str = Header(None),
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        teams = crud.search_teams_by_name(db, name=name, skip=skip, limit=limit)
+        return teams
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
+
+
 # Players
 @app.post("/api/players/", response_model=schemas.Player)
 def create_player(player: schemas.PlayerCreate, db: Session = Depends(get_db)):
@@ -190,6 +210,26 @@ def read_players(
     )
     if access:
         players = crud.get_players(db, skip=skip, limit=limit)
+        return players
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
+
+
+@app.get("/api/players/search/", response_model=List[schemas.Player])
+def search_players(
+    firebase_id: str = Header(None),
+    name: str = Header(None),
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        players = crud.search_players_by_name(db, name=name, skip=skip, limit=limit)
         return players
     else:
         raise HTTPException(
