@@ -12,8 +12,8 @@ const { Panel } = Collapse;
 const { Title } = Typography;
 
 const Matches = () => {
-  let { currentUser } = useContext(AuthContext);
-  let fbId = currentUser.uid;
+  const { currentUser } = useContext(AuthContext);
+  const fbId = currentUser.uid;
 
   const [matches, setMatches] = useState(null);
   const [err, setErr] = useState(null);
