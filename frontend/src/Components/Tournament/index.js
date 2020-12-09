@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Typography, Divider, Card, Button, Table, Space, Spin } from "antd";
+import { Typography, Divider, Button, List, Table, Space, Spin } from "antd";
 import { useParams } from "react-router-dom";
 import "./index.css";
 
@@ -10,8 +10,14 @@ import SEGraph from "./SEGraph";
 const { Title } = Typography;
 const { Column, ColumnGroup } = Table;
 
+export const tournamentTypes = {
+  "round-robin": "Round Robin",
+  "single-elimination": "Single Elimination",
+  swiss: "Swiss",
+};
+
 const Tournament = ({ id, data }) => {
-  let { currentUser, userData } = useContext(AuthContext);
+  let { currentUser } = useContext(AuthContext);
   let fbId = currentUser.uid;
 
   // If no id has been passed, check router params
@@ -28,11 +34,13 @@ const Tournament = ({ id, data }) => {
   useEffect(() => {
     if (data) {
       setTournamentData(data);
+      console.log(data);
     } else if (id) {
       Api.get("/tournaments/" + id, { headers: { "firebase-id": fbId } })
         .then((response) => {
           if (response.status === 200) {
             setTournamentData(response.data);
+            console.log(response.data);
           }
         })
         .catch((err) => {
@@ -100,6 +108,32 @@ const Tournament = ({ id, data }) => {
       {tournamentData.tournament_type === "single-elimination" ? (
         <SEGraph id={id} maches={[]} />
       ) : null}
+      <List
+        header={
+          <div>
+            <strong>{tournamentData.name}</strong>
+          </div>
+        }
+        bordered
+        dataSource={[
+          {
+            title: "Type",
+            desc: tournamentTypes[tournamentData.tournament_type],
+          },
+          { title: "Number of teams", desc: tournamentData.teams.length },
+          {
+            title: "Description",
+            desc: tournamentData.description
+              ? tournamentData.description
+              : "Empty",
+          },
+        ]}
+        renderItem={(item) => (
+          <List.Item>
+            <List.Item.Meta title={item.title} description={item.desc} />
+          </List.Item>
+        )}
+      />
       <Table
         dataSource={scoreboard.results.map((team) => ({
           name: team.team.name,
@@ -113,7 +147,7 @@ const Tournament = ({ id, data }) => {
       >
         <ColumnGroup title="Scoreboard" align="center">
           <Column title="Team" dataIndex="name" key="teamname" />
-          <Column title="Id" dataIndex="id" key="teamid" />
+          <Column title="Team id" dataIndex="id" key="teamid" />
           <Column title="Match points" dataIndex="match_points" key="mpoints" />
           <Column
             title="Tournament points"

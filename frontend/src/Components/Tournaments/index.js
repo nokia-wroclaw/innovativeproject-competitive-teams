@@ -4,7 +4,7 @@ import "./index.css";
 
 import { Api } from "../../Api";
 import { AuthContext } from "../Auth/Auth";
-import Tournament from "../Tournament";
+import Tournament, { tournamentTypes } from "../Tournament";
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -36,7 +36,8 @@ const Tournaments = () => {
           <Collapse>
             {tournaments.map((tournament) => (
               <Panel
-                header={"Tournament " + tournament.name}
+                header={`Tournament ${tournament.name} - 
+                   ${tournamentTypes[tournament.tournament_type]} `}
                 key={tournament.id}
               >
                 <Tournament data={tournament} />
