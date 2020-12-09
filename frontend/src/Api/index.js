@@ -9,5 +9,5 @@ if (env === "development" && env_url != null) BACKEND_URL = env_url;
 
 export const Api = axios.create({
   baseURL: BACKEND_URL,
-  timeout: 1000,
+  timeout: 30000,
 });

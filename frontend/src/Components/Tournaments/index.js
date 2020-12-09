@@ -2,9 +2,9 @@ import React, { useEffect, useState, useContext } from "react";
 import { Layout, Card, Collapse, Typography, Spin } from "antd";
 import "./index.css";
 
-import Tournament from "../Tournament";
-
+import { Api } from "../../Api";
 import { AuthContext } from "../Auth/Auth";
+import Tournament from "../Tournament";
 
 const { Content } = Layout;
 const { Panel } = Collapse;
@@ -18,8 +18,14 @@ const Tournaments = () => {
   const [err, setErr] = useState(null);
 
   useEffect(() => {
-    if (fbId) setTournaments([{ name: "se bracket example", id: 0 }]);
-    else setErr(`fbId ${fbId}`);
+    Api.get("/tournaments/", { headers: { "firebase-id": fbId } })
+      .then((result) => {
+        setTournaments(result.data);
+      })
+      .catch((err) => {
+        setTournaments(null);
+        setErr(err.toString());
+      });
   }, [fbId]);
 
   return tournaments ? (
@@ -33,7 +39,7 @@ const Tournaments = () => {
                 header={"Tournament " + tournament.name}
                 key={tournament.id}
               >
-                <Tournament id={tournament.id} />
+                <Tournament data={tournament} />
               </Panel>
             ))}
           </Collapse>
