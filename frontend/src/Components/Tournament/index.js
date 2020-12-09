@@ -6,6 +6,7 @@ import "./index.css";
 import { Api } from "../../Api";
 import { AuthContext } from "../Auth/Auth";
 import SEGraph from "./SEGraph";
+import ResolveTournamentMatch from "./ResolveTournamentMatch";
 
 const { Title } = Typography;
 const { Column, ColumnGroup } = Table;
@@ -104,7 +105,10 @@ const Tournament = ({ id, data }) => {
     scoreboard &&
     finishedMatches &&
     unfinishedMatches ? (
-    <div style={{ overflow: "auto" }}>
+    <div
+      style={{ overflow: "auto" }}
+      className={scoreboard.finished ? "bgFinished" : null}
+    >
       {tournamentData.tournament_type === "single-elimination" ? (
         <SEGraph id={id} maches={[]} />
       ) : null}
@@ -127,6 +131,12 @@ const Tournament = ({ id, data }) => {
               ? tournamentData.description
               : "Empty",
           },
+          {
+            title: "Status",
+            desc: scoreboard.finished
+              ? `Finshed. Winner: ${scoreboard.results[0].team.name}!`
+              : "In progress.",
+          },
         ]}
         renderItem={(item) => (
           <List.Item>
@@ -134,6 +144,7 @@ const Tournament = ({ id, data }) => {
           </List.Item>
         )}
       />
+      <Divider />
       <Table
         dataSource={scoreboard.results.map((team) => ({
           name: team.team.name,
@@ -179,6 +190,7 @@ const Tournament = ({ id, data }) => {
       <Table
         dataSource={unfinishedMatches.map((match) => ({
           name: match.name,
+          id: match.id,
           teama: match.team1.name,
           teamb: match.team2.name,
           score: `${match.score1} : ${match.score2}`,
@@ -198,7 +210,12 @@ const Tournament = ({ id, data }) => {
             render={(text, record) => (
               <Space size="small">
                 <Button type="primary">Modify</Button>
-                <Button type="primary">Update results</Button>
+                <ResolveTournamentMatch
+                  tournamentID={tournamentData.id}
+                  matchID={record.id}
+                  teamAName={record.teama}
+                  teamBName={record.teamb}
+                />
               </Space>
             )}
           />
