@@ -171,6 +171,7 @@ const Tournament = ({ id, data }) => {
       <Table
         dataSource={finishedMatches.map((match) => ({
           name: match.name,
+          time: new Date(Date.parse(match.start_time)).toGMTString(),
           teama: match.team1.name,
           teamb: match.team2.name,
           score: `${match.score1} : ${match.score2}`,
@@ -181,6 +182,7 @@ const Tournament = ({ id, data }) => {
       >
         <ColumnGroup title="Finished matches" align="center">
           <Column title="Match" dataIndex="name" key="matchname" />
+          <Column title="Start time" dataIndex="time" key="time" />
           <Column title="Team A" dataIndex="teama" key="teama" />
           <Column title="Team B" dataIndex="teamb" key="teamb" />
           <Column title="Score (A : B)" dataIndex="score" key="score" />
@@ -189,8 +191,9 @@ const Tournament = ({ id, data }) => {
       <Divider />
       <Table
         dataSource={unfinishedMatches.map((match) => ({
-          name: match.name,
           id: match.id,
+          name: match.name,
+          time: new Date(Date.parse(match.start_time)).toGMTString(),
           teama: match.team1.name,
           teamb: match.team2.name,
           score: `${match.score1} : ${match.score2}`,
@@ -201,6 +204,7 @@ const Tournament = ({ id, data }) => {
       >
         <ColumnGroup title="Unfinished matches" align="center">
           <Column title="Match" dataIndex="name" key="matchname" />
+          <Column title="Start time" dataIndex="time" key="time" />
           <Column title="Team A" dataIndex="teama" key="teama" />
           <Column title="Team B" dataIndex="teamb" key="teamb" />
           <Column title="Score (A : B)" dataIndex="score" key="score" />
