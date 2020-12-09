@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
     Api.patch(
       `/players/${data.id}`,
       { name: data.name, description: data.description, colour: data.colour },
-      { headers: { "firebase-id": "admin" } }
+      { headers: { "firebase-id": currentUser.uid } }
     )
       .then(() => {
         Notification("success", "Success.", "Updated successfully.");
