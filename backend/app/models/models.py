@@ -9,6 +9,12 @@ class PlayerTeam(Base):
     player_id = Column('players_id', ForeignKey('players.id'), primary_key=True)
     team_id = Column('teams_id', ForeignKey('teams.id'), primary_key=True)
 
+class TournamentTeam(Base):
+    __tablename__ = "tournaments_teams"
+
+    tournament_id = Column('tournaments_id', ForeignKey('tournaments.id'), primary_key=True)
+    team_id = Column('teams_id', ForeignKey('teams.id'), primary_key=True)
+
 class Team(Base):
     __tablename__ = "teams"
 
@@ -21,6 +27,7 @@ class Team(Base):
     captain = relationship("Player", back_populates='captain_teams')
 
     players = relationship("Player", secondary=PlayerTeam.__tablename__)
+    tournaments = relationship("Tournament", secondary=TournamentTeam.__tablename__)
 
 class Player(Base):
     __tablename__ = "players"
@@ -51,5 +58,26 @@ class Match(Base):
     start_time = Column(String)
     finished = Column(Boolean)
 
+
+    tournament_place = Column(Integer)
+
+    tournament_id = Column(Integer, ForeignKey('tournaments.id'))
+    tournament = relationship("Tournament", back_populates="matches")
+
     score1 = Column(Integer)
     score2 = Column(Integer)
+
+class Tournament(Base):
+    __tablename__ = "tournaments"
+
+    id = Column(Integer, primary_key=True, nullable=False)
+    name = Column(String)
+    description = Column(String)
+
+    start_time = Column(String)
+
+    tournament_type = Column(String)
+
+    matches = relationship("Match", back_populates="tournament")
+    teams = relationship("Team", secondary=TournamentTeam.__tablename__)
+
