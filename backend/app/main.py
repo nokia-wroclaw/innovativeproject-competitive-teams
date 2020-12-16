@@ -496,14 +496,19 @@ def create_tournament(
                 raise HTTPException(
                     status_code=404, detail="Team " + str(team_id) + " not found"
                 )
-        if len(teams_ids) % 2 and tournament.tournament_type == "swiss":
-            raise HTTPException(
-                    status_code=404, detail="Swiss tournament requires even number of teams"
-            )
-        if len(teams_ids) < tournament.swiss_rounds + 1 and tournament.tournament_type == "swiss":
-            raise HTTPException(
-                    status_code=404, detail="Swiss tournament: Not enough teams for " + str(tournament.swiss_rounds) + " number of rounds"
-            )
+        if tournament.tournament_type == "swiss":
+            if len(teams_ids) % 2:
+                raise HTTPException(
+                        status_code=404, detail="Swiss tournament requires even number of teams"
+                )
+            if len(teams_ids) < tournament.swiss_rounds + 1:
+                raise HTTPException(
+                        status_code=404, detail="Swiss tournament: Not enough teams for " + str(tournament.swiss_rounds) + " number of rounds"
+                )
+            if tournament.swiss_rounds <= 0:
+                raise HTTPException(
+                        status_code=404, detail="Swiss tournament: non-positive number of rounds"
+                )
         return crud.create_tournament(db=db, tournament=tournament)
     else:
         raise HTTPException(

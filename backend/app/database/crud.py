@@ -152,7 +152,7 @@ def update_match(db: Session, match_id: int, match: schemas.MatchUpdate):
 def create_tournament(db: Session, tournament: schemas.TournamentCreate):
     teams_ids = tournament.teams_ids
     db_tournament = models.Tournament(name=tournament.name, description=tournament.description, start_time=tournament.start_time,
-    tournament_type=tournament.tournament_type, teams=[])
+    tournament_type=tournament.tournament_type, teams=[], swiss_rounds=tournament.swiss_rounds)
     for element in teams_ids:
         db_team = db.query(models.Team).filter(models.Team.id == element).first()
         db_tournament.teams.append(db_team)
@@ -214,11 +214,18 @@ def create_tournament(db: Session, tournament: schemas.TournamentCreate):
     return db_tournament
 
 def update_tournament_match(db: Session, tournament_id: int, match_id: int, match: schemas.MatchResult):
+    db_tournament = db.query(models.Tournament).filter(models.Tournament.id == tournament_id).first()
+
     db_match = db.query(models.Match).filter(models.Match.id == match_id).first()
     db_match.score1 = match.score1
     db_match.score2 = match.score2
     db_match.finished = True
     db.commit()
+
+    if db_tournament.tournament_type == "swiss":
+        scoreboard = get_tournament_scoreboard(db=db, tournament_id=tournament_id)
+        if scoreboard.matches_unfinished == 0 and scoreboard.swiss_round < db_tournament.swiss_rounds:
+            print("Next round")
 
 def get_tournament_matches(db: Session, tournament_id: int, skip: int = 0, limit: int = 100):
     return db.query(models.Match).filter(models.Match.tournament_id == tournament_id).order_by(models.Match.tournament_place).offset(skip).limit(limit).all()
@@ -276,9 +283,14 @@ def get_tournament_scoreboard(db: Session, tournament_id: int):
         )
         teams_results.append(team_result)
 
+    swiss_round = None
+    if db_tournament.tournament_type == "swiss":
+        swiss_round = len(db_tournament.matches) / (len(db_tournament.teams) / 2)
+
     res = schemas.TournamentResults(matches_finished=matches_finished, 
                                     matches_unfinished = matches_unfinished, 
-                                    matches_total = matches_total, 
+                                    matches_total = matches_total,
+                                    swiss_round = swiss_round,
                                     finished = matches_total == matches_finished,
                                     results=teams_results)
     return res

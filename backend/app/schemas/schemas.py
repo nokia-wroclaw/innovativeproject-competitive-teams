@@ -104,6 +104,7 @@ class TournamentResults(BaseModel):
     matches_finished: int
     matches_unfinished: int
     matches_total: int
+    swiss_round: Optional[int] = 0
     finished: bool
 
     results: List[TeamResults] = []
