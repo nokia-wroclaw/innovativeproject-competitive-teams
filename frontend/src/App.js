@@ -14,6 +14,7 @@ import LoggedOut from "./Components/LoggedOut";
 import Teams from "./Components/Teams";
 import Players from "./Components/Players";
 import Matches from "./Components/Matches";
+import Tournaments from "./Components/Tournaments";
 
 const App = () => (
   <AuthProvider>
@@ -30,6 +31,7 @@ const App = () => (
             <PrivateRoute exact path="/teams" component={Teams} />
             <PrivateRoute exact path="/players" component={Players} />
             <PrivateRoute exact path="/matches" component={Matches} />
+            <PrivateRoute exact path="/tournaments" component={Tournaments} />
           </Switch>
         </Layout>
       </Router>
