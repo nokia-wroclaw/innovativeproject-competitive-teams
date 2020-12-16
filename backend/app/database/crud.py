@@ -222,10 +222,54 @@ def update_tournament_match(db: Session, tournament_id: int, match_id: int, matc
     db_match.finished = True
     db.commit()
 
+    def is_pair_valid(pair):
+        for match in db_tournament.matches:
+            if (match.team1_id == pair[0] and match.team2_id == pair[1]) or (match.team1_id == pair[1] and match.team2_id == pair[0]):
+                return False
+        return True
+
+    def is_perm_valid(perm):
+        i = len(perm) - 1
+        while i > 0:
+            if not is_pair_valid((perm[i], perm[i - 1])):
+                return False
+            i -= 2
+        return True
+
+    def make_new_round(teams_ids):
+        comb = []
+        permutations = list(itertools.permutations(teams_ids))
+        for perm in permutations:
+            if is_perm_valid(perm):
+                for i in range(0, len(teams_ids), 2):
+                    comb.append((teams_ids[i], teams_ids[i + 1]))
+                    return comb
+        print("MAKE NEW ROUND ERROR")
+
     if db_tournament.tournament_type == "swiss":
         scoreboard = get_tournament_scoreboard(db=db, tournament_id=tournament_id)
         if scoreboard.matches_unfinished == 0 and scoreboard.swiss_round < db_tournament.swiss_rounds:
-            print("Next round")
+            teams_ids = [result.team.id for result in scoreboard.results]
+            comb = make_new_round(teams_ids)
+            print(comb)
+            i = scoreboard.matches_finished
+            for t1, t2 in comb:
+                i += 1
+                db_match = models.Match(
+                    name = db_tournament.name + " match " + str(i),
+                    description = "",
+                    start_time = db_tournament.start_time,
+                    finished = False,
+                    score1 = 0,
+                    score2 = 0,
+                    team1_id = t1,
+                    team2_id = t2,
+                    tournament_place = i,
+                    tournament_id = db_tournament.id
+                )
+                db.add(db_match)
+                db.commit()
+                db.refresh(db_match)
 
 def get_tournament_matches(db: Session, tournament_id: int, skip: int = 0, limit: int = 100):
     return db.query(models.Match).filter(models.Match.tournament_id == tournament_id).order_by(models.Match.tournament_place).offset(skip).limit(limit).all()
