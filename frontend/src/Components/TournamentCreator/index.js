@@ -9,13 +9,14 @@ import {
   DatePicker,
   InputNumber,
   Select,
+  AutoComplete,
 } from "antd";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
 import { Notification } from "../Util/Notification";
 import { Api } from "../../Api";
 
-const { Option } = Select;
+let { Option } = Select;
 const layout = {
   labelCol: { span: 11 },
   wrapperCol: { span: 16 },
@@ -32,15 +33,40 @@ const TournamentCreator = () => {
   const [visible, setVisible] = useState(false);
   const [teamsFormList, setTeamsFormList] = useState(null);
   const [tourValues, setTourValues] = useState({});
-  const teams_ids_list = [];
+  const [teamIDs, setTeamIDs] = useState({});
+  const teamIdsList = [];
   const addTeam = (value) => {
-    teams_ids_list.push(value);
+    teamIdsList.push(value);
   };
 
   const cancel = () => {
     setVisible(false);
     settourForm(tournamentForm);
   };
+  const handleSearch = (value) => {
+    Api.get("/teams/search/", {
+      headers: {
+        "firebase-id": fbId,
+        name: value,
+      },
+    }).then((result) => {
+      console.log(teamIDs);
+      setTeamIDs(
+        result.data.reduce((acc, { id, name }) => {
+          acc[name] = id;
+          return acc;
+        }, {})
+      );
+      console.log(teamIDs);
+      console.log(
+        result.data.reduce((acc, { id, name }) => {
+          acc[name] = id;
+          return acc;
+        }, {})
+      );
+    });
+  };
+
   const onFinish2 = (values) => {
     Object.keys(values)
       .filter((prop) => prop.slice(0, 5) === "team_")
@@ -59,7 +85,7 @@ const TournamentCreator = () => {
         color: "ffffff",
         tournament_type: tourValues.tournament_type,
         start_time: tourValues.starttime,
-        teams_ids: teams_ids_list,
+        teams_ids: Object.values(teamIDs),
       },
       hdrs
     )
@@ -81,6 +107,7 @@ const TournamentCreator = () => {
     setVisible(false);
   };
   useEffect(() => {
+    let { Option } = AutoComplete;
     if (teamsFormList) {
       settourForm(
         <Form
@@ -94,7 +121,13 @@ const TournamentCreator = () => {
               name={`team_${index}`}
               label={`Team ${index + 1} id`}
             >
-              <InputNumber />
+              <AutoComplete onSearch={handleSearch} placeholder="input here">
+                {Object.keys(teamIDs).map((team) => (
+                  <Option key={team} value={team}>
+                    {team}
+                  </Option>
+                ))}
+              </AutoComplete>
             </Form.Item>
           ))}
 
