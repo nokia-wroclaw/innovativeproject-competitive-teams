@@ -30,19 +30,14 @@ const MatchCreator = () => {
   let { currentUser } = useContext(AuthContext);
   let fbId = currentUser.uid;
   const [visible, setVisible] = useState(false);
-  const [teamNames, setTeamNames] = useState([]);
   const [teamIDs, setTeamIDs] = useState({});
 
   const onFinish = (values) => {
-    const team1name = values.team1id;
-    const team2name = values.team2id;
-    values.team1id = teamIDs[values.team1id];
-    values.team2id = teamIDs[values.team2id];
     const hdrs = {
       headers: {
         "firebase-id": fbId,
-        "team1-id": values.team1id,
-        "team2-id": values.team2id,
+        "team1-id": teamIDs[values.team1name],
+        "team2-id": teamIDs[values.team2name],
       },
     };
 
@@ -64,7 +59,7 @@ const MatchCreator = () => {
         Notification(
           "success",
           "Success.",
-          `Match ${values.name} between ${team1name} ${team2name} created successfully.`
+          `Match ${values.name} between ${values.team1id} ${values.team2id} created successfully.`
         );
       })
       .catch((err) => {
@@ -85,12 +80,12 @@ const MatchCreator = () => {
         name: value,
       },
     }).then((result) => {
-      const tnames = result.data.map((team) => team.name);
-      const IDs = result.data.map((team) => team.id);
-      const names = {};
-      tnames.forEach((key, i) => (names[key] = IDs[i]));
-      setTeamNames(tnames);
-      setTeamIDs(names);
+      setTeamIDs(
+        result.data.reduce((acc, { id, name }) => {
+          acc[name] = id;
+          return acc;
+        }, {})
+      );
     });
   };
 
@@ -111,25 +106,29 @@ const MatchCreator = () => {
         <DatePicker showTime format="YYYY-MM-DD HH:mm" />
       </Form.Item>
       <Form.Item
-        name="team1id"
+        name="team1name"
         label="Team's name"
         rules={[{ required: true }]}
       >
-        <AutoComplete onSearch={handleSearch} placeholder="name">
-          {teamNames.map((name) => {
-            return <Option key={name}>{name}</Option>;
-          })}
+        <AutoComplete onSearch={handleSearch} placeholder="input here">
+          {Object.keys(teamIDs).map((team) => (
+            <Option key={team} value={team}>
+              {team}
+            </Option>
+          ))}
         </AutoComplete>
       </Form.Item>
       <Form.Item
-        name="team2id"
+        name="team2name"
         label="Team's name"
         rules={[{ required: true }]}
       >
-        <AutoComplete onSearch={handleSearch} placeholder="name">
-          {teamNames.map((name) => {
-            return <Option key={name}>{name}</Option>;
-          })}
+        <AutoComplete onSearch={handleSearch} placeholder="input here">
+          {Object.keys(teamIDs).map((team) => (
+            <Option key={team} value={team}>
+              {team}
+            </Option>
+          ))}
         </AutoComplete>
       </Form.Item>
       <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>

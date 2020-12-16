@@ -8,8 +8,8 @@ import { Api } from "../../Api";
 const { TextArea } = Input;
 const { Option } = AutoComplete;
 const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 },
+  labelCol: { span: 9 },
+  wrapperCol: { span: 15 },
 };
 
 const validateMessages = {
@@ -22,12 +22,11 @@ const TeamCreator = () => {
   let fbId = currentUser.uid;
   const hdrs = { headers: { "firebase-id": fbId } };
   const [visible, setVisible] = useState(false);
-  const [playerNames, setPlayerNames] = useState([]);
   const [playerIDs, setPlayerIDs] = useState({});
 
   const onFinish = (values) => {
     // Verify that the player exists
-    values.capid = playerIDs[values.capid];
+    values.capid = playerIDs[values.capname];
     Api.get("/players/" + values.capid, hdrs)
       // Create the team
       .then(() =>
@@ -85,15 +84,15 @@ const TeamCreator = () => {
         name: value,
       },
     }).then((result) => {
-      console.log(result);
-      const pnames = result.data.map((player) => player.name);
-      const IDs = result.data.map((player) => player.id);
-      const names = {};
-      pnames.forEach((key, i) => (names[key] = IDs[i]));
-      setPlayerNames(pnames);
-      setPlayerIDs(names);
+      setPlayerIDs(
+        result.data.reduce((acc, { id, name }) => {
+          acc[name] = id;
+          return acc;
+        }, {})
+      );
     });
   };
+
   const teamForm = (
     <Form
       {...layout}
@@ -104,11 +103,17 @@ const TeamCreator = () => {
       <Form.Item name="name" label="Name" rules={[{ required: true }]}>
         <Input />
       </Form.Item>
-      <Form.Item name="capid" label="Captain ID" rules={[{ required: true }]}>
-        <AutoComplete onSearch={handleSearch} placeholder="name">
-          {playerNames.map((name) => {
-            return <Option key={name}>{name}</Option>;
-          })}
+      <Form.Item
+        name="capname"
+        label="Captain name"
+        rules={[{ required: true }]}
+      >
+        <AutoComplete onSearch={handleSearch} placeholder="input here">
+          {Object.keys(playerIDs).map((player) => (
+            <Option key={player} value={player}>
+              {player}
+            </Option>
+          ))}
         </AutoComplete>
       </Form.Item>
       <Form.Item name="desc" label="Description">
