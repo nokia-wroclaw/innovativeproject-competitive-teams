@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 import iso8601
 import itertools
+import random
+import copy
 
 from app.models import models
 from app.schemas import schemas
@@ -159,6 +161,37 @@ def create_tournament(db: Session, tournament: schemas.TournamentCreate):
     db.refresh(db_tournament)
     if tournament.tournament_type == "round-robin":
         comb = list(itertools.combinations(teams_ids, 2))
+        i = 0
+        for t1, t2 in comb:
+            i += 1
+            db_match = models.Match(
+                name = tournament.name + " match " + str(i),
+                description = "",
+                start_time = tournament.start_time,
+                finished = False,
+                score1 = 0,
+                score2 = 0,
+                team1_id = t1,
+                team2_id = t2,
+                tournament_place = i,
+                tournament_id = db_tournament.id
+            )
+            db.add(db_match)
+            db.commit()
+            db.refresh(db_match)
+    
+    elif tournament.tournament_type == "swiss":
+        lst = copy.deepcopy(teams_ids)
+
+        def pop_random(lst):
+            idx = random.randrange(0, len(lst))
+            return lst.pop(idx)
+        
+        comb = []
+        while lst:
+            rand1 = pop_random(lst)
+            rand2 = pop_random(lst)
+            comb.append((rand1, rand2))
         i = 0
         for t1, t2 in comb:
             i += 1

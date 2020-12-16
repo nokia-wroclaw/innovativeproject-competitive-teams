@@ -83,7 +83,9 @@ class TournamentBase(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     tournament_type: Optional[str] = None
+    swiss_rounds: Optional[int] = 3
     start_time: Optional[str] = None
+
 
 class TournamentUpdate(BaseModel):
     name: Optional[str] = None
