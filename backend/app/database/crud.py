@@ -243,7 +243,7 @@ def update_tournament_match(db: Session, tournament_id: int, match_id: int, matc
             if is_perm_valid(perm):
                 for i in range(0, len(teams_ids), 2):
                     comb.append((teams_ids[i], teams_ids[i + 1]))
-                    return comb
+                return comb
         print("MAKE NEW ROUND ERROR")
 
     if db_tournament.tournament_type == "swiss":
