@@ -37,9 +37,9 @@ const Match = ({ id }) => {
 
   function color(matchd) {
     if (matchd.finished) {
-      return "#8c8c8c";
+      return "#b7eb8f";
     }
-    return "#b7eb8f";
+    return "#8c8c8c";
   }
   return matchdata ? (
     <div className="match-info">
