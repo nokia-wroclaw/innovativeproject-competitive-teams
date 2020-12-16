@@ -3,53 +3,44 @@ import { Layout, Card, Collapse, Typography, Spin } from "antd";
 import "./index.css";
 
 import { Api } from "../../Api";
-import Match from "../Match";
-
 import { AuthContext } from "../Auth/Auth";
+import Tournament, { tournamentTypes } from "../Tournament";
 
 const { Content } = Layout;
 const { Panel } = Collapse;
 const { Title } = Typography;
 
-const Matches = () => {
-  const { currentUser } = useContext(AuthContext);
-  const fbId = currentUser.uid;
+const Tournaments = () => {
+  let { currentUser } = useContext(AuthContext);
+  let fbId = currentUser.uid;
 
-  const [matches, setMatches] = useState(null);
+  const [tournaments, setTournaments] = useState(null);
   const [err, setErr] = useState(null);
 
   useEffect(() => {
-    Api.get("/matches/?limit=5", { headers: { "firebase-id": fbId } })
+    Api.get("/tournaments/", { headers: { "firebase-id": fbId } })
       .then((result) => {
-        setMatches(result.data);
+        setTournaments(result.data);
       })
       .catch((err) => {
-        setMatches(null);
-
+        setTournaments(null);
         setErr(err.toString());
       });
   }, [fbId]);
 
-  return matches ? (
+  return tournaments ? (
     <Layout className="list-background">
       <Content className="site-layout-background">
         <Card>
-          <Title level={1} align="center">
-            {" "}
-            Upcoming matches{" "}
-          </Title>
+          <Title> List of tournaments </Title>
           <Collapse>
-            {matches.map((match) => (
+            {tournaments.map((tournament) => (
               <Panel
-                header={
-                  <Title level={3} align="center">
-                    {match.name + "  " + match.start_time}
-                  </Title>
-                }
-                key={match.id}
-                showArrow={false}
+                header={`Tournament ${tournament.name} - 
+                   ${tournamentTypes[tournament.tournament_type]} `}
+                key={tournament.id}
               >
-                <Match id={match.id} />
+                <Tournament data={tournament} />
               </Panel>
             ))}
           </Collapse>
@@ -58,7 +49,7 @@ const Matches = () => {
     </Layout>
   ) : err ? (
     <Title>
-      Api request failed for the list of matches.
+      Api request failed for the list of tournaments.
       <br />
       {err}
     </Title>
@@ -73,4 +64,4 @@ const Matches = () => {
   );
 };
 
-export default Matches;
+export default Tournaments;

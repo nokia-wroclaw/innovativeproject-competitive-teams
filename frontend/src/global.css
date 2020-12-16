@@ -1,0 +1,14 @@
+.ant-layout {
+  background-color: #1f2223;
+}
+
+.ant-typography,
+.ant-card {
+  color: rgba(232, 230, 227, 0.85);
+  background-color: #131516;
+  border-color: #3f3f3f;
+}
+
+.ant-card-head {
+  border-bottom-color: #3f3f3f;
+}

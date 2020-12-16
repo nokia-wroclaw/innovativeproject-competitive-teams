@@ -1,0 +1,5 @@
+@import "~antd/dist/antd.css";
+
+.bgFinished {
+  border: solid 5px #b7eb8f;
+}
