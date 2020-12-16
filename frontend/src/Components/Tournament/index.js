@@ -146,7 +146,8 @@ const Tournament = ({ id, data }) => {
       />
       <Divider />
       <Table
-        dataSource={scoreboard.results.map((team) => ({
+        dataSource={scoreboard.results.map((team, idx) => ({
+          idx: (idx + 1).toString() + ".",
           name: team.team.name,
           id: team.team.id,
           match_points: team.match_points,
@@ -157,6 +158,7 @@ const Tournament = ({ id, data }) => {
         bordered={true}
       >
         <ColumnGroup title="Scoreboard" align="center">
+          <Column title="Position" dataIndex="idx" key="position" />
           <Column title="Team" dataIndex="name" key="teamname" />
           <Column title="Team id" dataIndex="id" key="teamid" />
           <Column title="Match points" dataIndex="match_points" key="mpoints" />
