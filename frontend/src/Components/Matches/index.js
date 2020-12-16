@@ -10,14 +10,12 @@ import { AuthContext } from "../Auth/Auth";
 const { Content } = Layout;
 const { Panel } = Collapse;
 const { Title } = Typography;
-
 const Matches = () => {
   let { currentUser } = useContext(AuthContext);
   let fbId = currentUser.uid;
 
   const [matches, setMatches] = useState(null);
   const [err, setErr] = useState(null);
-
   useEffect(() => {
     Api.get("/matches/", { headers: { "firebase-id": fbId } })
       .then((result) => {

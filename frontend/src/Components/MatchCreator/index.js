@@ -38,7 +38,6 @@ const MatchCreator = () => {
     const team2name = values.team2id;
     values.team1id = teamIDs[values.team1id];
     values.team2id = teamIDs[values.team2id];
-    console.log(values);
     const hdrs = {
       headers: {
         "firebase-id": fbId,
@@ -86,7 +85,6 @@ const MatchCreator = () => {
         name: value,
       },
     }).then((result) => {
-      console.log(result);
       const tnames = result.data.map((team) => team.name);
       const IDs = result.data.map((team) => team.id);
       const names = {};

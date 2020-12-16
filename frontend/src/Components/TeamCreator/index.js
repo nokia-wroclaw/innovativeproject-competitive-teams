@@ -1,12 +1,12 @@
 import React, { useContext, useState } from "react";
-import { Popover, Button, Col, Form, Input, Space } from "antd";
+import { Popover, Button, Col, Form, Input, Space, AutoComplete } from "antd";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
 import { Notification } from "../Util/Notification";
 import { Api } from "../../Api";
 
 const { TextArea } = Input;
-
+const { Option } = AutoComplete;
 const layout = {
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
@@ -22,9 +22,12 @@ const TeamCreator = () => {
   let fbId = currentUser.uid;
   const hdrs = { headers: { "firebase-id": fbId } };
   const [visible, setVisible] = useState(false);
+  const [playerNames, setPlayerNames] = useState([]);
+  const [playerIDs, setPlayerIDs] = useState({});
 
   const onFinish = (values) => {
     // Verify that the player exists
+    values.capid = playerIDs[values.capid];
     Api.get("/players/" + values.capid, hdrs)
       // Create the team
       .then(() =>
@@ -75,6 +78,22 @@ const TeamCreator = () => {
     setVisible(false);
   };
 
+  const handleSearch = (value) => {
+    Api.get("/players/search/", {
+      headers: {
+        "firebase-id": fbId,
+        name: value,
+      },
+    }).then((result) => {
+      console.log(result);
+      const pnames = result.data.map((player) => player.name);
+      const IDs = result.data.map((player) => player.id);
+      const names = {};
+      pnames.forEach((key, i) => (names[key] = IDs[i]));
+      setPlayerNames(pnames);
+      setPlayerIDs(names);
+    });
+  };
   const teamForm = (
     <Form
       {...layout}
@@ -86,7 +105,11 @@ const TeamCreator = () => {
         <Input />
       </Form.Item>
       <Form.Item name="capid" label="Captain ID" rules={[{ required: true }]}>
-        <Input />
+        <AutoComplete onSearch={handleSearch} placeholder="name">
+          {playerNames.map((name) => {
+            return <Option key={name}>{name}</Option>;
+          })}
+        </AutoComplete>
       </Form.Item>
       <Form.Item name="desc" label="Description">
         <TextArea />
