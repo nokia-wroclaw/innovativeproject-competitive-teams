@@ -240,9 +240,10 @@ def update_tournament_match(db: Session, tournament_id: int, match_id: int, matc
         comb = []
         permutations = list(itertools.permutations(teams_ids))
         for perm in permutations:
+            comb = []
             if is_perm_valid(perm):
                 for i in range(0, len(teams_ids), 2):
-                    comb.append((teams_ids[i], teams_ids[i + 1]))
+                    comb.append((perm[i], perm[i + 1]))
                 return comb
         print("MAKE NEW ROUND ERROR")
 
@@ -251,7 +252,6 @@ def update_tournament_match(db: Session, tournament_id: int, match_id: int, matc
         if scoreboard.matches_unfinished == 0 and scoreboard.swiss_round < db_tournament.swiss_rounds:
             teams_ids = [result.team.id for result in scoreboard.results]
             comb = make_new_round(teams_ids)
-            print(comb)
             i = scoreboard.matches_finished
             for t1, t2 in comb:
                 i += 1
