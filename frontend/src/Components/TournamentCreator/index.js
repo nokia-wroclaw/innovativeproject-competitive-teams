@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Popover,
   Button,
@@ -34,14 +34,11 @@ const TournamentCreator = () => {
   const [teamsFormList, setTeamsFormList] = useState(null);
   const [tourValues, setTourValues] = useState({});
   const [teamIDs, setTeamIDs] = useState({});
-  const teamIdsList = [];
-  const addTeam = (value) => {
-    teamIdsList.push(value);
-  };
+  const [currentForm, setCurrentForm] = useState(1);
 
   const cancel = () => {
+    setCurrentForm(1);
     setVisible(false);
-    settourForm(tournamentForm);
   };
   const handleSearch = (value) => {
     Api.get("/teams/search/", {
@@ -50,15 +47,7 @@ const TournamentCreator = () => {
         name: value,
       },
     }).then((result) => {
-      console.log(teamIDs);
       setTeamIDs(
-        result.data.reduce((acc, { id, name }) => {
-          acc[name] = id;
-          return acc;
-        }, {})
-      );
-      console.log(teamIDs);
-      console.log(
         result.data.reduce((acc, { id, name }) => {
           acc[name] = id;
           return acc;
@@ -68,10 +57,6 @@ const TournamentCreator = () => {
   };
 
   const onFinish2 = (values) => {
-    Object.keys(values)
-      .filter((prop) => prop.slice(0, 5) === "team_")
-      .forEach((team) => addTeam(values[team]));
-
     const hdrs = {
       headers: {
         "firebase-id": fbId,
@@ -91,7 +76,11 @@ const TournamentCreator = () => {
     )
 
       .then(() => {
-        Notification("success", "Success.", "Tournament created successfully.");
+        Notification(
+          "success",
+          "Success.",
+          `Tournament ${tourValues.name} created successfully.`
+        );
       })
       .catch((err) => {
         Notification(
@@ -106,113 +95,111 @@ const TournamentCreator = () => {
       });
     setVisible(false);
   };
-  useEffect(() => {
-    let { Option } = AutoComplete;
-    if (teamsFormList) {
-      settourForm(
-        <Form
-          {...layout}
-          onFinish={onFinish2}
-          validateMessages={validateMessages}
-        >
-          {teamsFormList.map((item, index) => (
-            <Form.Item
-              rules={[{ required: true }]}
-              name={`team_${index}`}
-              label={`Team ${index + 1} id`}
-            >
-              <AutoComplete onSearch={handleSearch} placeholder="input here">
-                {Object.keys(teamIDs).map((team) => (
-                  <Option key={team} value={team}>
-                    {team}
-                  </Option>
-                ))}
-              </AutoComplete>
-            </Form.Item>
-          ))}
-
-          <Form.Item>
-            <Space size="middle">
-              <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
-              <Button type="primary" onClick={cancel}>
-                Cancel
-              </Button>
-            </Space>
-          </Form.Item>
-        </Form>
-      );
-    }
-    // eslint-disable-next-line
-  }, [teamsFormList]);
 
   const onFinish = (values) => {
     const helpList = [];
     for (let i = 0; i < values.number_of_teams; i++) {
       helpList.push("team " + i);
     }
-    setTourValues(values);
-    setTeamsFormList(helpList);
+    setTeamsFormList(helpList, setTourValues(values));
+    setCurrentForm(2);
   };
 
-  const tournamentForm = (
-    <Form
-      {...layout}
-      name="nest-messages"
-      onFinish={onFinish}
-      validateMessages={validateMessages}
-    >
-      <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-        <Input />
-      </Form.Item>
-      <Form.Item name="desc" label="Description">
-        <Input />
-      </Form.Item>
-      <Form.Item name="starttime" label="Start Time">
-        <DatePicker showTime format="YYYY-MM-DD HH:mm" />
-      </Form.Item>
-      <Form.Item
-        name="tournament_type"
-        label="Type:"
-        rules={[{ required: true }]}
-      >
-        <Select>
-          <Option value="round-robin">round-robin</Option>
-          <Option value="swiss">swiss</Option>
-          <Option value="single-elimination"> single-elimination</Option>
-        </Select>
-      </Form.Item>
-      <Form.Item
-        name="number_of_teams"
-        label="Number of teams: "
-        rules={[{ required: true }]}
-      >
-        <InputNumber />
-      </Form.Item>
-      <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-        <Space size="middle">
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-          <Button type="primary" onClick={() => setVisible(false)}>
-            Cancel
-          </Button>
-        </Space>
-      </Form.Item>
-    </Form>
-  );
-  const [tourForm, settourForm] = useState(tournamentForm);
   return (
     <Col align="center">
       <Popover
-        placement="right"
         title="Create a new tournament"
-        trigger="click"
-        display="inline-block"
-        content={tourForm}
-        visible={visible}
         size="large"
+        placement="right"
+        display="inline-block"
+        visible={visible}
+        content={
+          currentForm === 1 ? (
+            <Form
+              {...layout}
+              name="nest-messages"
+              onFinish={onFinish}
+              validateMessages={validateMessages}
+            >
+              <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+                <Input />
+              </Form.Item>
+              <Form.Item name="desc" label="Description">
+                <Input />
+              </Form.Item>
+              <Form.Item name="starttime" label="Start Time">
+                <DatePicker showTime format="YYYY-MM-DD HH:mm" />
+              </Form.Item>
+              <Form.Item
+                name="tournament_type"
+                label="Type:"
+                rules={[{ required: true }]}
+              >
+                <Select>
+                  <Option value="round-robin">round-robin</Option>
+                  <Option value="swiss">swiss</Option>
+                  <Option value="single-elimination">
+                    {" "}
+                    single-elimination
+                  </Option>
+                </Select>
+              </Form.Item>
+              <Form.Item
+                name="number_of_teams"
+                label="Number of teams: "
+                rules={[{ required: true }]}
+              >
+                <InputNumber />
+              </Form.Item>
+              <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+                <Space size="middle">
+                  <Button type="primary" htmlType="submit">
+                    Submit
+                  </Button>
+                  <Button type="primary" onClick={() => setVisible(false)}>
+                    Cancel
+                  </Button>
+                </Space>
+              </Form.Item>
+            </Form>
+          ) : (
+            <Form
+              {...layout}
+              onFinish={onFinish2}
+              validateMessages={validateMessages}
+            >
+              {teamsFormList.map((item, index) => (
+                <Form.Item
+                  rules={[{ required: true }]}
+                  name={`team_${index}`}
+                  label={`Team ${index + 1}`}
+                >
+                  <AutoComplete
+                    onSearch={handleSearch}
+                    placeholder="input here"
+                  >
+                    {Object.keys(teamIDs).map((team) => (
+                      <Option key={team} value={team}>
+                        {team}
+                      </Option>
+                    ))}
+                  </AutoComplete>
+                </Form.Item>
+              ))}
+
+              <Form.Item>
+                <Space size="middle">
+                  <Button type="primary" htmlType="submit">
+                    Submit
+                  </Button>
+                  <Button type="primary" onClick={cancel}>
+                    Cancel
+                  </Button>
+                </Space>
+              </Form.Item>
+            </Form>
+          )
+        }
       >
         <Button
           type="primary"
