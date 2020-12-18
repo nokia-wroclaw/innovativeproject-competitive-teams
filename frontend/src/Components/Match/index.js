@@ -63,7 +63,11 @@ const Match = ({ id }) => {
         style={{ borderColor: color(matchdata), borderWidth: 5 }}
       >
         <Row>
-          <Title level={3}> Starting Time: {matchdata.start_time}</Title>
+          <Title level={3}>
+            {" "}
+            Starting Time:{" "}
+            {new Date(Date.parse(matchdata.start_time)).toGMTString()}
+          </Title>
         </Row>
         <Row gutter={16}></Row>
         <Row gutter={16}>

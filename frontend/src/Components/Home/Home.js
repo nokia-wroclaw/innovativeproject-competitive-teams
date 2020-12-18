@@ -43,7 +43,9 @@ const Matches = () => {
               <Panel
                 header={
                   <Title level={3} align="center">
-                    {match.name + "  " + match.start_time}
+                    {match.name +
+                      "  " +
+                      new Date(Date.parse(match.start_time)).toGMTString()}
                   </Title>
                 }
                 key={match.id}
