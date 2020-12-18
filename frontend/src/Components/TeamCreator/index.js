@@ -1,15 +1,15 @@
 import React, { useContext, useState } from "react";
-import { Popover, Button, Col, Form, Input, Space } from "antd";
+import { Popover, Button, Col, Form, Input, Space, AutoComplete } from "antd";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
 import { Notification } from "../Util/Notification";
 import { Api } from "../../Api";
 
 const { TextArea } = Input;
-
+const { Option } = AutoComplete;
 const layout = {
-  labelCol: { span: 8 },
-  wrapperCol: { span: 16 },
+  labelCol: { span: 9 },
+  wrapperCol: { span: 15 },
 };
 
 const validateMessages = {
@@ -22,9 +22,11 @@ const TeamCreator = () => {
   let fbId = currentUser.uid;
   const hdrs = { headers: { "firebase-id": fbId } };
   const [visible, setVisible] = useState(false);
+  const [playerIDs, setPlayerIDs] = useState({});
 
   const onFinish = (values) => {
     // Verify that the player exists
+    values.capid = playerIDs[values.capname];
     Api.get("/players/" + values.capid, hdrs)
       // Create the team
       .then(() =>
@@ -75,6 +77,22 @@ const TeamCreator = () => {
     setVisible(false);
   };
 
+  const handleSearch = (value) => {
+    Api.get("/players/search/", {
+      headers: {
+        "firebase-id": fbId,
+        name: value,
+      },
+    }).then((result) => {
+      setPlayerIDs(
+        result.data.reduce((acc, { id, name }) => {
+          acc[name] = id;
+          return acc;
+        }, {})
+      );
+    });
+  };
+
   const teamForm = (
     <Form
       {...layout}
@@ -85,8 +103,18 @@ const TeamCreator = () => {
       <Form.Item name="name" label="Name" rules={[{ required: true }]}>
         <Input />
       </Form.Item>
-      <Form.Item name="capid" label="Captain ID" rules={[{ required: true }]}>
-        <Input />
+      <Form.Item
+        name="capname"
+        label="Captain name"
+        rules={[{ required: true }]}
+      >
+        <AutoComplete onSearch={handleSearch} placeholder="input here">
+          {Object.keys(playerIDs).map((player) => (
+            <Option key={player} value={player}>
+              {player}
+            </Option>
+          ))}
+        </AutoComplete>
       </Form.Item>
       <Form.Item name="desc" label="Description">
         <TextArea />

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   Popover,
   Button,
@@ -9,63 +9,159 @@ import {
   DatePicker,
   InputNumber,
   Select,
+  AutoComplete,
 } from "antd";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
 import { Notification } from "../Util/Notification";
 import { Api } from "../../Api";
-
-const { Option } = Select;
+let { Option } = Select;
 const layout = {
   labelCol: { span: 11 },
   wrapperCol: { span: 16 },
 };
-
 const validateMessages = {
   // eslint-disable-next-line
   required: "${label} is required!",
 };
-
+const CreateTeams = ({
+  fbId,
+  cancel,
+  onFinish,
+  teamsNumber,
+  teamIDs,
+  updateTeamIDs,
+}) => {
+  const handleSearch = (value) => {
+    Api.get("/teams/search/", {
+      headers: {
+        "firebase-id": fbId,
+        name: value,
+      },
+    }).then((result) =>
+      updateTeamIDs(
+        result.data.reduce((acc, { id, name }) => {
+          acc[name] = id;
+          return acc;
+        }, {})
+      )
+    );
+  };
+  return (
+    <Form {...layout} onFinish={onFinish} validateMessages={validateMessages}>
+      {[...Array(teamsNumber)].map((_, index) => (
+        <Form.Item
+          key={index}
+          rules={[{ required: true }]}
+          name={`team_${index}`}
+          label={`Team ${index + 1}`}
+        >
+          <AutoComplete onSearch={handleSearch} placeholder="input here">
+            {Object.keys(teamIDs).map((team) => (
+              <Option key={team} value={team}>
+                {team}
+              </Option>
+            ))}
+          </AutoComplete>
+        </Form.Item>
+      ))}
+      <Form.Item>
+        <Space size="middle">
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+          <Button type="primary" onClick={cancel}>
+            Cancel
+          </Button>
+        </Space>
+      </Form.Item>
+    </Form>
+  );
+};
+const CreateTournament = ({ cancel, onFinish }) => (
+  <Form
+    {...layout}
+    name="nest-messages"
+    onFinish={onFinish}
+    validateMessages={validateMessages}
+  >
+    <Form.Item name="name" label="Name" rules={[{ required: true }]}>
+      <Input />
+    </Form.Item>
+    <Form.Item name="desc" label="Description">
+      <Input />
+    </Form.Item>
+    <Form.Item name="starttime" label="Start Time">
+      <DatePicker showTime format="YYYY-MM-DD HH:mm" />
+    </Form.Item>
+    <Form.Item
+      name="tournament_type"
+      label="Type:"
+      rules={[{ required: true }]}
+    >
+      <Select>
+        <Option value="round-robin">round-robin</Option>
+        <Option value="swiss">swiss</Option>
+        <Option value="single-elimination"> single-elimination</Option>
+      </Select>
+    </Form.Item>
+    <Form.Item
+      name="number_of_teams"
+      label="Number of teams: "
+      rules={[{ required: true }]}
+    >
+      <InputNumber />
+    </Form.Item>
+    <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+      <Space size="middle">
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+        <Button type="primary" onClick={cancel}>
+          Cancel
+        </Button>
+      </Space>
+    </Form.Item>
+  </Form>
+);
 const TournamentCreator = () => {
   const { currentUser } = useContext(AuthContext);
   const fbId = currentUser.uid;
   const [visible, setVisible] = useState(false);
-  const [teamsFormList, setTeamsFormList] = useState(null);
-  const [tourValues, setTourValues] = useState({});
-  const teams_ids_list = [];
-  const addTeam = (value) => {
-    teams_ids_list.push(value);
-  };
-
+  const [teamIDs, setTeamIDs] = useState({});
+  const [tournamentInfo, setTournamentInfo] = useState({});
+  const [currentForm, setCurrentForm] = useState(1);
   const cancel = () => {
+    setCurrentForm(1);
     setVisible(false);
-    settourForm(tournamentForm);
   };
-  const onFinish2 = (values) => {
-    Object.keys(values)
-      .filter((prop) => prop.slice(0, 5) === "team_")
-      .forEach((team) => addTeam(values[team]));
-
-    const hdrs = {
-      headers: {
-        "firebase-id": fbId,
-      },
-    };
+  const onFinishTournamentForm = (values) => {
+    setTournamentInfo(values);
+    setCurrentForm(2);
+  };
+  const onFinishTeamsForm = (values) => {
     Api.post(
       "/tournaments/",
       {
-        name: tourValues.name,
-        description: tourValues.desc,
+        name: tournamentInfo.name,
+        description: tournamentInfo.desc,
         color: "ffffff",
-        tournament_type: tourValues.tournament_type,
-        start_time: tourValues.starttime,
-        teams_ids: teams_ids_list,
+        tournament_type: tournamentInfo.tournament_type,
+        start_time: tournamentInfo.starttime,
+        teams_ids: Object.values(teamIDs),
       },
-      hdrs
+      {
+        headers: {
+          "firebase-id": fbId,
+        },
+      }
     )
-
       .then(() => {
-        Notification("success", "Success.", "Tournament created successfully.");
+        Notification(
+          "success",
+          "Success.",
+          `Tournament ${tournamentInfo.name} created successfully.`
+        );
       })
       .catch((err) => {
         Notification(
@@ -79,114 +175,35 @@ const TournamentCreator = () => {
         );
       });
     setVisible(false);
+    setCurrentForm(1);
   };
-  useEffect(() => {
-    if (teamsFormList) {
-      settourForm(
-        <Form
-          {...layout}
-          onFinish={onFinish2}
-          validateMessages={validateMessages}
-        >
-          {teamsFormList.map((item, index) => (
-            <Form.Item
-              rules={[{ required: true }]}
-              name={`team_${index}`}
-              label={`Team ${index + 1} id`}
-            >
-              <InputNumber />
-            </Form.Item>
-          ))}
-
-          <Form.Item>
-            <Space size="middle">
-              <Button type="primary" htmlType="submit">
-                Submit
-              </Button>
-              <Button type="primary" onClick={cancel}>
-                Cancel
-              </Button>
-            </Space>
-          </Form.Item>
-        </Form>
-      );
-    }
-    // eslint-disable-next-line
-  }, [teamsFormList]);
-
-  const onFinish = (values) => {
-    const helpList = [];
-    for (let i = 0; i < values.number_of_teams; i++) {
-      helpList.push("team " + i);
-    }
-    setTourValues(values);
-    setTeamsFormList(helpList);
-  };
-
-  const tournamentForm = (
-    <Form
-      {...layout}
-      name="nest-messages"
-      onFinish={onFinish}
-      validateMessages={validateMessages}
-    >
-      <Form.Item name="name" label="Name" rules={[{ required: true }]}>
-        <Input />
-      </Form.Item>
-      <Form.Item name="desc" label="Description">
-        <Input />
-      </Form.Item>
-      <Form.Item name="starttime" label="Start Time">
-        <DatePicker showTime format="YYYY-MM-DD HH:mm" />
-      </Form.Item>
-      <Form.Item
-        name="tournament_type"
-        label="Type:"
-        rules={[{ required: true }]}
-      >
-        <Select>
-          <Option value="round-robin">round-robin</Option>
-          <Option value="swiss">swiss</Option>
-          <Option value="single-elimination"> single-elimination</Option>
-        </Select>
-      </Form.Item>
-      <Form.Item
-        name="number_of_teams"
-        label="Number of teams: "
-        rules={[{ required: true }]}
-      >
-        <InputNumber />
-      </Form.Item>
-      <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
-        <Space size="middle">
-          <Button type="primary" htmlType="submit">
-            Submit
-          </Button>
-          <Button type="primary" onClick={() => setVisible(false)}>
-            Cancel
-          </Button>
-        </Space>
-      </Form.Item>
-    </Form>
-  );
-  const [tourForm, settourForm] = useState(tournamentForm);
   return (
     <Col align="center">
       <Popover
-        placement="right"
         title="Create a new tournament"
-        trigger="click"
-        display="inline-block"
-        content={tourForm}
-        visible={visible}
         size="large"
+        placement="right"
+        display="inline-block"
+        visible={visible}
+        content={
+          currentForm === 1 ? (
+            <CreateTournament
+              cancel={cancel}
+              onFinish={onFinishTournamentForm}
+            />
+          ) : (
+            <CreateTeams
+              cancel={cancel}
+              onFinish={onFinishTeamsForm}
+              teamsNumber={tournamentInfo.number_of_teams}
+              updateTeamIDs={(newTeamIDs) => setTeamIDs(newTeamIDs)}
+              teamIDs={teamIDs}
+              fbId={fbId}
+            />
+          )
+        }
       >
-        <Button
-          type="primary"
-          onClick={() => {
-            setVisible(true);
-          }}
-        >
+        <Button type="primary" onClick={() => setVisible(true)}>
           Create a tournament
         </Button>
       </Popover>
