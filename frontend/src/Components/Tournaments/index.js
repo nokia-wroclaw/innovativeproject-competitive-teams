@@ -1,5 +1,13 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Layout, Card, Collapse, Typography, Spin } from "antd";
+import {
+  Layout,
+  Card,
+  Collapse,
+  Typography,
+  Spin,
+  Row,
+  AutoComplete,
+} from "antd";
 import "./index.css";
 
 import { Api } from "../../Api";
@@ -27,12 +35,28 @@ const Tournaments = () => {
         setErr(err.toString());
       });
   }, [fbId]);
-
+  const handleSearch = (value) => {
+    Api.get("/tournaments/search/", {
+      headers: {
+        "firebase-id": fbId,
+        name: value,
+      },
+    }).then((result) => {
+      setTournaments(result.data);
+    });
+  };
   return tournaments ? (
     <Layout className="list-background">
       <Content className="site-layout-background">
         <Card>
           <Title> List of tournaments </Title>
+          <Row gutter={[0, 15]}>
+            <AutoComplete
+              placeholder="Search tournaments"
+              onChange={handleSearch}
+              style={{ width: 200 }}
+            />
+          </Row>
           <Collapse>
             {tournaments.map((tournament) => (
               <Panel
