@@ -2,6 +2,8 @@ from sqlalchemy.orm import Session
 from datetime import datetime
 import iso8601
 import itertools
+import random
+import copy
 
 from app.models import models
 from app.schemas import schemas
@@ -150,7 +152,7 @@ def update_match(db: Session, match_id: int, match: schemas.MatchUpdate):
 def create_tournament(db: Session, tournament: schemas.TournamentCreate):
     teams_ids = tournament.teams_ids
     db_tournament = models.Tournament(name=tournament.name, description=tournament.description, start_time=tournament.start_time,
-    tournament_type=tournament.tournament_type, teams=[])
+    tournament_type=tournament.tournament_type, teams=[], swiss_rounds=tournament.swiss_rounds)
     for element in teams_ids:
         db_team = db.query(models.Team).filter(models.Team.id == element).first()
         db_tournament.teams.append(db_team)
@@ -177,15 +179,97 @@ def create_tournament(db: Session, tournament: schemas.TournamentCreate):
             db.add(db_match)
             db.commit()
             db.refresh(db_match)
+    
+    elif tournament.tournament_type == "swiss":
+        lst = copy.deepcopy(teams_ids)
+
+        def pop_random(lst):
+            idx = random.randrange(0, len(lst))
+            return lst.pop(idx)
+        
+        comb = []
+        while lst:
+            rand1 = pop_random(lst)
+            rand2 = pop_random(lst)
+            comb.append((rand1, rand2))
+        i = 0
+        for t1, t2 in comb:
+            i += 1
+            db_match = models.Match(
+                name = tournament.name + " match " + str(i),
+                description = "",
+                start_time = tournament.start_time,
+                finished = False,
+                score1 = 0,
+                score2 = 0,
+                team1_id = t1,
+                team2_id = t2,
+                tournament_place = i,
+                tournament_id = db_tournament.id
+            )
+            db.add(db_match)
+            db.commit()
+            db.refresh(db_match)
 
     return db_tournament
 
 def update_tournament_match(db: Session, tournament_id: int, match_id: int, match: schemas.MatchResult):
+    db_tournament = db.query(models.Tournament).filter(models.Tournament.id == tournament_id).first()
+
     db_match = db.query(models.Match).filter(models.Match.id == match_id).first()
     db_match.score1 = match.score1
     db_match.score2 = match.score2
     db_match.finished = True
     db.commit()
+
+    def is_pair_valid(pair):
+        for match in db_tournament.matches:
+            if (match.team1_id == pair[0] and match.team2_id == pair[1]) or (match.team1_id == pair[1] and match.team2_id == pair[0]):
+                return False
+        return True
+
+    def is_perm_valid(perm):
+        i = len(perm) - 1
+        while i > 0:
+            if not is_pair_valid((perm[i], perm[i - 1])):
+                return False
+            i -= 2
+        return True
+
+    def make_new_round(teams_ids):
+        comb = []
+        permutations = list(itertools.permutations(teams_ids))
+        for perm in permutations:
+            comb = []
+            if is_perm_valid(perm):
+                for i in range(0, len(teams_ids), 2):
+                    comb.append((perm[i], perm[i + 1]))
+                return comb
+        print("MAKE NEW ROUND ERROR")
+
+    if db_tournament.tournament_type == "swiss":
+        scoreboard = get_tournament_scoreboard(db=db, tournament_id=tournament_id)
+        if scoreboard.matches_unfinished == 0 and scoreboard.swiss_round < db_tournament.swiss_rounds:
+            teams_ids = [result.team.id for result in scoreboard.results]
+            comb = make_new_round(teams_ids)
+            i = scoreboard.matches_finished
+            for t1, t2 in comb:
+                i += 1
+                db_match = models.Match(
+                    name = db_tournament.name + " match " + str(i),
+                    description = "",
+                    start_time = db_tournament.start_time,
+                    finished = False,
+                    score1 = 0,
+                    score2 = 0,
+                    team1_id = t1,
+                    team2_id = t2,
+                    tournament_place = i,
+                    tournament_id = db_tournament.id
+                )
+                db.add(db_match)
+                db.commit()
+                db.refresh(db_match)
 
 def get_tournament_matches(db: Session, tournament_id: int, skip: int = 0, limit: int = 100):
     return db.query(models.Match).filter(models.Match.tournament_id == tournament_id).order_by(models.Match.tournament_place).offset(skip).limit(limit).all()
@@ -243,9 +327,14 @@ def get_tournament_scoreboard(db: Session, tournament_id: int):
         )
         teams_results.append(team_result)
 
+    swiss_round = None
+    if db_tournament.tournament_type == "swiss":
+        swiss_round = len(db_tournament.matches) / (len(db_tournament.teams) / 2)
+
     res = schemas.TournamentResults(matches_finished=matches_finished, 
                                     matches_unfinished = matches_unfinished, 
-                                    matches_total = matches_total, 
+                                    matches_total = matches_total,
+                                    swiss_round = swiss_round,
                                     finished = matches_total == matches_finished,
                                     results=teams_results)
     return res

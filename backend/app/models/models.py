@@ -77,6 +77,7 @@ class Tournament(Base):
     start_time = Column(String)
 
     tournament_type = Column(String)
+    swiss_rounds = Column(Integer)
 
     matches = relationship("Match", back_populates="tournament")
     teams = relationship("Team", secondary=TournamentTeam.__tablename__)
