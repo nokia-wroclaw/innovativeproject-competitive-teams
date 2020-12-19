@@ -31,6 +31,7 @@ const CreateTeams = ({
   teamsNumber,
   teamIDs,
   updateTeamIDs,
+  isSwiss,
 }) => {
   const handleSearch = (value) => {
     Api.get("/teams/search/", {
@@ -49,6 +50,11 @@ const CreateTeams = ({
   };
   return (
     <Form {...layout} onFinish={onFinish} validateMessages={validateMessages}>
+      {isSwiss ? (
+        <Form.Item name="swiss_rounds" label="Rounds:">
+          <InputNumber />
+        </Form.Item>
+      ) : null}
       {[...Array(teamsNumber)].map((_, index) => (
         <Form.Item
           key={index}
@@ -131,6 +137,7 @@ const TournamentCreator = () => {
   const [teamIDs, setTeamIDs] = useState({});
   const [tournamentInfo, setTournamentInfo] = useState({});
   const [currentForm, setCurrentForm] = useState(1);
+  const [isSwiss, setIsSwiss] = useState(false);
   const cancel = () => {
     setCurrentForm(1);
     setVisible(false);
@@ -138,6 +145,9 @@ const TournamentCreator = () => {
   const onFinishTournamentForm = (values) => {
     setTournamentInfo(values);
     setCurrentForm(2);
+    if (values.tournament_type === "swiss") {
+      setIsSwiss(true);
+    }
   };
   const onFinishTeamsForm = (values) => {
     let teamsNames = Object.keys(values)
@@ -162,6 +172,7 @@ const TournamentCreator = () => {
               tournament_type: tournamentInfo.tournament_type,
               start_time: tournamentInfo.starttime,
               teams_ids: teamsIDs,
+              swiss_rounds: values.swiss_rounds,
             },
             {
               headers: {
@@ -216,6 +227,7 @@ const TournamentCreator = () => {
               updateTeamIDs={(newTeamIDs) => setTeamIDs(newTeamIDs)}
               teamIDs={teamIDs}
               fbId={fbId}
+              isSwiss={isSwiss}
             />
           )
         }
