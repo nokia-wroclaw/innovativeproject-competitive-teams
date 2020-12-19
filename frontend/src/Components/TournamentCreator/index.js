@@ -140,40 +140,57 @@ const TournamentCreator = () => {
     setCurrentForm(2);
   };
   const onFinishTeamsForm = (values) => {
-    Api.post(
-      "/tournaments/",
-      {
-        name: tournamentInfo.name,
-        description: tournamentInfo.desc,
-        color: "ffffff",
-        tournament_type: tournamentInfo.tournament_type,
-        start_time: tournamentInfo.starttime,
-        teams_ids: Object.values(teamIDs),
-      },
-      {
+    let teamsNames = Object.keys(values)
+      .filter((filed) => filed.includes("team_"))
+      .map((teamName) => values[teamName]);
+    let teamsIDs = [];
+    for (let i = 0; i < teamsNames.length; i++) {
+      Api.get("/teams/search/", {
         headers: {
           "firebase-id": fbId,
+          name: teamsNames[i],
         },
-      }
-    )
-      .then(() => {
-        Notification(
-          "success",
-          "Success.",
-          `Tournament ${tournamentInfo.name} created successfully.`
-        );
-      })
-      .catch((err) => {
-        Notification(
-          "error",
-          `Eror when creating tournament  + ${
-            (values.name,
-            err.response && err.response.data.detail
-              ? err.response.data.detail
-              : err.message)
-          }`
-        );
+      }).then((result) => {
+        teamsIDs.push(result.data[0].id);
+        if (i === teamsNames.length - 1) {
+          Api.post(
+            "/tournaments/",
+            {
+              name: tournamentInfo.name,
+              description: tournamentInfo.desc,
+              color: "ffffff",
+              tournament_type: tournamentInfo.tournament_type,
+              start_time: tournamentInfo.starttime,
+              teams_ids: teamsIDs,
+            },
+            {
+              headers: {
+                "firebase-id": fbId,
+              },
+            }
+          )
+            .then(() => {
+              Notification(
+                "success",
+                "Success.",
+                `Tournament ${tournamentInfo.name} created successfully.`
+              );
+            })
+            .catch((err) => {
+              Notification(
+                "error",
+                `Eror when creating tournament  + ${
+                  (values.name,
+                  err.response && err.response.data.detail
+                    ? err.response.data.detail
+                    : err.message)
+                }`
+              );
+            });
+        }
       });
+    }
+
     setVisible(false);
     setCurrentForm(1);
   };
