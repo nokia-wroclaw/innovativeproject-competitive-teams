@@ -35,13 +35,11 @@ const Tournament = ({ id, data }) => {
   useEffect(() => {
     if (data) {
       setTournamentData(data);
-      console.log(data);
     } else if (id) {
       Api.get("/tournaments/" + id, { headers: { "firebase-id": fbId } })
         .then((response) => {
           if (response.status === 200) {
             setTournamentData(response.data);
-            console.log(response.data);
           }
         })
         .catch((err) => {
@@ -62,8 +60,6 @@ const Tournament = ({ id, data }) => {
         .then((response) => {
           if (response.status === 200) {
             setScoreboard(response.data);
-            console.log("SB");
-            console.log(response.data);
           }
         })
         .catch((err) => {
@@ -77,7 +73,6 @@ const Tournament = ({ id, data }) => {
         .then((response) => {
           if (response.status === 200) {
             setFinishedMatches(response.data);
-            console.log(response.data);
           }
         })
         .catch((err) => {
@@ -91,7 +86,6 @@ const Tournament = ({ id, data }) => {
         .then((response) => {
           if (response.status === 200) {
             setUnfinishedMatches(response.data);
-            console.log(response.data);
           }
         })
         .catch((err) => {
