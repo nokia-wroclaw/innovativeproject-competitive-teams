@@ -437,6 +437,24 @@ def read_upcoming_matches(
             status_code=404, detail="Permission denied, requires at least: player"
         )
 
+@app.get("/api/matches/search/", response_model=List[schemas.Match])
+def search_matches(
+    firebase_id: str = Header(None),
+    name: str = Header(None),
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        matches = crud.search_matches_by_name(db, name=name, skip=skip, limit=limit)
+        return matches
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
 
 @app.get("/api/matches/{match_id}", response_model=schemas.Match)
 def read_match(
@@ -527,6 +545,25 @@ def read_tournaments(
     )
     if access:
         tournaments = crud.get_tournaments(db, skip=skip, limit=limit)
+        return tournaments
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
+
+@app.get("/api/tournaments/search/", response_model=List[schemas.Tournament])
+def search_tournaments(
+    firebase_id: str = Header(None),
+    name: str = Header(None),
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        tournaments = crud.search_tournaments_by_name(db, name=name, skip=skip, limit=limit)
         return tournaments
     else:
         raise HTTPException(
