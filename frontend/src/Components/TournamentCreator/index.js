@@ -29,10 +29,10 @@ const CreateTeams = ({
   cancel,
   onFinish,
   teamsNumber,
-  teamIDs,
   updateTeamIDs,
   isSwiss,
 }) => {
+  const [nameToId, setNameToId] = useState({});
   const handleSearch = (value) => {
     Api.get("/teams/search/", {
       headers: {
@@ -40,7 +40,7 @@ const CreateTeams = ({
         name: value,
       },
     }).then((result) =>
-      updateTeamIDs(
+      setNameToId(
         result.data.reduce((acc, { id, name }) => {
           acc[name] = id;
           return acc;
@@ -50,11 +50,11 @@ const CreateTeams = ({
   };
   return (
     <Form {...layout} onFinish={onFinish} validateMessages={validateMessages}>
-      {isSwiss ? (
+      {isSwiss && (
         <Form.Item name="swiss_rounds" label="Rounds:">
           <InputNumber />
         </Form.Item>
-      ) : null}
+      )}
       {[...Array(teamsNumber)].map((_, index) => (
         <Form.Item
           key={index}
@@ -62,8 +62,12 @@ const CreateTeams = ({
           name={`team_${index}`}
           label={`Team ${index + 1}`}
         >
-          <AutoComplete onSearch={handleSearch} placeholder="input here">
-            {Object.keys(teamIDs).map((team) => (
+          <AutoComplete
+            onSearch={handleSearch}
+            placeholder="input here"
+            onSelect={(value) => updateTeamIDs(nameToId[value])}
+          >
+            {Object.keys(nameToId).map((team) => (
               <Option key={team} value={team}>
                 {team}
               </Option>
@@ -134,74 +138,58 @@ const TournamentCreator = () => {
   const { currentUser } = useContext(AuthContext);
   const fbId = currentUser.uid;
   const [visible, setVisible] = useState(false);
-  const [teamIDs, setTeamIDs] = useState({});
+  const [teamIDs, setTeamIDs] = useState([]);
   const [tournamentInfo, setTournamentInfo] = useState({});
   const [currentForm, setCurrentForm] = useState(1);
   const [isSwiss, setIsSwiss] = useState(false);
   const cancel = () => {
     setCurrentForm(1);
     setVisible(false);
+    setIsSwiss(false);
   };
   const onFinishTournamentForm = (values) => {
     setTournamentInfo(values);
     setCurrentForm(2);
-    if (values.tournament_type === "swiss") {
-      setIsSwiss(true);
-    }
+    setIsSwiss(values.tournament_type === "swiss");
   };
   const onFinishTeamsForm = (values) => {
-    let teamsNames = Object.keys(values)
-      .filter((filed) => filed.includes("team_"))
-      .map((teamName) => values[teamName]);
-    let teamsIDs = [];
-    for (let i = 0; i < teamsNames.length; i++) {
-      Api.get("/teams/search/", {
+    setIsSwiss(false);
+    Api.post(
+      "/tournaments/",
+      {
+        name: tournamentInfo.name,
+        description: tournamentInfo.desc,
+        color: "ffffff",
+        tournament_type: tournamentInfo.tournament_type,
+        start_time: tournamentInfo.starttime,
+        teams_ids: teamIDs,
+        swiss_rounds: values.swiss_rounds,
+      },
+      {
         headers: {
           "firebase-id": fbId,
-          name: teamsNames[i],
         },
-      }).then((result) => {
-        teamsIDs.push(result.data[0].id);
-        if (i === teamsNames.length - 1) {
-          Api.post(
-            "/tournaments/",
-            {
-              name: tournamentInfo.name,
-              description: tournamentInfo.desc,
-              color: "ffffff",
-              tournament_type: tournamentInfo.tournament_type,
-              start_time: tournamentInfo.starttime,
-              teams_ids: teamsIDs,
-              swiss_rounds: values.swiss_rounds,
-            },
-            {
-              headers: {
-                "firebase-id": fbId,
-              },
-            }
-          )
-            .then(() => {
-              Notification(
-                "success",
-                "Success.",
-                `Tournament ${tournamentInfo.name} created successfully.`
-              );
-            })
-            .catch((err) => {
-              Notification(
-                "error",
-                `Eror when creating tournament  + ${
-                  (values.name,
-                  err.response && err.response.data.detail
-                    ? err.response.data.detail
-                    : err.message)
-                }`
-              );
-            });
-        }
+      }
+    )
+      .then(() => {
+        setTeamIDs([]);
+        Notification(
+          "success",
+          "Success.",
+          `Tournament ${tournamentInfo.name} created successfully.`
+        );
+      })
+      .catch((err) => {
+        Notification(
+          "error",
+          `Eror when creating tournament  + ${
+            (values.name,
+            err.response && err.response.data.detail
+              ? err.response.data.detail
+              : err.message)
+          }`
+        );
       });
-    }
-
     setVisible(false);
     setCurrentForm(1);
   };
@@ -224,8 +212,9 @@ const TournamentCreator = () => {
               cancel={cancel}
               onFinish={onFinishTeamsForm}
               teamsNumber={tournamentInfo.number_of_teams}
-              updateTeamIDs={(newTeamIDs) => setTeamIDs(newTeamIDs)}
-              teamIDs={teamIDs}
+              updateTeamIDs={(newTeamID) =>
+                setTeamIDs((prevTeamIDs) => [...prevTeamIDs, newTeamID])
+              }
               fbId={fbId}
               isSwiss={isSwiss}
             />
