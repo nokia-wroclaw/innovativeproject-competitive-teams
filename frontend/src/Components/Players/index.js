@@ -7,6 +7,8 @@ import {
   Spin,
   Row,
   AutoComplete,
+  Pagination,
+  Col,
 } from "antd";
 import "./index.css";
 import { Api } from "../../Api";
@@ -24,10 +26,14 @@ const Players = () => {
 
   const [players, setPlayers] = useState(null);
   const [err, setErr] = useState(null);
+  const [playersOnPage, setPlayersOnPage] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   useEffect(() => {
     Api.get("/players/", { headers: { "firebase-id": fbId } })
       .then((result) => {
+        setPlayersOnPage(result.data.slice(0, 10));
         setPlayers(result.data);
       })
       .catch((err) => {
@@ -35,6 +41,7 @@ const Players = () => {
         setErr(err.toString());
       });
   }, [fbId]);
+
   const handleSearch = (value) => {
     Api.get("/players/search/", {
       headers: {
@@ -43,8 +50,19 @@ const Players = () => {
       },
     }).then((result) => {
       setPlayers(result.data);
+      let itemsIgnored = (currentPage - 1) * pageSize;
+      setPlayersOnPage(
+        result.data.slice(itemsIgnored, itemsIgnored + pageSize)
+      );
     });
   };
+
+  const handleChange = (page, pageSize) => {
+    setCurrentPage(page);
+    let itemsIgnored = (page - 1) * pageSize;
+    setPlayersOnPage(players.slice(itemsIgnored, itemsIgnored + pageSize));
+  };
+
   return players ? (
     <Layout className="list-background">
       <Content className="site-layout-background">
@@ -57,13 +75,23 @@ const Players = () => {
               style={{ width: 200 }}
             />
           </Row>
-          <Collapse>
-            {players.map((player) => (
-              <Panel header={"Player " + player.name} key={player.id}>
-                <Player id={player.id} />
-              </Panel>
-            ))}
-          </Collapse>
+          <Col span={24}>
+            <Collapse>
+              {playersOnPage.map((player) => (
+                <Panel header={"Player " + player.name} key={player.id}>
+                  <Player id={player.id} />
+                </Panel>
+              ))}
+            </Collapse>
+          </Col>
+          <Row align="center">
+            <Pagination
+              defaultCurrent={1}
+              defaultPageSize={pageSize}
+              onChange={handleChange}
+              total={players.length}
+            />
+          </Row>
         </Card>
       </Content>
     </Layout>
