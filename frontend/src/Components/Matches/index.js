@@ -23,45 +23,45 @@ const Matches = () => {
   let { currentUser } = useContext(AuthContext);
   let fbId = currentUser.uid;
 
-  const [matches, setMatches] = useState(null);
   const [matchesOnPage, setMatchesOnPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [err, setErr] = useState(null);
   const pageSize = 10;
   useEffect(() => {
-    Api.get("/matches/", { headers: { "firebase-id": fbId } })
+    Api.get(
+      `/matches/?skip=${(currentPage - 1) * pageSize}&limit=${pageSize}`,
+      {
+        headers: { "firebase-id": fbId },
+      }
+    )
       .then((result) => {
-        setMatchesOnPage(result.data.slice(0, 10));
-        setMatches(result.data);
+        setMatchesOnPage(result.data);
       })
       .catch((err) => {
-        setMatches(null);
+        setMatchesOnPage(null);
         setErr(err.toString());
       });
   }, [fbId]);
 
   const handleSearch = (value) => {
-    Api.get("/matches/search/", {
-      headers: {
-        "firebase-id": fbId,
-        name: value,
-      },
-    }).then((result) => {
-      setMatches(result.data);
-      let itemsIgnored = (currentPage - 1) * pageSize;
-      setMatchesOnPage(
-        result.data.slice(itemsIgnored, itemsIgnored + pageSize)
-      );
+    Api.get(
+      `/matches/?skip=${(currentPage - 1) * pageSize}&limit=${pageSize}`,
+      {
+        headers: {
+          "firebase-id": fbId,
+          name: value,
+        },
+      }
+    ).then((result) => {
+      setMatchesOnPage(result.data);
     });
   };
 
   const handleChange = (page, pageSize) => {
     setCurrentPage(page);
-    let itemsIgnored = (page - 1) * pageSize;
-    setMatchesOnPage(matches.slice(itemsIgnored, itemsIgnored + pageSize));
   };
 
-  return matches ? (
+  return matchesOnPage ? (
     <Layout style={{ padding: "24px 24px 24px" }}>
       <Content className="site-layout-background">
         <Card>
@@ -88,7 +88,6 @@ const Matches = () => {
               defaultCurrent={1}
               defaultPageSize={pageSize}
               onChange={handleChange}
-              total={matches.length}
             />
           </Row>
         </Card>
