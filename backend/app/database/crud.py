@@ -47,6 +47,9 @@ def search_teams_by_name(db: Session, name: str, skip: int = 0, limit: int = 100
 def get_teams(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Team).offset(skip).limit(limit).all()
 
+def count_teams(db: Session):
+    return db.query(models.Team).count()
+
 # Players:
 
 def create_player(db: Session, player: schemas.PlayerCreate):
@@ -81,6 +84,9 @@ def get_player_by_firebase_id(db: Session, firebase_id: str):
 
 def get_players(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Player).offset(skip).limit(limit).all()
+
+def count_players(db: Session):
+    return db.query(models.Player).count()
 
 def search_players_by_name(db: Session, name: str, skip: int = 0, limit: int = 100):
     db_players = db.query(models.Player).offset(skip).limit(limit).all()
@@ -131,6 +137,9 @@ def create_match(db: Session, match: schemas.MatchCreate, team1_id: int, team2_i
 def get_matches(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Match).offset(skip).limit(limit).all()
 
+def count_matches(db: Session):
+    return db.query(models.Match).count()
+
 def get_upcoming_matches(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Match).filter(models.Match.finished == False).order_by(models.Match.start_time).offset(skip).limit(limit).all()
 
@@ -156,6 +165,7 @@ def search_matches_by_name(db: Session, name: str, skip: int = 0, limit: int = 1
         if name.lower() in match.name.lower():
             ans.append(match)
     return ans
+
 # Tournaments
 
 def create_tournament(db: Session, tournament: schemas.TournamentCreate):
@@ -283,6 +293,9 @@ def update_tournament_match(db: Session, tournament_id: int, match_id: int, matc
 def get_tournament_matches(db: Session, tournament_id: int, skip: int = 0, limit: int = 100):
     return db.query(models.Match).filter(models.Match.tournament_id == tournament_id).order_by(models.Match.tournament_place).offset(skip).limit(limit).all()
 
+def count_tournament_matches(db: Session, tournament_id: int):
+    return db.query(models.Match).filter(models.Match.tournament_id == tournament_id).count()
+
 def get_tournament_finished_matches(db: Session, tournament_id: int, skip: int = 0, limit: int = 100):
     return db.query(models.Match).filter(models.Match.tournament_id == tournament_id).filter(models.Match.finished).order_by(models.Match.tournament_place).offset(skip).limit(limit).all()
 
@@ -357,6 +370,9 @@ def is_match_in_tournament(db: Session, tournament_id: int, match_id: int):
 
 def get_tournaments(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Tournament).offset(skip).limit(limit).all()
+
+def count_tournaments(db: Session):
+    return db.query(models.Tournament).count()
 
 def get_tournament(db: Session, tournament_id: int):
     return db.query(models.Tournament).filter(models.Tournament.id == tournament_id).first()
