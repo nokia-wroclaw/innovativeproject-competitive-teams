@@ -22,43 +22,38 @@ const { Title } = Typography;
 const Matches = () => {
   let { currentUser } = useContext(AuthContext);
   let fbId = currentUser.uid;
-
   const [matchesOnPage, setMatchesOnPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [allMatches, setAllMatches] = useState(0);
+  const [searched, setSearched] = useState("");
   const [err, setErr] = useState(null);
   const pageSize = 10;
+
   useEffect(() => {
     Api.get(
-      `/matches/?skip=${(currentPage - 1) * pageSize}&limit=${pageSize}`,
+      `/matches/search/?skip=${(currentPage - 1) * pageSize}&limit=${pageSize}`,
       {
-        headers: { "firebase-id": fbId },
+        headers: { "firebase-id": fbId, name: searched },
       }
     )
       .then((result) => {
         setMatchesOnPage(result.data);
+
+        console.log(result.data);
       })
       .catch((err) => {
         setMatchesOnPage(null);
         setErr(err.toString());
       });
-  }, [fbId]);
-
-  const handleSearch = (value) => {
-    Api.get(
-      `/matches/?skip=${(currentPage - 1) * pageSize}&limit=${pageSize}`,
-      {
-        headers: {
-          "firebase-id": fbId,
-          name: value,
-        },
-      }
-    ).then((result) => {
-      setMatchesOnPage(result.data);
-    });
-  };
+  }, [fbId, currentPage, searched]);
 
   const handleChange = (page, pageSize) => {
     setCurrentPage(page);
+    console.log(page);
+  };
+
+  const handleSearch = (value) => {
+    setSearched(value);
   };
 
   return matchesOnPage ? (
@@ -88,6 +83,7 @@ const Matches = () => {
               defaultCurrent={1}
               defaultPageSize={pageSize}
               onChange={handleChange}
+              total={allMatches}
             />
           </Row>
         </Card>
