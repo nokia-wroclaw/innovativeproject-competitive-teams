@@ -162,6 +162,24 @@ def search_teams(
         )
 
 
+@app.get("/api/teams_count_by_search/", response_model=int)
+def count_teams_by_search(
+    firebase_id: str = Header(None),
+    name: str = Header(None),
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        count = crud.count_teams_by_search(db, name)
+        return count
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
+
+
 # Players
 @app.post("/api/players/", response_model=schemas.Player)
 def create_player(player: schemas.PlayerCreate, db: Session = Depends(get_db)):
@@ -265,6 +283,24 @@ def search_players(
     if access:
         players = crud.search_players_by_name(db, name=name, skip=skip, limit=limit)
         return players
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
+
+
+@app.get("/api/players_count_by_search/", response_model=int)
+def count_players_by_search(
+    firebase_id: str = Header(None),
+    name: str = Header(None),
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        count = crud.count_players_by_search(db, name)
+        return count
     else:
         raise HTTPException(
             status_code=404, detail="Permission denied, requires at least: player"
@@ -406,6 +442,7 @@ def set_team_captain(
             status_code=404, detail="Permission denied, requires at least: admin"
         )
 
+
 # matches
 @app.post("/api/matches/", response_model=schemas.Match)
 def create_match(
@@ -507,6 +544,25 @@ def search_matches(
         raise HTTPException(
             status_code=404, detail="Permission denied, requires at least: player"
         )
+
+
+@app.get("/api/matches_count_by_search/", response_model=int)
+def count_matches_by_search(
+    firebase_id: str = Header(None),
+    name: str = Header(None),
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        count = crud.count_matches_by_search(db, name)
+        return count
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
+
 
 @app.get("/api/matches/{match_id}", response_model=schemas.Match)
 def read_match(
@@ -639,6 +695,25 @@ def search_tournaments(
         raise HTTPException(
             status_code=404, detail="Permission denied, requires at least: player"
         )
+
+
+@app.get("/api/tournaments_count_by_search/", response_model=int)
+def count_tournaments_by_search(
+    firebase_id: str = Header(None),
+    name: str = Header(None),
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        count = crud.count_tournaments_by_search(db, name)
+        return count
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
+
 
 @app.get("/api/tournaments/{tournament_id}", response_model=schemas.Tournament)
 def read_tournament(
