@@ -42,16 +42,6 @@ const Tournaments = () => {
     )
       .then((result) => {
         setTournamentsOnPage(result.data);
-        Api.get(`/tournaments_count_by_search/`, {
-          headers: { "firebase-id": fbId, name: searched },
-        })
-          .then((result) => {
-            setAllTournaments(result.data);
-          })
-          .catch((err) => {
-            setTournamentsOnPage(null);
-            setErr(err.toString());
-          });
       })
       .catch((err) => {
         setTournamentsOnPage(null);
@@ -61,6 +51,16 @@ const Tournaments = () => {
 
   useEffect(() => {
     setCurrentPage(1);
+    Api.get(`/tournaments_count_by_search/`, {
+      headers: { "firebase-id": fbId, name: searched },
+    })
+      .then((result) => {
+        setAllTournaments(result.data);
+      })
+      .catch((err) => {
+        setTournamentsOnPage(null);
+        setErr(err.toString());
+      });
   }, [searched]);
 
   return tournamentsOnPage ? (

@@ -37,16 +37,6 @@ const Matches = () => {
     )
       .then((result) => {
         setMatchesOnPage(result.data);
-        Api.get(`/matches_count_by_search/`, {
-          headers: { "firebase-id": fbId, name: searched },
-        })
-          .then((result) => {
-            setAllMatches(result.data);
-          })
-          .catch((err) => {
-            setMatchesOnPage(null);
-            setErr(err.toString());
-          });
       })
       .catch((err) => {
         setMatchesOnPage(null);
@@ -56,6 +46,16 @@ const Matches = () => {
 
   useEffect(() => {
     setCurrentPage(1);
+    Api.get(`/matches_count_by_search/`, {
+      headers: { "firebase-id": fbId, name: searched },
+    })
+      .then((result) => {
+        setAllMatches(result.data);
+      })
+      .catch((err) => {
+        setMatchesOnPage(null);
+        setErr(err.toString());
+      });
   }, [searched]);
 
   return matchesOnPage ? (

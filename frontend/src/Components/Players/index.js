@@ -40,16 +40,6 @@ const Players = () => {
     )
       .then((result) => {
         setPlayersOnPage(result.data);
-        Api.get(`/players_count_by_search/`, {
-          headers: { "firebase-id": fbId, name: searched },
-        })
-          .then((result) => {
-            setAllPlayers(result.data);
-          })
-          .catch((err) => {
-            setPlayersOnPage(null);
-            setErr(err.toString());
-          });
       })
       .catch((err) => {
         setPlayersOnPage(null);
@@ -59,6 +49,16 @@ const Players = () => {
 
   useEffect(() => {
     setCurrentPage(1);
+    Api.get(`/players_count_by_search/`, {
+      headers: { "firebase-id": fbId, name: searched },
+    })
+      .then((result) => {
+        setAllPlayers(result.data);
+      })
+      .catch((err) => {
+        setPlayersOnPage(null);
+        setErr(err.toString());
+      });
   }, [searched]);
 
   return playersOnPage ? (
