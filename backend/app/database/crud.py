@@ -44,6 +44,16 @@ def search_teams_by_name(db: Session, name: str, skip: int = 0, limit: int = 100
             ans.append(team)
     return ans
 
+def count_teams_by_search(db: Session, name: str):
+    db_teams = db.query(models.Team).all()
+    ans = []
+    if name is None:
+        name = ""
+    for team in db_teams:
+        if name.lower() in team.name.lower():
+            ans.append(team)
+    return len(ans)
+
 def get_teams(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Team).offset(skip).limit(limit).all()
 
@@ -90,6 +100,16 @@ def count_players(db: Session):
 
 def search_players_by_name(db: Session, name: str, skip: int = 0, limit: int = 100):
     db_players = db.query(models.Player).offset(skip).limit(limit).all()
+    ans = []
+    if name is None:
+        name = ""
+    for player in db_players:
+        if name.lower() in player.name.lower():
+            ans.append(player)
+    return len(ans)
+
+def count_players_by_search(db: Session, name: str):
+    db_players = db.query(models.Player).all()
     ans = []
     if name is None:
         name = ""
@@ -165,6 +185,16 @@ def search_matches_by_name(db: Session, name: str, skip: int = 0, limit: int = 1
         if name.lower() in match.name.lower():
             ans.append(match)
     return ans
+
+def count_matches_by_search(db: Session, name: str):
+    db_matches = db.query(models.Player).all()
+    ans = []
+    if name is None:
+        name = ""
+    for match in db_matches:
+        if name.lower() in match.name.lower():
+            ans.append(match)
+    return len(ans)
 
 # Tournaments
 
@@ -361,8 +391,6 @@ def get_tournament_scoreboard(db: Session, tournament_id: int):
                                     results=teams_results)
     return res
     
-
-
 def is_match_in_tournament(db: Session, tournament_id: int, match_id: int):
     db_tournament = db.query(models.Tournament).filter(models.Tournament.id == tournament_id).first()
     db_match = db.query(models.Match).filter(models.Match.id == match_id).first()
@@ -386,6 +414,17 @@ def search_tournaments_by_name(db: Session, name: str, skip: int = 0, limit: int
         if name.lower() in tournament.name.lower():
             ans.append(tournament)
     return ans
+
+def count_tournaments_by_search(db: Session, name: str):
+    db_tournaments = db.query(models.Player).all()
+    ans = []
+    if name is None:
+        name = ""
+    for tournament in db_tournaments:
+        if name.lower() in tournament.name.lower():
+            ans.append(tournament)
+    return len(ans)
+
 # TODO
 def link_player_to_team_with_name():
     pass
