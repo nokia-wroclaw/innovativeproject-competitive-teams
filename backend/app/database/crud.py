@@ -35,14 +35,14 @@ def get_team_by_name(db: Session, name: str):
     return db.query(models.Team).filter(models.Team.name == name).first()
 
 def search_teams_by_name(db: Session, name: str, skip: int = 0, limit: int = 100):
-    db_teams = db.query(models.Team).offset(skip).limit(limit).all()
+    db_teams = db.query(models.Team).offset(skip).all()
     ans = []
     if name is None:
         name = ""
     for team in db_teams:
         if name.lower() in team.name.lower():
             ans.append(team)
-    return ans
+    return ans[:limit]
 
 def count_teams_by_search(db: Session, name: str):
     db_teams = db.query(models.Team).all()
@@ -99,14 +99,14 @@ def count_players(db: Session):
     return db.query(models.Player).count()
 
 def search_players_by_name(db: Session, name: str, skip: int = 0, limit: int = 100):
-    db_players = db.query(models.Player).offset(skip).limit(limit).all()
+    db_players = db.query(models.Player).offset(skip).all()
     ans = []
     if name is None:
         name = ""
     for player in db_players:
         if name.lower() in player.name.lower():
             ans.append(player)
-    return len(ans)
+    return ans[:limit]
 
 def count_players_by_search(db: Session, name: str):
     db_players = db.query(models.Player).all()
@@ -116,7 +116,7 @@ def count_players_by_search(db: Session, name: str):
     for player in db_players:
         if name.lower() in player.name.lower():
             ans.append(player)
-    return ans
+    return len(ans)
 
 # Team - Player functionality
 
@@ -177,17 +177,17 @@ def update_match(db: Session, match_id: int, match: schemas.MatchUpdate):
     db.commit()
 
 def search_matches_by_name(db: Session, name: str, skip: int = 0, limit: int = 100):
-    db_matches = db.query(models.Match).offset(skip).limit(limit).all()
+    db_matches = db.query(models.Match).offset(skip).all()
     ans = []
     if name is None:
         name = ""
     for match in db_matches:
         if name.lower() in match.name.lower():
             ans.append(match)
-    return ans
-
+    return ans[:limit]
+    
 def count_matches_by_search(db: Session, name: str):
-    db_matches = db.query(models.Player).all()
+    db_matches = db.query(models.Match).all()
     ans = []
     if name is None:
         name = ""
@@ -406,17 +406,17 @@ def get_tournament(db: Session, tournament_id: int):
     return db.query(models.Tournament).filter(models.Tournament.id == tournament_id).first()
 
 def search_tournaments_by_name(db: Session, name: str, skip: int = 0, limit: int = 100):
-    db_tournaments = db.query(models.Tournament).offset(skip).limit(limit).all()
+    db_tournaments = db.query(models.Tournament).offset(skip).all()
     ans = []
     if name is None:
         name = ""
     for tournament in db_tournaments:
         if name.lower() in tournament.name.lower():
             ans.append(tournament)
-    return ans
+    return ans[:limit]
 
 def count_tournaments_by_search(db: Session, name: str):
-    db_tournaments = db.query(models.Player).all()
+    db_tournaments = db.query(models.Tournament).all()
     ans = []
     if name is None:
         name = ""

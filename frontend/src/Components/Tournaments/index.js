@@ -24,48 +24,46 @@ const Tournaments = () => {
   let { currentUser } = useContext(AuthContext);
   let fbId = currentUser.uid;
 
-  const [tournaments, setTournaments] = useState(null);
   const [err, setErr] = useState(null);
   const [tournamentsOnPage, setTournamentsOnPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [allTournaments, setAllTournaments] = useState(0);
+  const [searched, setSearched] = useState("");
   const pageSize = 10;
 
   useEffect(() => {
-    Api.get("/tournaments/", { headers: { "firebase-id": fbId } })
+    Api.get(
+      `/tournaments/search/?skip=${
+        (currentPage - 1) * pageSize
+      }&limit=${pageSize}`,
+      {
+        headers: { "firebase-id": fbId, name: searched },
+      }
+    )
       .then((result) => {
-        setTournamentsOnPage(result.data.slice(0, 10));
-        setTournaments(result.data);
+        setTournamentsOnPage(result.data);
+        Api.get(`/tournaments_count_by_search/`, {
+          headers: { "firebase-id": fbId, name: searched },
+        })
+          .then((result) => {
+            setAllTournaments(result.data);
+          })
+          .catch((err) => {
+            setTournamentsOnPage(null);
+            setErr(err.toString());
+          });
       })
       .catch((err) => {
-        setTournaments(null);
+        setTournamentsOnPage(null);
         setErr(err.toString());
       });
-  }, [fbId]);
+  }, [fbId, currentPage, searched]);
 
-  const handleSearch = (value) => {
-    Api.get("/tournaments/search/", {
-      headers: {
-        "firebase-id": fbId,
-        name: value,
-      },
-    }).then((result) => {
-      setTournaments(result.data);
-      let itemsIgnored = (currentPage - 1) * pageSize;
-      setTournamentsOnPage(
-        result.data.slice(itemsIgnored, itemsIgnored + pageSize)
-      );
-    });
-  };
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searched]);
 
-  const handleChange = (page, pageSize) => {
-    setCurrentPage(page);
-    let itemsIgnored = (page - 1) * pageSize;
-    setTournamentsOnPage(
-      tournaments.slice(itemsIgnored, itemsIgnored + pageSize)
-    );
-  };
-
-  return tournaments ? (
+  return tournamentsOnPage ? (
     <Layout className="list-background">
       <Content className="site-layout-background">
         <Card>
@@ -73,7 +71,7 @@ const Tournaments = () => {
           <Row gutter={[0, 15]}>
             <AutoComplete
               placeholder="Search tournaments"
-              onChange={handleSearch}
+              onChange={setSearched}
               style={{ width: 200 }}
             />
           </Row>
@@ -94,8 +92,9 @@ const Tournaments = () => {
             <Pagination
               defaultCurrent={1}
               defaultPageSize={pageSize}
-              onChange={handleChange}
-              total={tournaments.length}
+              onChange={setCurrentPage}
+              total={allTournaments}
+              current={currentPage}
             />
           </Row>
         </Card>

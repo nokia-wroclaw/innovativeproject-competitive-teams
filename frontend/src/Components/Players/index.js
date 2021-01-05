@@ -24,46 +24,44 @@ const Players = () => {
   let { currentUser } = useContext(AuthContext);
   let fbId = currentUser.uid;
 
-  const [players, setPlayers] = useState(null);
   const [err, setErr] = useState(null);
   const [playersOnPage, setPlayersOnPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [allPlayers, setAllPlayers] = useState(0);
+  const [searched, setSearched] = useState("");
   const pageSize = 10;
 
   useEffect(() => {
-    Api.get("/players/", { headers: { "firebase-id": fbId } })
+    Api.get(
+      `/players/search/?skip=${(currentPage - 1) * pageSize}&limit=${pageSize}`,
+      {
+        headers: { "firebase-id": fbId, name: searched },
+      }
+    )
       .then((result) => {
-        setPlayersOnPage(result.data.slice(0, 10));
-        setPlayers(result.data);
+        setPlayersOnPage(result.data);
+        Api.get(`/players_count_by_search/`, {
+          headers: { "firebase-id": fbId, name: searched },
+        })
+          .then((result) => {
+            setAllPlayers(result.data);
+          })
+          .catch((err) => {
+            setPlayersOnPage(null);
+            setErr(err.toString());
+          });
       })
       .catch((err) => {
-        setPlayers(null);
+        setPlayersOnPage(null);
         setErr(err.toString());
       });
-  }, [fbId]);
+  }, [fbId, currentPage, searched]);
 
-  const handleSearch = (value) => {
-    Api.get("/players/search/", {
-      headers: {
-        "firebase-id": fbId,
-        name: value,
-      },
-    }).then((result) => {
-      setPlayers(result.data);
-      let itemsIgnored = (currentPage - 1) * pageSize;
-      setPlayersOnPage(
-        result.data.slice(itemsIgnored, itemsIgnored + pageSize)
-      );
-    });
-  };
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searched]);
 
-  const handleChange = (page, pageSize) => {
-    setCurrentPage(page);
-    let itemsIgnored = (page - 1) * pageSize;
-    setPlayersOnPage(players.slice(itemsIgnored, itemsIgnored + pageSize));
-  };
-
-  return players ? (
+  return playersOnPage ? (
     <Layout className="list-background">
       <Content className="site-layout-background">
         <Card>
@@ -71,14 +69,14 @@ const Players = () => {
           <Row gutter={[0, 15]}>
             <AutoComplete
               placeholder="Search players"
-              onChange={handleSearch}
+              onChange={setSearched}
               style={{ width: 200 }}
             />
           </Row>
           <Col span={24}>
             <Collapse>
               {playersOnPage.map((player) => (
-                <Panel header={"Player " + player.name} key={player.id}>
+                <Panel header={`Player ${player.name}`} key={player.id}>
                   <Player id={player.id} />
                 </Panel>
               ))}
@@ -88,8 +86,9 @@ const Players = () => {
             <Pagination
               defaultCurrent={1}
               defaultPageSize={pageSize}
-              onChange={handleChange}
-              total={players.length}
+              current={currentPage}
+              onChange={setCurrentPage}
+              total={allPlayers}
             />
           </Row>
         </Card>

@@ -11,7 +11,6 @@ import {
   Col,
 } from "antd";
 import "./index.css";
-
 import { Api } from "../../Api";
 import Match from "../Match";
 import { AuthContext } from "../Auth/Auth";
@@ -38,8 +37,16 @@ const Matches = () => {
     )
       .then((result) => {
         setMatchesOnPage(result.data);
-
-        console.log(result.data);
+        Api.get(`/matches_count_by_search/`, {
+          headers: { "firebase-id": fbId, name: searched },
+        })
+          .then((result) => {
+            setAllMatches(result.data);
+          })
+          .catch((err) => {
+            setMatchesOnPage(null);
+            setErr(err.toString());
+          });
       })
       .catch((err) => {
         setMatchesOnPage(null);
@@ -47,32 +54,26 @@ const Matches = () => {
       });
   }, [fbId, currentPage, searched]);
 
-  const handleChange = (page, pageSize) => {
-    setCurrentPage(page);
-    console.log(page);
-  };
-
-  const handleSearch = (value) => {
-    setSearched(value);
-  };
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searched]);
 
   return matchesOnPage ? (
-    <Layout style={{ padding: "24px 24px 24px" }}>
+    <Layout className="list-background">
       <Content className="site-layout-background">
         <Card>
           <Title> List of matches </Title>
           <Row gutter={[0, 15]}>
             <AutoComplete
               placeholder="Search matches"
-              onChange={handleSearch}
+              onChange={setSearched}
               style={{ width: 200 }}
             />
           </Row>
-
           <Col span={24}>
             <Collapse>
               {matchesOnPage.map((match) => (
-                <Panel header={"Match " + match.name} key={match.id}>
+                <Panel header={`Match ${match.name}`} key={match.id}>
                   <Match id={match.id} />
                 </Panel>
               ))}
@@ -82,7 +83,8 @@ const Matches = () => {
             <Pagination
               defaultCurrent={1}
               defaultPageSize={pageSize}
-              onChange={handleChange}
+              current={currentPage}
+              onChange={setCurrentPage}
               total={allMatches}
             />
           </Row>
@@ -96,7 +98,7 @@ const Matches = () => {
       {err}
     </Title>
   ) : (
-    <Layout style={{ padding: "24px 24px 24px" }}>
+    <Layout>
       <Content className="site-layout-background">
         <Card>
           <Spin />
