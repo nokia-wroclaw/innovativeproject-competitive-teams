@@ -7,12 +7,12 @@ import {
   Spin,
   Row,
   AutoComplete,
+  Pagination,
+  Col,
 } from "antd";
 import "./index.css";
-
 import { Api } from "../../Api";
 import Match from "../Match";
-
 import { AuthContext } from "../Auth/Auth";
 
 const { Content } = Layout;
@@ -21,49 +21,73 @@ const { Title } = Typography;
 const Matches = () => {
   let { currentUser } = useContext(AuthContext);
   let fbId = currentUser.uid;
-
-  const [matches, setMatches] = useState(null);
+  const [matchesOnPage, setMatchesOnPage] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [allMatches, setAllMatches] = useState(0);
+  const [searched, setSearched] = useState("");
   const [err, setErr] = useState(null);
+  const pageSize = 10;
+
   useEffect(() => {
-    Api.get("/matches/", { headers: { "firebase-id": fbId } })
+    Api.get(
+      `/matches/search/?skip=${(currentPage - 1) * pageSize}&limit=${pageSize}`,
+      {
+        headers: { "firebase-id": fbId, name: searched },
+      }
+    )
       .then((result) => {
-        setMatches(result.data);
+        setMatchesOnPage(result.data);
       })
       .catch((err) => {
-        setMatches(null);
+        setMatchesOnPage(null);
         setErr(err.toString());
       });
-  }, [fbId]);
+  }, [fbId, currentPage, searched]);
 
-  const handleSearch = (value) => {
-    Api.get("/matches/search/", {
-      headers: {
-        "firebase-id": fbId,
-        name: value,
-      },
-    }).then((result) => {
-      setMatches(result.data);
-    });
-  };
-  return matches ? (
-    <Layout style={{ padding: "24px 24px 24px" }}>
+  useEffect(() => {
+    setCurrentPage(1);
+    Api.get(`/matches_count_by_search/`, {
+      headers: { "firebase-id": fbId, name: searched },
+    })
+      .then((result) => {
+        setAllMatches(result.data);
+      })
+      .catch((err) => {
+        setMatchesOnPage(null);
+        setErr(err.toString());
+      });
+  }, [searched]);
+
+  return matchesOnPage ? (
+    <Layout className="list-background">
       <Content className="site-layout-background">
         <Card>
           <Title> List of matches </Title>
           <Row gutter={[0, 15]}>
             <AutoComplete
               placeholder="Search matches"
-              onChange={handleSearch}
+              onChange={setSearched}
               style={{ width: 200 }}
             />
           </Row>
-          <Collapse>
-            {matches.map((match) => (
-              <Panel header={"Match " + match.name} key={match.id}>
-                <Match id={match.id} />
-              </Panel>
-            ))}
-          </Collapse>
+          <Col span={24}>
+            <Collapse>
+              {matchesOnPage.map((match) => (
+                <Panel header={`Match ${match.name}`} key={match.id}>
+                  <Match id={match.id} />
+                </Panel>
+              ))}
+            </Collapse>
+          </Col>
+          <Row align="center">
+            <Pagination
+              defaultCurrent={1}
+              defaultPageSize={pageSize}
+              current={currentPage}
+              onChange={setCurrentPage}
+              total={allMatches}
+            />
+          </Row>
         </Card>
       </Content>
     </Layout>
@@ -74,7 +98,7 @@ const Matches = () => {
       {err}
     </Title>
   ) : (
-    <Layout style={{ padding: "24px 24px 24px" }}>
+    <Layout>
       <Content className="site-layout-background">
         <Card>
           <Spin />

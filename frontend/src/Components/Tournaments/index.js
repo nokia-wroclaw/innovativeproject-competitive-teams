@@ -7,6 +7,8 @@ import {
   Spin,
   Row,
   AutoComplete,
+  Pagination,
+  Col,
 } from "antd";
 import "./index.css";
 
@@ -22,30 +24,46 @@ const Tournaments = () => {
   let { currentUser } = useContext(AuthContext);
   let fbId = currentUser.uid;
 
-  const [tournaments, setTournaments] = useState(null);
   const [err, setErr] = useState(null);
+  const [tournamentsOnPage, setTournamentsOnPage] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [allTournaments, setAllTournaments] = useState(0);
+  const [searched, setSearched] = useState("");
+  const pageSize = 10;
 
   useEffect(() => {
-    Api.get("/tournaments/", { headers: { "firebase-id": fbId } })
+    Api.get(
+      `/tournaments/search/?skip=${
+        (currentPage - 1) * pageSize
+      }&limit=${pageSize}`,
+      {
+        headers: { "firebase-id": fbId, name: searched },
+      }
+    )
       .then((result) => {
-        setTournaments(result.data);
+        setTournamentsOnPage(result.data);
       })
       .catch((err) => {
-        setTournaments(null);
+        setTournamentsOnPage(null);
         setErr(err.toString());
       });
-  }, [fbId]);
-  const handleSearch = (value) => {
-    Api.get("/tournaments/search/", {
-      headers: {
-        "firebase-id": fbId,
-        name: value,
-      },
-    }).then((result) => {
-      setTournaments(result.data);
-    });
-  };
-  return tournaments ? (
+  }, [fbId, currentPage, searched]);
+
+  useEffect(() => {
+    setCurrentPage(1);
+    Api.get(`/tournaments_count_by_search/`, {
+      headers: { "firebase-id": fbId, name: searched },
+    })
+      .then((result) => {
+        setAllTournaments(result.data);
+      })
+      .catch((err) => {
+        setTournamentsOnPage(null);
+        setErr(err.toString());
+      });
+  }, [searched]);
+
+  return tournamentsOnPage ? (
     <Layout className="list-background">
       <Content className="site-layout-background">
         <Card>
@@ -53,21 +71,32 @@ const Tournaments = () => {
           <Row gutter={[0, 15]}>
             <AutoComplete
               placeholder="Search tournaments"
-              onChange={handleSearch}
+              onChange={setSearched}
               style={{ width: 200 }}
             />
           </Row>
-          <Collapse>
-            {tournaments.map((tournament) => (
-              <Panel
-                header={`Tournament ${tournament.name} - 
+          <Col span={24}>
+            <Collapse>
+              {tournamentsOnPage.map((tournament) => (
+                <Panel
+                  header={`Tournament ${tournament.name} - 
                    ${tournamentTypes[tournament.tournament_type]} `}
-                key={tournament.id}
-              >
-                <Tournament data={tournament} />
-              </Panel>
-            ))}
-          </Collapse>
+                  key={tournament.id}
+                >
+                  <Tournament data={tournament} />
+                </Panel>
+              ))}
+            </Collapse>
+          </Col>
+          <Row align="center">
+            <Pagination
+              defaultCurrent={1}
+              defaultPageSize={pageSize}
+              onChange={setCurrentPage}
+              total={allTournaments}
+              current={currentPage}
+            />
+          </Row>
         </Card>
       </Content>
     </Layout>

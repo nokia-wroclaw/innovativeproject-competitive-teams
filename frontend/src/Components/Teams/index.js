@@ -7,6 +7,8 @@ import {
   Spin,
   AutoComplete,
   Row,
+  Pagination,
+  Col,
 } from "antd";
 import "./index.css";
 
@@ -22,31 +24,44 @@ const { Title } = Typography;
 const Teams = () => {
   let { currentUser } = useContext(AuthContext);
   let fbId = currentUser.uid;
-  const [teams, setTeams] = useState(null);
   const [err, setErr] = useState(null);
+  const [teamsOnPage, setTeamsOnPage] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [allTeams, setAllTeams] = useState(0);
+  const [searched, setSearched] = useState("");
+  const pageSize = 10;
 
   useEffect(() => {
-    Api.get("/teams/", { headers: { "firebase-id": fbId } })
+    Api.get(
+      `/teams/search/?skip=${(currentPage - 1) * pageSize}&limit=${pageSize}`,
+      {
+        headers: { "firebase-id": fbId, name: searched },
+      }
+    )
       .then((result) => {
-        setTeams(result.data);
+        setTeamsOnPage(result.data);
       })
       .catch((err) => {
-        setTeams(null);
+        setTeamsOnPage(null);
         setErr(err.toString());
       });
-  }, [fbId]);
+  }, [fbId, currentPage, searched]);
 
-  const handleSearch = (value) => {
-    Api.get("/teams/search/", {
-      headers: {
-        "firebase-id": fbId,
-        name: value,
-      },
-    }).then((result) => {
-      setTeams(result.data);
-    });
-  };
-  return teams ? (
+  useEffect(() => {
+    setCurrentPage(1);
+    Api.get(`/teams_count_by_search/`, {
+      headers: { "firebase-id": fbId, name: searched },
+    })
+      .then((result) => {
+        setAllTeams(result.data);
+      })
+      .catch((err) => {
+        setTeamsOnPage(null);
+        setErr(err.toString());
+      });
+  }, [searched]);
+
+  return teamsOnPage ? (
     <Layout className="list-background">
       <Content className="site-layout-background">
         <Card>
@@ -54,17 +69,28 @@ const Teams = () => {
           <Row gutter={[0, 15]}>
             <AutoComplete
               placeholder="Search teams"
-              onChange={handleSearch}
+              onChange={setSearched}
               style={{ width: 200 }}
             />
           </Row>
-          <Collapse>
-            {teams.map((team) => (
-              <Panel header={"Team " + team.name} key={team.id}>
-                <Team id={team.id} />
-              </Panel>
-            ))}
-          </Collapse>
+          <Col span={24}>
+            <Collapse>
+              {teamsOnPage.map((team) => (
+                <Panel header={`Team ${team.name}`} key={team.id}>
+                  <Team id={team.id} />
+                </Panel>
+              ))}
+            </Collapse>
+          </Col>
+          <Row align="center" span={4}>
+            <Pagination
+              defaultCurrent={1}
+              defaultPageSize={pageSize}
+              onChange={setCurrentPage}
+              total={allTeams}
+              current={currentPage}
+            />
+          </Row>
         </Card>
       </Content>
     </Layout>
