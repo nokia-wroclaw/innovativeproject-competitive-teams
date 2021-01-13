@@ -490,7 +490,6 @@ def read_matches(
         )
 
 
-
 @app.get("/api/matches_count/", response_model=int)
 def count_matches(
     firebase_id: str = Header(None),
@@ -525,6 +524,7 @@ def read_upcoming_matches(
         raise HTTPException(
             status_code=404, detail="Permission denied, requires at least: player"
         )
+
 
 @app.get("/api/matches/search/", response_model=List[schemas.Match])
 def search_matches(
@@ -580,7 +580,8 @@ def read_match(
         return db_match
     else:
         raise HTTPException(
-            status_code=404, detail="Permission denied, requires at least: player")
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
 
 
 @app.patch("/api/matches/{match_id}")
@@ -601,6 +602,7 @@ def update_match(
         raise HTTPException(
             status_code=404, detail="Permission denied, requires at least: moderator"
         )
+
 
 # tournaments
 @app.post("/api/tournaments/", response_model=schemas.Tournament)
@@ -625,21 +627,27 @@ def create_tournament(
         if tournament.tournament_type == "swiss":
             if len(teams_ids) % 2:
                 raise HTTPException(
-                        status_code=404, detail="Swiss tournament requires even number of teams"
+                    status_code=404,
+                    detail="Swiss tournament requires even number of teams",
                 )
             if len(teams_ids) < tournament.swiss_rounds + 1:
                 raise HTTPException(
-                        status_code=404, detail="Swiss tournament: Not enough teams for " + str(tournament.swiss_rounds) + " number of rounds"
+                    status_code=404,
+                    detail="Swiss tournament: Not enough teams for "
+                    + str(tournament.swiss_rounds)
+                    + " number of rounds",
                 )
             if tournament.swiss_rounds <= 0:
                 raise HTTPException(
-                        status_code=404, detail="Swiss tournament: non-positive number of rounds"
+                    status_code=404,
+                    detail="Swiss tournament: non-positive number of rounds",
                 )
         return crud.create_tournament(db=db, tournament=tournament)
     else:
         raise HTTPException(
             status_code=404, detail="Permission denied, requires at least: moderator"
         )
+
 
 @app.get("/api/tournaments/", response_model=List[schemas.Tournament])
 def read_tournaments(
@@ -689,7 +697,9 @@ def search_tournaments(
         db=db, firebase_id=firebase_id, clearance="player"
     )
     if access:
-        tournaments = crud.search_tournaments_by_name(db, name=name, skip=skip, limit=limit)
+        tournaments = crud.search_tournaments_by_name(
+            db, name=name, skip=skip, limit=limit
+        )
         return tournaments
     else:
         raise HTTPException(
@@ -737,6 +747,7 @@ def read_tournament(
 
 # Tournament - Matches
 
+
 @app.patch("/api/tournaments/{tournament_id}/input_match_result")
 def update_tournament_match(
     match: schemas.MatchResult,
@@ -753,9 +764,13 @@ def update_tournament_match(
             raise HTTPException(status_code=404, detail="Match not found")
         if crud.get_tournament(db, tournament_id=tournament_id) is None:
             raise HTTPException(status_code=404, detail="Tournament not found")
-        if not crud.is_match_in_tournament(db, tournament_id=tournament_id, match_id=match_id):
+        if not crud.is_match_in_tournament(
+            db, tournament_id=tournament_id, match_id=match_id
+        ):
             raise HTTPException(status_code=404, detail="Match not in tournament")
-        crud.update_tournament_match(db, tournament_id=tournament_id, match_id=match_id, match=match)
+        crud.update_tournament_match(
+            db, tournament_id=tournament_id, match_id=match_id, match=match
+        )
     else:
         raise HTTPException(
             status_code=404, detail="Permission denied, requires at least: moderator"
@@ -776,7 +791,9 @@ def read_tournament_matches(
     if access:
         if crud.get_tournament(db, tournament_id=tournament_id) is None:
             raise HTTPException(status_code=404, detail="Tournament not found")
-        matches = crud.get_tournament_matches(db, tournament_id=tournament_id, skip=skip, limit=limit)
+        matches = crud.get_tournament_matches(
+            db, tournament_id=tournament_id, skip=skip, limit=limit
+        )
         return matches
     else:
         raise HTTPException(
@@ -796,9 +813,7 @@ def count_tournament_matches(
     if access:
         tournament = crud.get_tournament(db, tournament_id=tournament_id)
         if tournament is None:
-            raise HTTPException(
-                status_code=404, detail="Tournament not found"
-        )
+            raise HTTPException(status_code=404, detail="Tournament not found")
         count = crud.count_tournament_matches(db, tournament_id=tournament_id)
         return count
     else:
@@ -807,7 +822,10 @@ def count_tournament_matches(
         )
 
 
-@app.get("/api/tournament/{tournament_id}/finished_matches", response_model=List[schemas.Match])
+@app.get(
+    "/api/tournament/{tournament_id}/finished_matches",
+    response_model=List[schemas.Match],
+)
 def read_tournament_finished_matches(
     tournament_id: int = Header(None),
     firebase_id: str = Header(None),
@@ -821,7 +839,9 @@ def read_tournament_finished_matches(
     if access:
         if crud.get_tournament(db, tournament_id=tournament_id) is None:
             raise HTTPException(status_code=404, detail="Tournament not found")
-        matches = crud.get_tournament_finished_matches(db, tournament_id=tournament_id, skip=skip, limit=limit)
+        matches = crud.get_tournament_finished_matches(
+            db, tournament_id=tournament_id, skip=skip, limit=limit
+        )
         return matches
     else:
         raise HTTPException(
@@ -829,7 +849,10 @@ def read_tournament_finished_matches(
         )
 
 
-@app.get("/api/tournament/{tournament_id}/unfinished_matches", response_model=List[schemas.Match])
+@app.get(
+    "/api/tournament/{tournament_id}/unfinished_matches",
+    response_model=List[schemas.Match],
+)
 def read_tournament_unfinished_matches(
     tournament_id: int = Header(None),
     firebase_id: str = Header(None),
@@ -843,7 +866,9 @@ def read_tournament_unfinished_matches(
     if access:
         if crud.get_tournament(db, tournament_id=tournament_id) is None:
             raise HTTPException(status_code=404, detail="Tournament not found")
-        matches = crud.get_tournament_unfinished_matches(db, tournament_id=tournament_id, skip=skip, limit=limit)
+        matches = crud.get_tournament_unfinished_matches(
+            db, tournament_id=tournament_id, skip=skip, limit=limit
+        )
         return matches
     else:
         raise HTTPException(
@@ -851,7 +876,10 @@ def read_tournament_unfinished_matches(
         )
 
 
-@app.get("/api/tournament/{tournament_id}/scoreboard", response_model=schemas.TournamentResults)
+@app.get(
+    "/api/tournament/{tournament_id}/scoreboard",
+    response_model=schemas.TournamentResults,
+)
 def read_tournament_scoreboard(
     tournament_id: int = Header(None),
     firebase_id: str = Header(None),
