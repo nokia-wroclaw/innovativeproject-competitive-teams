@@ -73,15 +73,23 @@ const Teams = () => {
               style={{ width: 200 }}
             />
           </Row>
-          <Col span={24}>
-            <Collapse>
+
+          <Card
+            bordered={false}
+            bodyStyle={{
+              height: 520,
+              overflow: "auto",
+            }}
+          >
+            <Collapse accordion>
               {teamsOnPage.map((team) => (
                 <Panel header={`Team ${team.name}`} key={team.id}>
                   <Team id={team.id} />
                 </Panel>
               ))}
             </Collapse>
-          </Col>
+          </Card>
+
           <Row align="center" span={4}>
             <Pagination
               defaultCurrent={1}

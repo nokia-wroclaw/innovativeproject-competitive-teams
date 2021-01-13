@@ -75,7 +75,13 @@ const Tournaments = () => {
               style={{ width: 200 }}
             />
           </Row>
-          <Col span={24}>
+          <Card
+            bordered={false}
+            bodyStyle={{
+              height: 520,
+              overflow: "auto",
+            }}
+          >
             <Collapse>
               {tournamentsOnPage.map((tournament) => (
                 <Panel
@@ -87,7 +93,7 @@ const Tournaments = () => {
                 </Panel>
               ))}
             </Collapse>
-          </Col>
+          </Card>
           <Row align="center">
             <Pagination
               defaultCurrent={1}

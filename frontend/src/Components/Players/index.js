@@ -73,7 +73,13 @@ const Players = () => {
               style={{ width: 200 }}
             />
           </Row>
-          <Col span={24}>
+          <Card
+            bordered={false}
+            bodyStyle={{
+              height: 520,
+              overflow: "auto",
+            }}
+          >
             <Collapse>
               {playersOnPage.map((player) => (
                 <Panel header={`Player ${player.name}`} key={player.id}>
@@ -81,7 +87,7 @@ const Players = () => {
                 </Panel>
               ))}
             </Collapse>
-          </Col>
+          </Card>
           <Row align="center">
             <Pagination
               defaultCurrent={1}
