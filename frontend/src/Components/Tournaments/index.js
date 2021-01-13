@@ -61,7 +61,7 @@ const Tournaments = () => {
         setTournamentsOnPage(null);
         setErr(err.toString());
       });
-  }, [searched]);
+  }, [searched, fbId]);
 
   return tournamentsOnPage ? (
     <Layout className="list-background">

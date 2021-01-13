@@ -56,7 +56,7 @@ const Matches = () => {
         setMatchesOnPage(null);
         setErr(err.toString());
       });
-  }, [searched]);
+  }, [searched, fbId]);
 
   return matchesOnPage ? (
     <Layout className="list-background">

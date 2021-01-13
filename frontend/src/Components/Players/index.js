@@ -59,7 +59,7 @@ const Players = () => {
         setPlayersOnPage(null);
         setErr(err.toString());
       });
-  }, [searched]);
+  }, [searched, fbId]);
 
   return playersOnPage ? (
     <Layout className="list-background">

@@ -59,7 +59,7 @@ const Teams = () => {
         setTeamsOnPage(null);
         setErr(err.toString());
       });
-  }, [searched]);
+  }, [searched, fbId]);
 
   return teamsOnPage ? (
     <Layout className="list-background">
