@@ -8,7 +8,6 @@ import {
   AutoComplete,
   Row,
   Pagination,
-  Col,
 } from "antd";
 import "./index.css";
 
