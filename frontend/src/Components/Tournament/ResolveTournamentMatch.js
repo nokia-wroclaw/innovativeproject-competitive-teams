@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { useQueryClient, useMutation } from "react-query";
 import { Popover, Button, Col, Form, Input, Space } from "antd";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
@@ -26,6 +27,16 @@ const ResolveTournamentMatch = ({
   const hdrs = { headers: { "firebase-id": fbId } };
   const [visible, setVisible] = useState(false);
 
+  const queryClient = useQueryClient();
+
+  // const mutation = useMutation((data) =>
+  //   Api.patch(
+  //     `/tournaments/${tournamentID}/input_match_result?match_id=${matchID}`,
+  //     data,
+  //     hdrs
+  //   )
+  // );
+
   const onFinish = (values) => {
     Api.patch(
       `/tournaments/${tournamentID}/input_match_result?match_id=${matchID}`,
@@ -46,6 +57,10 @@ const ResolveTournamentMatch = ({
         )
       );
     setVisible(false);
+    queryClient.invalidateQueries(["tournament", tournamentID]);
+    queryClient.invalidateQueries(["scoreboard", tournamentID]);
+    queryClient.invalidateQueries(["finished", tournamentID]);
+    queryClient.invalidateQueries(["unfinished", tournamentID]);
   };
 
   const teamForm = (
