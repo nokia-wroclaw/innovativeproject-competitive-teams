@@ -164,61 +164,65 @@ const Tournament = ({ id, data }) => {
         </ColumnGroup>
       </Table>
       <Divider />
-      <Table
-        dataSource={finishedMatches.map((match) => ({
-          name: match.name,
-          teama: match.team1.name,
-          teamb: match.team2.name,
-          score: `${match.score1} : ${match.score2}`,
-        }))}
-        size="small"
-        pagination={false}
-        bordered={true}
-      >
-        <ColumnGroup title="Finished matches" align="center">
-          <Column title="Match" dataIndex="name" key="matchname" />
-          <Column title="Team A" dataIndex="teama" key="teama" />
-          <Column title="Team B" dataIndex="teamb" key="teamb" />
-          <Column title="Score (A : B)" dataIndex="score" key="score" />
-        </ColumnGroup>
-      </Table>
+      {finishedMatches.length > 0 ? (
+        <Table
+          dataSource={finishedMatches.map((match) => ({
+            name: match.name,
+            teama: match.team1.name,
+            teamb: match.team2.name,
+            score: `${match.score1} : ${match.score2}`,
+          }))}
+          size="small"
+          pagination={false}
+          bordered={true}
+        >
+          <ColumnGroup title="Finished matches" align="center">
+            <Column title="Match" dataIndex="name" key="matchname" />
+            <Column title="Team A" dataIndex="teama" key="teama" />
+            <Column title="Team B" dataIndex="teamb" key="teamb" />
+            <Column title="Score (A : B)" dataIndex="score" key="score" />
+          </ColumnGroup>
+        </Table>
+      ) : null}
       <Divider />
-      <Table
-        dataSource={unfinishedMatches.map((match) => ({
-          id: match.id,
-          name: match.name,
-          time: new Date(Date.parse(match.start_time)).toGMTString(),
-          teama: match.team1.name,
-          teamb: match.team2.name,
-          score: `${match.score1} : ${match.score2}`,
-        }))}
-        size="small"
-        pagination={false}
-        bordered={true}
-      >
-        <ColumnGroup title="Unfinished matches" align="center">
-          <Column title="Match" dataIndex="name" key="matchname" />
-          <Column title="Start time" dataIndex="time" key="time" />
-          <Column title="Team A" dataIndex="teama" key="teama" />
-          <Column title="Team B" dataIndex="teamb" key="teamb" />
-          <Column title="Score (A : B)" dataIndex="score" key="score" />
-          <Column
-            title="Actions"
-            key="actions"
-            render={(text, record) => (
-              <Space size="small">
-                <Button type="primary">Modify</Button>
-                <ResolveTournamentMatch
-                  tournamentID={tournamentData.id}
-                  matchID={record.id}
-                  teamAName={record.teama}
-                  teamBName={record.teamb}
-                />
-              </Space>
-            )}
-          />
-        </ColumnGroup>
-      </Table>
+      {unfinishedMatches.length > 0 ? (
+        <Table
+          dataSource={unfinishedMatches.map((match) => ({
+            id: match.id,
+            name: match.name,
+            time: new Date(Date.parse(match.start_time)).toGMTString(),
+            teama: match.team1.name,
+            teamb: match.team2.name,
+            score: `${match.score1} : ${match.score2}`,
+          }))}
+          size="small"
+          pagination={false}
+          bordered={true}
+        >
+          <ColumnGroup title="Unfinished matches" align="center">
+            <Column title="Match" dataIndex="name" key="matchname" />
+            <Column title="Start time" dataIndex="time" key="time" />
+            <Column title="Team A" dataIndex="teama" key="teama" />
+            <Column title="Team B" dataIndex="teamb" key="teamb" />
+            <Column title="Score (A : B)" dataIndex="score" key="score" />
+            <Column
+              title="Actions"
+              key="actions"
+              render={(text, record) => (
+                <Space size="small">
+                  <Button type="primary">Modify</Button>
+                  <ResolveTournamentMatch
+                    tournamentID={tournamentData.id}
+                    matchID={record.id}
+                    teamAName={record.teama}
+                    teamBName={record.teamb}
+                  />
+                </Space>
+              )}
+            />
+          </ColumnGroup>
+        </Table>
+      ) : null}
     </div>
   ) : err ? (
     <Title>
