@@ -8,7 +8,6 @@ import {
   Row,
   AutoComplete,
   Pagination,
-  Col,
 } from "antd";
 import "./index.css";
 
@@ -61,7 +60,7 @@ const Tournaments = () => {
         setTournamentsOnPage(null);
         setErr(err.toString());
       });
-  }, [searched]);
+  }, [searched, fbId]);
 
   return tournamentsOnPage ? (
     <Layout className="list-background">
@@ -75,7 +74,13 @@ const Tournaments = () => {
               style={{ width: 200 }}
             />
           </Row>
-          <Col span={24}>
+          <Card
+            bordered={false}
+            bodyStyle={{
+              height: 520,
+              overflow: "auto",
+            }}
+          >
             <Collapse>
               {tournamentsOnPage.map((tournament) => (
                 <Panel
@@ -87,7 +92,7 @@ const Tournaments = () => {
                 </Panel>
               ))}
             </Collapse>
-          </Col>
+          </Card>
           <Row align="center">
             <Pagination
               defaultCurrent={1}

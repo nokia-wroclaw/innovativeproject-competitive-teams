@@ -8,7 +8,6 @@ import {
   Row,
   AutoComplete,
   Pagination,
-  Col,
 } from "antd";
 import "./index.css";
 import { Api } from "../../Api";
@@ -56,7 +55,7 @@ const Matches = () => {
         setMatchesOnPage(null);
         setErr(err.toString());
       });
-  }, [searched]);
+  }, [searched, fbId]);
 
   return matchesOnPage ? (
     <Layout className="list-background">
@@ -70,7 +69,13 @@ const Matches = () => {
               style={{ width: 200 }}
             />
           </Row>
-          <Col span={24}>
+          <Card
+            bordered={false}
+            bodyStyle={{
+              height: 520,
+              overflow: "auto",
+            }}
+          >
             <Collapse>
               {matchesOnPage.map((match) => (
                 <Panel header={`Match ${match.name}`} key={match.id}>
@@ -78,7 +83,7 @@ const Matches = () => {
                 </Panel>
               ))}
             </Collapse>
-          </Col>
+          </Card>
           <Row align="center">
             <Pagination
               defaultCurrent={1}

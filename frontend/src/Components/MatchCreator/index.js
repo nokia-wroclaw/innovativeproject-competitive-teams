@@ -59,7 +59,7 @@ const MatchCreator = () => {
         Notification(
           "success",
           "Success.",
-          `Match ${values.name} between ${values.team1id} ${values.team2id} created successfully.`
+          `Match ${values.name} between ${values.team1name} ${values.team2name} created successfully.`
         );
       })
       .catch((err) => {
