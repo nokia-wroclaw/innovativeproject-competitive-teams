@@ -419,6 +419,31 @@ def link_player_to_team(
         )
 
 
+@app.put("/api/unlink_player/{team_id}")
+def unlink_player_to_team(
+    team_id: int,
+    player_id: int,
+    firebase_id: str = Header(None),
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="admin"
+    )
+    if access:
+        if crud.get_player(db, player_id=player_id) is None:
+            raise HTTPException(status_code=404, detail="Player not found")
+        if crud.get_team(db, team_id=team_id) is None:
+            raise HTTPException(status_code=404, detail="Team not found")
+        if crud.is_player_in_team(db, player_id=player_id, team_id=team_id):
+            crud.unlink_player_to_team_with_id(db, team_id, player_id)
+        else:
+            raise HTTPException(status_code=404, detail="Player is not in the team")
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: admin"
+        )
+
+
 @app.put("/api/teams/{team_id}")
 def set_team_captain(
     team_id: int,
@@ -519,6 +544,56 @@ def read_upcoming_matches(
     )
     if access:
         matches = crud.get_upcoming_matches(db, skip=skip, limit=limit)
+        return matches
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
+
+
+@app.get("/api/personal_upcoming_matches/{player_id}", response_model=List[schemas.Match])
+def read_upcoming_personal_matches(
+    firebase_id: str = Header(None),
+    player_id: str = Header(None),
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        player = crud.get_player(db=db, player_id=player_id)
+        if player is None:
+            raise HTTPException(
+                status_code=404, detail="Player not found"
+            )
+        matches = crud.get_personal_upcoming_matches(db, player_id=player_id, skip=skip, limit=limit)
+        return matches
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
+
+
+@app.get("/api/personal_finished_matches/{player_id}", response_model=List[schemas.Match])
+def read_finished_personal_matches(
+    firebase_id: str = Header(None),
+    player_id: str = Header(None),
+    skip: int = 0,
+    limit: int = 100,
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        player = crud.get_player(db=db, player_id=player_id)
+        if player is None:
+            raise HTTPException(
+                status_code=404, detail="Player not found"
+            )
+        matches = crud.get_personal_finished_matches(db, player_id=player_id, skip=skip, limit=limit)
         return matches
     else:
         raise HTTPException(
