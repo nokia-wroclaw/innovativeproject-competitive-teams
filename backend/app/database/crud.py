@@ -138,6 +138,8 @@ def unlink_player_to_team_with_id(db: Session, team_id: int, player_id: int):
     db_team = db.query(models.Team).filter(models.Team.id == team_id).first()
     db_player = db.query(models.Player).filter(models.Player.id == player_id).first()
     db_team.players.remove(db_player)
+    if db_team.captain_id == player_id:
+        db_team.captain_id = None
     db.commit()
 
 def is_player_in_team(db: Session, player_id: int, team_id: int):
