@@ -163,6 +163,25 @@ def count_matches(db: Session):
 def get_upcoming_matches(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Match).filter(models.Match.finished == False).order_by(models.Match.start_time).offset(skip).limit(limit).all()
 
+def get_finished_matches(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(models.Match).filter(models.Match.finished == True).order_by(models.Match.start_time).offset(skip).limit(limit).all()
+
+def get_personal_upcoming_matches(db: Session, player_id: int, skip: int = 0, limit: int = 100):
+    db_upcoming_matches = db.query(models.Match).filter(models.Match.finished == False).order_by(models.Match.start_time).all()
+    result = []
+    for match in db_upcoming_matches:
+        if is_player_in_team(db=db, player_id=player_id, team_id=match.team1_id) or is_player_in_team(db=db, player_id=player_id, team_id=match.team2_id):
+            result.append(match)
+    return result[skip:limit + skip]
+
+def get_personal_finished_matches(db: Session, player_id: int, skip: int = 0, limit: int = 100):
+    db_finished_matches = db.query(models.Match).filter(models.Match.finished == True).order_by(models.Match.start_time).all()
+    result = []
+    for match in db_finished_matches:
+        if is_player_in_team(db=db, player_id=player_id, team_id=match.team1_id) or is_player_in_team(db=db, player_id=player_id, team_id=match.team2_id):
+            result.append(match)
+    return result[skip:limit + skip]
+
 def get_match(db: Session, match_id: int):
     return db.query(models.Match).filter(models.Match.id == match_id).first()
 
@@ -425,24 +444,7 @@ def count_tournaments_by_search(db: Session, name: str):
             ans.append(tournament)
     return len(ans)
 
-# TODO
-def link_player_to_team_with_name():
-    pass
 
 def unlink_player_to_team_with_id():
     pass
 
-def unlink_player_to_team_with_name():
-    pass
-
-def link_captain_to_team_with_id():
-    pass
-
-def link_captain_to_team_with_name():
-    pass
-
-def unlink_captain_to_team_with_id():
-    pass
-
-def unlink_captain_to_team_with_name():
-    pass
