@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useQueryClient } from "react-query";
-import { Popover, Button, Col, Form, Input, Space } from "antd";
+import { Popover, Button, Col, Form, Input, Space, DatePicker } from "antd";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
 import { Notification } from "../Util/Notification";
@@ -16,11 +16,14 @@ const validateMessages = {
   required: "${label} is required!",
 };
 
-const ResolveTournamentMatch = ({
+const ModifyTournamentMatch = ({
   tournamentID,
   matchID,
-  teamAName,
-  teamBName,
+  name,
+  time,
+  description,
+  score1,
+  score2,
 }) => {
   let { currentUser } = useContext(AuthContext);
   let fbId = currentUser.uid;
@@ -31,27 +34,28 @@ const ResolveTournamentMatch = ({
 
   const onFinish = (values) => {
     Api.patch(
-      `/tournaments/${tournamentID}/input_match_result?match_id=${matchID}`,
+      `/matches/${matchID}`,
       {
-        score1: values.ascore,
-        score2: values.bscore,
+        name: values.name,
+        description: description,
+        start_time: values.time,
+        finished: false,
+        score1: score1,
+        score2: score2,
       },
       hdrs
     )
-      .then(() => Notification("success", "Match resolved successfully"))
+      .then(() => Notification("success", "Match modified successfully"))
       .catch((err) =>
         Notification(
           "error",
-          "Eror when resolving match " + values.name,
+          "Eror when modifying tournament " + values.name,
           err.response && err.response.data.detail
             ? err.response.data.detail
             : err.message
         )
       );
     setVisible(false);
-    queryClient.refetchQueries(["tournament", tournamentID]);
-    queryClient.refetchQueries(["scoreboard", tournamentID]);
-    queryClient.refetchQueries(["finished", tournamentID]);
     queryClient.refetchQueries(["unfinished", tournamentID]);
   };
 
@@ -62,19 +66,11 @@ const ResolveTournamentMatch = ({
       onFinish={onFinish}
       validateMessages={validateMessages}
     >
-      <Form.Item
-        name="ascore"
-        label={`${teamAName} score`}
-        rules={[{ required: true }]}
-      >
-        <Input type="number" min={0} step={1} />
+      <Form.Item name="name" label={`Match name`} rules={[{ required: true }]}>
+        <Input />
       </Form.Item>
-      <Form.Item
-        name="bscore"
-        label={`${teamBName} score`}
-        rules={[{ required: true }]}
-      >
-        <Input type="number" min={0} step={1} />
+      <Form.Item name="time" label={`Start time`} rules={[{ required: true }]}>
+        <DatePicker showTime format="YYYY-MM-DD HH:mm" />
       </Form.Item>
       <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
         <Space size="middle">
@@ -93,7 +89,7 @@ const ResolveTournamentMatch = ({
     <Col align="center">
       <Popover
         placement="top"
-        title="Resolve match"
+        title="Modify match details"
         trigger="click"
         display="inline-block"
         content={teamForm}
@@ -105,11 +101,11 @@ const ResolveTournamentMatch = ({
             setVisible(true);
           }}
         >
-          Resolve
+          Modify
         </Button>
       </Popover>
     </Col>
   );
 };
 
-export default ResolveTournamentMatch;
+export default ModifyTournamentMatch;

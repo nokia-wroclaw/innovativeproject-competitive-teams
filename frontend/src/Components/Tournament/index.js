@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useContext } from "react";
-import { useQueryClient, useQuery } from "react-query";
+import React, { useContext } from "react";
+import { useQuery } from "react-query";
 import { Typography, Divider, Button, List, Table, Space, Spin } from "antd";
 import { useParams } from "react-router-dom";
 import "./index.css";
@@ -8,6 +8,7 @@ import { Api } from "../../Api";
 import { AuthContext } from "../Auth/Auth";
 import SEGraph from "./SEGraph";
 import ResolveTournamentMatch from "./ResolveTournamentMatch";
+import ModifyTournamentMatch from "./ModifyTournamentMatch";
 
 const { Title } = Typography;
 const { Column, ColumnGroup } = Table;
@@ -22,8 +23,6 @@ const Tournament = ({ id }) => {
   let { currentUser } = useContext(AuthContext);
   let fbId = currentUser.uid;
 
-  const queryClient = useQueryClient();
-
   // If no id has been passed, check router params
   const { tournamentid } = useParams();
   if (id === null || id === undefined) id = tournamentid;
@@ -34,9 +33,6 @@ const Tournament = ({ id }) => {
       const res = await Api.get("/tournaments/" + id, {
         headers: { "firebase-id": fbId },
       });
-      queryClient.invalidateQueries(["scoreboard", id]);
-      queryClient.invalidateQueries(["finished", id]);
-      queryClient.invalidateQueries(["unfinished", id]);
       return res.data;
     }
   );
@@ -192,8 +188,11 @@ const Tournament = ({ id }) => {
             id: match.id,
             name: match.name,
             time: new Date(Date.parse(match.start_time)).toGMTString(),
+            desc: match.description,
             teama: match.team1.name,
             teamb: match.team2.name,
+            score1: match.score1,
+            score2: match.score2,
             score: `${match.score1} : ${match.score2}`,
           }))}
           size="small"
@@ -211,7 +210,15 @@ const Tournament = ({ id }) => {
               key="actions"
               render={(text, record) => (
                 <Space size="small">
-                  <Button type="primary">Modify</Button>
+                  <ModifyTournamentMatch
+                    tournamentID={tournamentData.id}
+                    matchID={record.id}
+                    name={record.name}
+                    time={record.time}
+                    description={record.description}
+                    score1={record.score1}
+                    score2={record.score2}
+                  />
                   <ResolveTournamentMatch
                     tournamentID={tournamentData.id}
                     matchID={record.id}
