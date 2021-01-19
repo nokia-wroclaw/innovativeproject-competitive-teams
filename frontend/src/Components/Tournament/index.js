@@ -167,8 +167,8 @@ const Tournament = ({ id, data }) => {
       <Table
         dataSource={finishedMatches.map((match) => ({
           name: match.name,
-          teama: match.team1.name,
-          teamb: match.team2.name,
+          teama: match.team1 === null ? "TBD" : match.team1.name,
+          teamb: match.team2 === null ? "TBD" : match.team2.name,
           score: `${match.score1} : ${match.score2}`,
         }))}
         size="small"
@@ -188,8 +188,8 @@ const Tournament = ({ id, data }) => {
           id: match.id,
           name: match.name,
           time: new Date(Date.parse(match.start_time)).toGMTString(),
-          teama: match.team1.name,
-          teamb: match.team2.name,
+          teama: match.team1 === null ? "TBD" : match.team1.name,
+          teamb: match.team2 === null ? "TBD" : match.team2.name,
           score: `${match.score1} : ${match.score2}`,
         }))}
         size="small"
