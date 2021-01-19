@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import { Typography, Card, Table, Spin } from "antd";
 import { useParams } from "react-router-dom";
 import "./index.css";
@@ -19,33 +20,20 @@ const Team = ({ id }) => {
   const { teamid } = useParams();
   if (id === null || id === undefined) id = teamid;
 
-  const [teamdata, setTeamdata] = useState(null);
-  const [err, setErr] = useState(null);
+  const { error: err, data: teamData } = useQuery(["team", id], async () => {
+    const res = await Api.get("/teams/" + id, {
+      headers: { "firebase-id": fbId },
+    });
+    return res.data;
+  });
 
-  // Get team data
-  useEffect(() => {
-    if (id === null || id === undefined) setErr("No team id passed.");
-    else {
-      Api.get("/teams/" + id, { headers: { "firebase-id": fbId } })
-        .then((response) => {
-          if (response.status === 200) {
-            setTeamdata(response.data);
-          }
-        })
-        .catch((err) => {
-          setTeamdata(null);
-          setErr(err.toString());
-        });
-    }
-  }, [id, fbId]);
-
-  return teamdata ? (
+  return teamData ? (
     <div className="team-info">
       <Table
         dataSource={
-          teamdata.captain_id
-            ? teamdata.players.filter(
-                (player) => player.id === teamdata.captain_id
+          teamData.captain_id
+            ? teamData.players.filter(
+                (player) => player.id === teamData.captain_id
               )
             : null
         }
@@ -64,7 +52,7 @@ const Team = ({ id }) => {
         </ColumnGroup>
       </Table>
       <Table
-        dataSource={teamdata.players}
+        dataSource={teamData.players}
         size="small"
         pagination={false}
         bordered={true}
@@ -80,7 +68,7 @@ const Team = ({ id }) => {
         </ColumnGroup>
       </Table>
       {userData &&
-      (teamdata.captain_id === userData.id ||
+      (teamData.captain_id === userData.id ||
         userData.role === "admin" ||
         userData.role === "manager") ? (
         <Card>
@@ -88,7 +76,7 @@ const Team = ({ id }) => {
         </Card>
       ) : null}
       <Card>
-        <Meta title="Description" description={teamdata.description} />
+        <Meta title="Description" description={teamData.description} />
       </Card>
     </div>
   ) : err ? (
