@@ -511,7 +511,25 @@ def update_tournament_match(
                 db.add(db_match)
                 db.commit()
                 db.refresh(db_match)
-
+    
+    if db_tournament.tournament_type == "single-elimination":
+        size = len(db_tournament.teams_ids)
+        if db_match.tournament_place < (size - 1):
+            aux = size - db_match.tournament_place
+            up = aux % 2
+            aux = aux // 2
+            aux = size - aux
+            db_match_to_update = db.query(models.Match).filter(models.Match.tournament_place == aux).filter(models.Match.tournament_id == tournament_id).first()
+            if match.score1 > match.score2:
+                if up:
+                    db_match_to_update.team1_id = db_match.team1_id
+                else:
+                    db_match_to_update.team2_id = db_match.team1_id
+            else:
+                if up:
+                    db_match_to_update.team1_id = db_match.team2_id
+                else:
+                    db_match_to_update.team2_id = db_match.team2_id
 
 def get_tournament_matches(
     db: Session, tournament_id: int, skip: int = 0, limit: int = 100
