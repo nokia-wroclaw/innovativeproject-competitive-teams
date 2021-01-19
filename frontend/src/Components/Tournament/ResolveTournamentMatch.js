@@ -42,7 +42,7 @@ const ResolveTournamentMatch = ({
       .catch((err) =>
         Notification(
           "error",
-          "Eror when resolving match " + values.name,
+          "Eror when resolving match " + matchID,
           err.response && err.response.data.detail
             ? err.response.data.detail
             : err.message
