@@ -221,7 +221,7 @@ const TournamentCreator = () => {
           )
         }
       >
-        <Button type="primary" onClick={() => setVisible(true)}>
+        <Button className="TournamentCreator" onClick={() => setVisible(true)}>
           Create a tournament
         </Button>
       </Popover>

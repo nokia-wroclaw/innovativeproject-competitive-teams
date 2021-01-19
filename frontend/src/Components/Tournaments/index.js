@@ -88,7 +88,7 @@ const Tournaments = () => {
                    ${tournamentTypes[tournament.tournament_type]} `}
                   key={tournament.id}
                 >
-                  <Tournament data={tournament} />
+                  <Tournament id={tournament.id} />
                 </Panel>
               ))}
             </Collapse>

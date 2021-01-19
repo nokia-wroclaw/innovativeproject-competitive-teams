@@ -1,9 +1,19 @@
 import React, { useContext, useState } from "react";
-import { Popover, notification, Button, Col, Form, Input, Space } from "antd";
+import {
+  Popover,
+  notification,
+  Button,
+  Col,
+  Form,
+  Space,
+  AutoComplete,
+} from "antd";
+import { useQueryClient } from "react-query";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
 
 import { Api } from "../../Api";
+const { Option } = AutoComplete;
 
 const layout = {
   labelCol: { span: 8 },
@@ -27,25 +37,36 @@ const AddPlayer = ({ teamid }) => {
   let fbId = currentUser.uid;
   const hdrs = { headers: { "firebase-id": fbId } };
   const [visible, setVisible] = useState(false);
+  const [playerIDs, setPlayerIDs] = useState({});
+
+  const queryClient = useQueryClient();
+
+  const handleSearch = (value) => {
+    Api.get("/players/search/", {
+      headers: {
+        "firebase-id": fbId,
+        name: value,
+      },
+    }).then((result) => {
+      setPlayerIDs(
+        result.data.reduce((acc, { id, name }) => {
+          acc[name] = id;
+          return acc;
+        }, {})
+      );
+    });
+  };
 
   const onFinish = (values) => {
-    // Verify that the player exists
-    Api.get("/players/" + values.playerid, hdrs)
-      // Add the player to the team
-      .then((response) => {
-        values.player = response.data.name;
-        return Api.put(
-          "/players/" + teamid + "?player_id=" + values.playerid,
-          {},
-          hdrs
-        );
-      })
+    values.playerid = playerIDs[values.player];
+    Api.put("/players/" + teamid + "?player_id=" + values.playerid, {}, hdrs)
       .then(() => {
         openNotificationWithIcon(
           "success",
           "Success.",
           "Player " + values.player + " has been added to the team."
         );
+        queryClient.refetchQueries(["team", teamid]);
       })
       .catch((err) => {
         openNotificationWithIcon(
@@ -70,10 +91,20 @@ const AddPlayer = ({ teamid }) => {
       onFinish={onFinish}
       validateMessages={validateMessages}
     >
-      <Form.Item name="playerid" label="Player ID" rules={[{ required: true }]}>
-        <Input />
+      <Form.Item name="player" label="Player" rules={[{ required: true }]}>
+        <AutoComplete
+          style={{ width: 150 }}
+          onSearch={handleSearch}
+          placeholder="input here"
+        >
+          {Object.keys(playerIDs).map((player) => (
+            <Option key={player} value={player}>
+              {player}
+            </Option>
+          ))}
+        </AutoComplete>
       </Form.Item>
-      <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
+      <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 6 }}>
         <Space size="middle">
           <Button type="primary" htmlType="submit">
             Submit
