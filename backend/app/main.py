@@ -690,7 +690,7 @@ def create_tournament(
         db=db, firebase_id=firebase_id, clearance="moderator"
     )
     if access:
-        if tournament.tournament_type not in ["round-robin", "swiss"]:
+        if tournament.tournament_type not in ["round-robin", "swiss", "single-elimination"]:
             raise HTTPException(status_code=404, detail="Tournament type unknown")
         teams_ids = tournament.teams_ids
         for team_id in teams_ids:
@@ -703,7 +703,7 @@ def create_tournament(
             if len(teams_ids) % 2:
                 raise HTTPException(
                     status_code=404,
-                    detail="Swiss tournament requires even number of teams",
+                    detail="Swiss tournament: requires even number of teams",
                 )
             if len(teams_ids) < tournament.swiss_rounds + 1:
                 raise HTTPException(
@@ -717,6 +717,12 @@ def create_tournament(
                     status_code=404,
                     detail="Swiss tournament: non-positive number of rounds",
                 )
+        elif tournament.tournament_type == "single-elimination":
+            if len(teams_ids) not in [2, 4, 8, 16, 32, 64, 128, 256, 512, 1024]:
+                raise HTTPException(
+                    status_code=404,
+                    detail="Single-elimination tournament: number of teams should be a power of 2",
+                ) 
         return crud.create_tournament(db=db, tournament=tournament)
     else:
         raise HTTPException(
@@ -843,6 +849,8 @@ def update_tournament_match(
             db, tournament_id=tournament_id, match_id=match_id
         ):
             raise HTTPException(status_code=404, detail="Match not in tournament")
+        if crud.is_match_empty(db, match_id=match_id):
+            raise HTTPException(status_code=404, detail="Teams are not set in match yet")
         crud.update_tournament_match(
             db, tournament_id=tournament_id, match_id=match_id, match=match
         )
