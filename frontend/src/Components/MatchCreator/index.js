@@ -155,7 +155,7 @@ const MatchCreator = () => {
         visible={visible}
       >
         <Button
-          type="primary"
+          className="MatchCreator"
           onClick={() => {
             setVisible(true);
           }}

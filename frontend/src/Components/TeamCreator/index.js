@@ -143,7 +143,7 @@ const TeamCreator = () => {
         visible={visible}
       >
         <Button
-          type="primary"
+          className="TeamCreator"
           onClick={() => {
             setVisible(true);
           }}
