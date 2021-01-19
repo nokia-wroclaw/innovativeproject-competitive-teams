@@ -216,7 +216,7 @@ def create_empty_match(db: Session, match: schemas.MatchCreate):
 
 def is_match_empty(db: Session, match_id: int):
     db_match = db.query(models.Match).filter(models.Match.id == match_id).first()
-    return db_match.team1_id == None and db_match.team2_id == None
+    return db_match.team1_id == None or db_match.team2_id == None
 
 def get_matches(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Match).offset(skip).limit(limit).all()
@@ -513,7 +513,7 @@ def update_tournament_match(
                 db.refresh(db_match)
     
     if db_tournament.tournament_type == "single-elimination":
-        size = len(db_tournament.teams_ids)
+        size = len(db_tournament.teams)
         if db_match.tournament_place < (size - 1):
             aux = size - db_match.tournament_place
             up = aux % 2
@@ -530,6 +530,7 @@ def update_tournament_match(
                     db_match_to_update.team1_id = db_match.team2_id
                 else:
                     db_match_to_update.team2_id = db_match.team2_id
+            db.commit()
 
 def get_tournament_matches(
     db: Session, tournament_id: int, skip: int = 0, limit: int = 100
