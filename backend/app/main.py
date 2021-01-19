@@ -841,9 +841,10 @@ def update_tournament_match(
         db=db, firebase_id=firebase_id, clearance="moderator"
     )
     if access:
+        db_tournament = crud.get_tournament(db, tournament_id=tournament_id)
         if crud.get_match(db, match_id=match_id) is None:
             raise HTTPException(status_code=404, detail="Match not found")
-        if crud.get_tournament(db, tournament_id=tournament_id) is None:
+        if db_tournament is None:
             raise HTTPException(status_code=404, detail="Tournament not found")
         if not crud.is_match_in_tournament(
             db, tournament_id=tournament_id, match_id=match_id
@@ -851,6 +852,8 @@ def update_tournament_match(
             raise HTTPException(status_code=404, detail="Match not in tournament")
         if crud.is_match_empty(db, match_id=match_id):
             raise HTTPException(status_code=404, detail="Teams are not set in match yet")
+        if db_tournament.tournament_type == "single-elimination" and (match.score1 == match.score2):
+            raise HTTPException(status_code=404, detail="No ties allowed in single-elimination tournament")
         crud.update_tournament_match(
             db, tournament_id=tournament_id, match_id=match_id, match=match
         )
