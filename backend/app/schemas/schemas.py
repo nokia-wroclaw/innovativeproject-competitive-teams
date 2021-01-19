@@ -83,8 +83,8 @@ class Match(MatchBase):
     team1_id: Optional[int] = None
     team2_id: Optional[int] = None
 
-    team1: Team
-    team2: Team
+    team1: Optional[Team] = None
+    team2: Optional[Team] = None
 
     tournament_id: Optional[int] = None
     tournament_place: Optional[int] = None

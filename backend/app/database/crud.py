@@ -50,7 +50,7 @@ def search_teams_by_name(db: Session, name: str, skip: int = 0, limit: int = 100
     for team in db_teams:
         if name.lower() in team.name.lower():
             ans.append(team)
-    return ans[skip:skip+limit]
+    return ans[skip : skip + limit]
 
 
 def count_teams_by_search(db: Session, name: str):
@@ -134,7 +134,7 @@ def search_players_by_name(db: Session, name: str, skip: int = 0, limit: int = 1
     for player in db_players:
         if name.lower() in player.name.lower():
             ans.append(player)
-    return ans[skip:skip+limit]
+    return ans[skip : skip + limit]
 
 
 def count_players_by_search(db: Session, name: str):
@@ -173,7 +173,7 @@ def link_player_to_team_with_id(db: Session, team_id: int, player_id: int):
     db_team.players.append(db_player)
     db.commit()
 
-    
+
 def unlink_player_to_team_with_id(db: Session, team_id: int, player_id: int):
     db_team = db.query(models.Team).filter(models.Team.id == team_id).first()
     db_player = db.query(models.Player).filter(models.Player.id == player_id).first()
@@ -182,7 +182,7 @@ def unlink_player_to_team_with_id(db: Session, team_id: int, player_id: int):
         db_team.captain_id = None
     db.commit()
 
-    
+
 def is_player_in_team(db: Session, player_id: int, team_id: int):
     db_team = db.query(models.Team).filter(models.Team.id == team_id).first()
     db_player = db.query(models.Player).filter(models.Player.id == player_id).first()
@@ -207,6 +207,19 @@ def create_match(db: Session, match: schemas.MatchCreate, team1_id: int, team2_i
     return db_match
 
 
+def create_empty_match(db: Session, match: schemas.MatchCreate):
+    db_match = models.Match(**match.dict())
+    db.add(db_match)
+    db.commit()
+    db.refresh(db_match)
+    return db_match
+
+
+def is_match_empty(db: Session, match_id: int):
+    db_match = db.query(models.Match).filter(models.Match.id == match_id).first()
+    return db_match.team1_id == None or db_match.team2_id == None
+
+
 def get_matches(db: Session, skip: int = 0, limit: int = 100):
     return db.query(models.Match).offset(skip).limit(limit).all()
 
@@ -227,23 +240,51 @@ def get_upcoming_matches(db: Session, skip: int = 0, limit: int = 100):
 
 
 def get_finished_matches(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(models.Match).filter(models.Match.finished == True).order_by(models.Match.start_time).offset(skip).limit(limit).all()
+    return (
+        db.query(models.Match)
+        .filter(models.Match.finished == True)
+        .order_by(models.Match.start_time)
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
 
-def get_personal_upcoming_matches(db: Session, player_id: int, skip: int = 0, limit: int = 100):
-    db_upcoming_matches = db.query(models.Match).filter(models.Match.finished == False).order_by(models.Match.start_time).all()
+
+def get_personal_upcoming_matches(
+    db: Session, player_id: int, skip: int = 0, limit: int = 100
+):
+    db_upcoming_matches = (
+        db.query(models.Match)
+        .filter(models.Match.finished == False)
+        .order_by(models.Match.start_time)
+        .all()
+    )
     result = []
     for match in db_upcoming_matches:
-        if is_player_in_team(db=db, player_id=player_id, team_id=match.team1_id) or is_player_in_team(db=db, player_id=player_id, team_id=match.team2_id):
+        if is_player_in_team(
+            db=db, player_id=player_id, team_id=match.team1_id
+        ) or is_player_in_team(db=db, player_id=player_id, team_id=match.team2_id):
             result.append(match)
-    return result[skip:limit + skip]
+    return result[skip : limit + skip]
 
-def get_personal_finished_matches(db: Session, player_id: int, skip: int = 0, limit: int = 100):
-    db_finished_matches = db.query(models.Match).filter(models.Match.finished == True).order_by(models.Match.start_time).all()
+
+def get_personal_finished_matches(
+    db: Session, player_id: int, skip: int = 0, limit: int = 100
+):
+    db_finished_matches = (
+        db.query(models.Match)
+        .filter(models.Match.finished == True)
+        .order_by(models.Match.start_time)
+        .all()
+    )
     result = []
     for match in db_finished_matches:
-        if is_player_in_team(db=db, player_id=player_id, team_id=match.team1_id) or is_player_in_team(db=db, player_id=player_id, team_id=match.team2_id):
+        if is_player_in_team(
+            db=db, player_id=player_id, team_id=match.team1_id
+        ) or is_player_in_team(db=db, player_id=player_id, team_id=match.team2_id):
             result.append(match)
-    return result[skip:limit + skip]
+    return result[skip : limit + skip]
+
 
 def get_match(db: Session, match_id: int):
     return db.query(models.Match).filter(models.Match.id == match_id).first()
@@ -268,9 +309,9 @@ def search_matches_by_name(db: Session, name: str, skip: int = 0, limit: int = 1
     for match in db_matches:
         if name.lower() in match.name.lower():
             ans.append(match)
-    return ans[skip:skip+limit]
+    return ans[skip : skip + limit]
 
-  
+
 def count_matches_by_search(db: Session, name: str):
     db_matches = db.query(models.Match).all()
     ans = []
@@ -301,6 +342,7 @@ def create_tournament(db: Session, tournament: schemas.TournamentCreate):
     db.add(db_tournament)
     db.commit()
     db.refresh(db_tournament)
+
     if tournament.tournament_type == "round-robin":
         comb = list(itertools.combinations(teams_ids, 2))
         i = 0
@@ -352,6 +394,78 @@ def create_tournament(db: Session, tournament: schemas.TournamentCreate):
             db.add(db_match)
             db.commit()
             db.refresh(db_match)
+
+    elif tournament.tournament_type == "single-elimination":
+        lst = copy.deepcopy(teams_ids)
+        terms = {
+            2: "Grand Final",
+            4: "Semifinal",
+            8: "Round of 8",
+            16: "Round of 16",
+            32: "Round of 32",
+            64: "Round of 64",
+            128: "Round of 128",
+            256: "Round of 256",
+            512: "Round of 512",
+            1024: "Round of 1024",
+        }
+
+        def pop_random(lst):
+            idx = random.randrange(0, len(lst))
+            return lst.pop(idx)
+
+        comb = []
+        while lst:
+            rand1 = pop_random(lst)
+            rand2 = pop_random(lst)
+            comb.append((rand1, rand2))
+        i = 0
+        for t1, t2 in comb:
+            i += 1
+            aux_name = tournament.name + " " + terms[len(tournament.teams_ids)]
+            if len(tournament.teams_ids) != 2:
+                aux_name += ": " + str(i)
+            db_match = models.Match(
+                name=aux_name,
+                description="",
+                start_time=tournament.start_time,
+                finished=False,
+                score1=0,
+                score2=0,
+                team1_id=t1,
+                team2_id=t2,
+                tournament_place=i,
+                tournament_id=db_tournament.id,
+            )
+            db.add(db_match)
+            db.commit()
+            db.refresh(db_match)
+
+        stage = len(tournament.teams_ids) / 2
+        j = 0
+        while i < len(tournament.teams_ids) - 1:
+            j += 1
+            i += 1
+            aux_name = tournament.name + " " + terms[stage]
+            if stage != 2:
+                aux_name += ": " + str(j)
+            db_match = models.Match(
+                name=aux_name,
+                description="",
+                start_time=tournament.start_time,
+                finished=False,
+                score1=0,
+                score2=0,
+                tournament_place=i,
+                tournament_id=db_tournament.id,
+            )
+            db.add(db_match)
+            db.commit()
+            db.refresh(db_match)
+
+            if j == stage / 2:
+                j = 0
+                stage = stage / 2
 
     return db_tournament
 
@@ -424,6 +538,31 @@ def update_tournament_match(
                 db.add(db_match)
                 db.commit()
                 db.refresh(db_match)
+
+    if db_tournament.tournament_type == "single-elimination":
+        size = len(db_tournament.teams)
+        if db_match.tournament_place < (size - 1):
+            aux = size - db_match.tournament_place
+            up = aux % 2
+            aux = aux // 2
+            aux = size - aux
+            db_match_to_update = (
+                db.query(models.Match)
+                .filter(models.Match.tournament_place == aux)
+                .filter(models.Match.tournament_id == tournament_id)
+                .first()
+            )
+            if match.score1 > match.score2:
+                if up:
+                    db_match_to_update.team1_id = db_match.team1_id
+                else:
+                    db_match_to_update.team2_id = db_match.team1_id
+            else:
+                if up:
+                    db_match_to_update.team1_id = db_match.team2_id
+                else:
+                    db_match_to_update.team2_id = db_match.team2_id
+            db.commit()
 
 
 def get_tournament_matches(
@@ -579,7 +718,7 @@ def search_tournaments_by_name(db: Session, name: str, skip: int = 0, limit: int
     for tournament in db_tournaments:
         if name.lower() in tournament.name.lower():
             ans.append(tournament)
-    return ans[skip:skip+limit]
+    return ans[skip : skip + limit]
 
 
 def count_tournaments_by_search(db: Session, name: str):
