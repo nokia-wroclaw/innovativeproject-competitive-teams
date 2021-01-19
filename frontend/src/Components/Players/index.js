@@ -75,7 +75,7 @@ const Players = () => {
           <Card
             bordered={false}
             bodyStyle={{
-              height: 520,
+              height: 645,
               overflow: "auto",
             }}
           >
