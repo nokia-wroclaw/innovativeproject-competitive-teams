@@ -551,7 +551,9 @@ def read_upcoming_matches(
         )
 
 
-@app.get("/api/personal_upcoming_matches/{player_id}", response_model=List[schemas.Match])
+@app.get(
+    "/api/personal_upcoming_matches/{player_id}", response_model=List[schemas.Match]
+)
 def read_upcoming_personal_matches(
     firebase_id: str = Header(None),
     player_id: str = Header(None),
@@ -565,10 +567,10 @@ def read_upcoming_personal_matches(
     if access:
         player = crud.get_player(db=db, player_id=player_id)
         if player is None:
-            raise HTTPException(
-                status_code=404, detail="Player not found"
-            )
-        matches = crud.get_personal_upcoming_matches(db, player_id=player_id, skip=skip, limit=limit)
+            raise HTTPException(status_code=404, detail="Player not found")
+        matches = crud.get_personal_upcoming_matches(
+            db, player_id=player_id, skip=skip, limit=limit
+        )
         return matches
     else:
         raise HTTPException(
@@ -576,7 +578,9 @@ def read_upcoming_personal_matches(
         )
 
 
-@app.get("/api/personal_finished_matches/{player_id}", response_model=List[schemas.Match])
+@app.get(
+    "/api/personal_finished_matches/{player_id}", response_model=List[schemas.Match]
+)
 def read_finished_personal_matches(
     firebase_id: str = Header(None),
     player_id: str = Header(None),
@@ -590,10 +594,10 @@ def read_finished_personal_matches(
     if access:
         player = crud.get_player(db=db, player_id=player_id)
         if player is None:
-            raise HTTPException(
-                status_code=404, detail="Player not found"
-            )
-        matches = crud.get_personal_finished_matches(db, player_id=player_id, skip=skip, limit=limit)
+            raise HTTPException(status_code=404, detail="Player not found")
+        matches = crud.get_personal_finished_matches(
+            db, player_id=player_id, skip=skip, limit=limit
+        )
         return matches
     else:
         raise HTTPException(
@@ -690,7 +694,11 @@ def create_tournament(
         db=db, firebase_id=firebase_id, clearance="moderator"
     )
     if access:
-        if tournament.tournament_type not in ["round-robin", "swiss", "single-elimination"]:
+        if tournament.tournament_type not in [
+            "round-robin",
+            "swiss",
+            "single-elimination",
+        ]:
             raise HTTPException(status_code=404, detail="Tournament type unknown")
         teams_ids = tournament.teams_ids
         for team_id in teams_ids:
@@ -722,7 +730,7 @@ def create_tournament(
                 raise HTTPException(
                     status_code=404,
                     detail="Single-elimination tournament: number of teams should be a power of 2",
-                ) 
+                )
         return crud.create_tournament(db=db, tournament=tournament)
     else:
         raise HTTPException(
@@ -851,9 +859,16 @@ def update_tournament_match(
         ):
             raise HTTPException(status_code=404, detail="Match not in tournament")
         if crud.is_match_empty(db, match_id=match_id):
-            raise HTTPException(status_code=404, detail="Teams are not set in match yet")
-        if db_tournament.tournament_type == "single-elimination" and (match.score1 == match.score2):
-            raise HTTPException(status_code=404, detail="No ties allowed in single-elimination tournament")
+            raise HTTPException(
+                status_code=404, detail="Teams are not set in match yet"
+            )
+        if db_tournament.tournament_type == "single-elimination" and (
+            match.score1 == match.score2
+        ):
+            raise HTTPException(
+                status_code=404,
+                detail="No ties allowed in single-elimination tournament",
+            )
         crud.update_tournament_match(
             db, tournament_id=tournament_id, match_id=match_id, match=match
         )
