@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { useQuery } from "react-query";
 import { Layout, Menu, Card, Spin } from "antd";
@@ -44,17 +44,13 @@ const Dashboard = () => {
     ["capTeams", currentUser, userData],
     async () => {
       const res = await Api.get("/captain/teams/" + userData.id, hdrs);
+      if (res.data.length > 0) setCapTeamsIDs(res.data.map((team) => team.id));
       return res.data;
     },
     {
       enabled: !!userData,
     }
   );
-
-  useEffect(() => {
-    if (capTeams !== undefined && capTeams.length > 0)
-      setCapTeamsIDs(capTeams.map((team) => team.id));
-  }, [capTeams]);
 
   return (
     <Router>
