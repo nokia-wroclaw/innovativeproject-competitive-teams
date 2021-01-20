@@ -15,7 +15,6 @@ import Teams from "./Components/Teams";
 import Players from "./Components/Players";
 import Matches from "./Components/Matches";
 import Tournaments from "./Components/Tournaments";
-
 const App = () => (
   <AuthProvider>
     <div className="app">
