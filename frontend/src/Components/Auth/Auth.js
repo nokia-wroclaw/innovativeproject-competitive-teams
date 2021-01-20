@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
         const random_color = "#" + rgb.toString(16);
         Api.post("/players", {
           name: user_uid.substr(0, 5),
-          description: user_uid.substr(5),
+          description: "Empty",
           firebase_id: user_uid,
           colour: random_color,
         });
