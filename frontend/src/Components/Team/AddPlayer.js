@@ -133,7 +133,7 @@ const AddPlayer = ({ teamid }) => {
             setVisible(true);
           }}
         >
-          Add a player
+          Add player
         </Button>
       </Popover>
     </Col>

@@ -1,12 +1,14 @@
 import React, { useContext } from "react";
 import { useQuery } from "react-query";
-import { Typography, Card, Table, Spin } from "antd";
+import { Typography, Card, Table, Spin, Space } from "antd";
 import { useParams } from "react-router-dom";
 import "./index.css";
 
 import { AuthContext } from "../Auth/Auth";
 import { Api } from "../../Api";
 import AddPlayer from "./AddPlayer";
+import RemovePlayer from "./RemovePlayer";
+import MakeCaptain from "./MakeCaptain";
 
 const { Title } = Typography;
 const { Column, ColumnGroup } = Table;
@@ -48,7 +50,6 @@ const Team = ({ id }) => {
         bordered={true}
       >
         <ColumnGroup title="Captain" align="center">
-          <Column title="Player ID" dataIndex="id" key="playerid" />
           <Column title="Name" dataIndex="name" key="playername" />
           <Column
             title="Description"
@@ -64,12 +65,28 @@ const Team = ({ id }) => {
         bordered={true}
       >
         <ColumnGroup title="Players" align="center">
-          <Column title="Player ID" dataIndex="id" key="playerid" />
           <Column title="Name" dataIndex="name" key="playername" />
           <Column
             title="Description"
             dataIndex="description"
             key="playerdesc"
+          />
+          <Column
+            title="Actions"
+            key="actions"
+            render={(text, record) =>
+              userData &&
+              (teamData.captain_id === userData.id ||
+                userData.role === "admin" ||
+                userData.role === "manager") ? (
+                <Space size="small">
+                  {userData.id === record.id ? null : (
+                    <MakeCaptain teamid={id} playerid={record.id} />
+                  )}
+                  <RemovePlayer teamid={id} playerid={record.id} />
+                </Space>
+              ) : null
+            }
           />
         </ColumnGroup>
       </Table>
