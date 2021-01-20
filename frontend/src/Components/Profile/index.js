@@ -8,7 +8,7 @@ import { EditTwoTone } from "@ant-design/icons";
 
 const { Text } = Typography;
 const Profile = () => {
-  let { userData, update } = useContext(AuthContext);
+  const { userData, update } = useContext(AuthContext);
 
   const [name, setName] = useState();
   const [desc, setDesc] = useState();
