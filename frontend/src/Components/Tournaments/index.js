@@ -77,7 +77,7 @@ const Tournaments = () => {
           <Card
             bordered={false}
             bodyStyle={{
-              height: 645,
+              height: "70vh",
               overflow: "auto",
             }}
           >
