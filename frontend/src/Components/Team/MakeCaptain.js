@@ -14,7 +14,7 @@ const openNotificationWithIcon = (type, title, msg) => {
 };
 
 const MakeCaptain = ({ teamid, playerid }) => {
-  let { currentUser } = useContext(AuthContext);
+  let { currentUser, userData } = useContext(AuthContext);
   let fbId = currentUser.uid;
   const hdrs = { headers: { "firebase-id": fbId } };
   const queryClient = useQueryClient();
@@ -28,6 +28,8 @@ const MakeCaptain = ({ teamid, playerid }) => {
           "Team captain updated."
         );
         queryClient.refetchQueries(["team", teamid]);
+        queryClient.refetchQueries(["teams", currentUser, userData]);
+        queryClient.refetchQueries(["capTeams", currentUser, userData]);
       })
       .catch((err) => {
         openNotificationWithIcon(

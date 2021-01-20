@@ -80,7 +80,7 @@ const Team = ({ id }) => {
                 userData.role === "admin" ||
                 userData.role === "manager") ? (
                 <Space size="small">
-                  {userData.id === record.id ? null : (
+                  {record.id === teamData.captain_id ? null : (
                     <MakeCaptain teamid={id} playerid={record.id} />
                   )}
                   <RemovePlayer teamid={id} playerid={record.id} />

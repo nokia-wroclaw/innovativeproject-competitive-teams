@@ -29,10 +29,11 @@ const Dashboard = () => {
   let { currentUser, userData } = useContext(AuthContext);
   const hdrs = { headers: { "firebase-id": currentUser.uid } };
 
-  const { data: teams } = useQuery(
-    ["teams", currentUser, userData],
+  const { data: capTeams } = useQuery(
+    ["capTeams", currentUser, userData],
     async () => {
-      const res = await Api.get("/players/teams/" + userData.id, hdrs);
+      const res = await Api.get("/captain/teams/" + userData.id, hdrs);
+      setCapTeamsIDs(res.data.map((team) => team.id));
       return res.data;
     },
     {
@@ -40,15 +41,14 @@ const Dashboard = () => {
     }
   );
 
-  const { data: capTeams } = useQuery(
-    ["capTeams", currentUser, userData],
+  const { data: teams } = useQuery(
+    ["teams", currentUser, userData],
     async () => {
-      const res = await Api.get("/captain/teams/" + userData.id, hdrs);
-      if (res.data.length > 0) setCapTeamsIDs(res.data.map((team) => team.id));
+      const res = await Api.get("/players/teams/" + userData.id, hdrs);
       return res.data;
     },
     {
-      enabled: !!userData,
+      enabled: !!userData && capTeams !== undefined,
     }
   );
 
