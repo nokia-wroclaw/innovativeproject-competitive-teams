@@ -20,12 +20,18 @@ const Team = ({ id }) => {
   const { teamid } = useParams();
   if (id === null || id === undefined) id = teamid;
 
-  const { error: err, data: teamData } = useQuery(["team", id], async () => {
-    const res = await Api.get("/teams/" + id, {
-      headers: { "firebase-id": fbId },
-    });
-    return res.data;
-  });
+  const { isIdle, error: err, data: teamData } = useQuery(
+    ["team", id],
+    async () => {
+      const res = await Api.get("/teams/" + id, {
+        headers: { "firebase-id": fbId },
+      });
+      return res.data;
+    },
+    {
+      enabled: !!id,
+    }
+  );
 
   return teamData ? (
     <div className="team-info">
@@ -85,6 +91,10 @@ const Team = ({ id }) => {
       <br />
       {err}
     </Title>
+  ) : isIdle ? (
+    <Card>
+      <Table></Table>
+    </Card>
   ) : (
     <Spin />
   );

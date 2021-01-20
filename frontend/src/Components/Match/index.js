@@ -49,13 +49,13 @@ const Match = ({ id }) => {
             {" "}
             <Row>
               <Col align="left" span={8}>
-                {matchdata.team1.name}
+                {matchdata.team1 ? matchdata.team1.name : "TBD"}
               </Col>
               <Col align="center" span={8}>
                 vs
               </Col>
               <Col align="right" span={8}>
-                {matchdata.team2.name}
+                {matchdata.team2 ? matchdata.team2.name : "TBD"}
               </Col>
             </Row>
           </Title>
