@@ -3,7 +3,6 @@ import { Layout } from "antd";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "react-query";
 import "./App.css";
-
 import Home from "./Components/Home/Home";
 import Login from "./Components/Login/Login";
 import SignUp from "./Components/SignUp/SignUp";
@@ -18,6 +17,7 @@ import Matches from "./Components/Matches";
 import Tournaments from "./Components/Tournaments";
 
 const queryClient = new QueryClient();
+
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <AuthProvider>
