@@ -101,7 +101,7 @@ const CreateTournament = ({ cancel, onFinish }) => (
     <Form.Item name="desc" label="Description">
       <Input />
     </Form.Item>
-    <Form.Item name="starttime" label="Start Time">
+    <Form.Item name="starttime" label="Date">
       <DatePicker showTime format="YYYY-MM-DD HH:mm" />
     </Form.Item>
     <Form.Item
@@ -221,7 +221,7 @@ const TournamentCreator = () => {
           )
         }
       >
-        <Button type="primary" onClick={() => setVisible(true)}>
+        <Button className="TournamentCreator" onClick={() => setVisible(true)}>
           Create a tournament
         </Button>
       </Popover>

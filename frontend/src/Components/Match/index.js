@@ -49,47 +49,43 @@ const Match = ({ id }) => {
             {" "}
             <Row>
               <Col align="left" span={8}>
-                {matchdata.team1.name}
+                {matchdata.team1 ? matchdata.team1.name : "TBD"}
               </Col>
               <Col align="center" span={8}>
                 vs
               </Col>
               <Col align="right" span={8}>
-                {matchdata.team2.name}
+                {matchdata.team2 ? matchdata.team2.name : "TBD"}
               </Col>
             </Row>
           </Title>
         }
         style={{ borderColor: color(matchdata), borderWidth: 5 }}
       >
-        <Row>
-          <Title level={3}>
-            {" "}
-            Starting Time:{" "}
-            {new Date(Date.parse(matchdata.start_time)).toGMTString()}
-          </Title>
+        <Row justify="center">
+          <Card bordered={false} align="center">
+            <Title level={1}>
+              {matchdata.score1}:{matchdata.score2}
+            </Title>
+          </Card>
         </Row>
-        <Row gutter={16}></Row>
         <Row gutter={16}>
-          <Col span={8}>
+          <Col span={12}>
             <Card bordered={false}>
               <Team id={matchdata.team1_id} />
             </Card>
           </Col>
 
-          <Col span={8}>
-            <Card bordered={false} align="center">
-              <Title level={3}>
-                {matchdata.score1}:{matchdata.score2}
-              </Title>
-            </Card>
-          </Col>
-
-          <Col span={8}>
+          <Col span={12}>
             <Card bordered={false}>
               <Team id={matchdata.team2_id} />
             </Card>
           </Col>
+        </Row>
+        <Row justify="center">
+          <Title level={3}>
+            Date: {new Date(Date.parse(matchdata.start_time)).toGMTString()}
+          </Title>
         </Row>
       </Card>
       ,

@@ -102,7 +102,7 @@ const MatchCreator = () => {
       <Form.Item name="desc" label="Description">
         <TextArea />
       </Form.Item>
-      <Form.Item name="starttime" label="Start Time">
+      <Form.Item name="starttime" label="Date">
         <DatePicker showTime format="YYYY-MM-DD HH:mm" />
       </Form.Item>
       <Form.Item
@@ -155,7 +155,7 @@ const MatchCreator = () => {
         visible={visible}
       >
         <Button
-          type="primary"
+          className="MatchCreator"
           onClick={() => {
             setVisible(true);
           }}

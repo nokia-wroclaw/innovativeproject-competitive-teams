@@ -66,7 +66,7 @@ const Tournaments = () => {
     <Layout className="list-background">
       <Content className="site-layout-background">
         <Card>
-          <Title> List of tournaments </Title>
+          <Title> Tournaments </Title>
           <Row gutter={[0, 15]}>
             <AutoComplete
               placeholder="Search tournaments"
@@ -88,7 +88,7 @@ const Tournaments = () => {
                    ${tournamentTypes[tournament.tournament_type]} `}
                   key={tournament.id}
                 >
-                  <Tournament data={tournament} />
+                  <Tournament id={tournament.id} />
                 </Panel>
               ))}
             </Collapse>

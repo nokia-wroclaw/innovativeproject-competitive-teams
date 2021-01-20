@@ -1,6 +1,7 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { Layout, Menu, Card } from "antd";
+import { useQuery } from "react-query";
+import { Layout, Menu, Card, Spin } from "antd";
 import {
   UserOutlined,
   LaptopOutlined,
@@ -26,28 +27,32 @@ const { SubMenu } = Menu;
 
 const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [teams, setTeams] = useState([]);
-  const [capTeams, setCapTeams] = useState([]);
   const [capTeamsIDs, setCapTeamsIDs] = useState([]);
   let { currentUser, userData } = useContext(AuthContext);
-  useEffect(() => {
-    const hdrs = { headers: { "firebase-id": currentUser.uid } };
-    if (userData) {
-      Api.get("/players/teams/" + userData.id, hdrs)
-        .then((response) => setTeams(response.data))
-        .catch((err) => {
-          console.log(err);
-        });
-      Api.get("/captain/teams/" + userData.id, hdrs)
-        .then((response) => {
-          setCapTeams(response.data);
-          setCapTeamsIDs(response.data.map((team) => team.id));
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+  const hdrs = { headers: { "firebase-id": currentUser.uid } };
+
+  const { data: capTeams } = useQuery(
+    ["capTeams", currentUser, userData],
+    async () => {
+      const res = await Api.get("/captain/teams/" + userData.id, hdrs);
+      setCapTeamsIDs(res.data.map((team) => team.id));
+      return res.data;
+    },
+    {
+      enabled: !!userData,
     }
-  }, [currentUser, userData]);
+  );
+
+  const { data: teams } = useQuery(
+    ["teams", currentUser, userData],
+    async () => {
+      const res = await Api.get("/players/teams/" + userData.id, hdrs);
+      return res.data;
+    },
+    {
+      enabled: !!userData && capTeams !== undefined,
+    }
+  );
 
   return (
     <Router>
@@ -68,24 +73,36 @@ const Dashboard = () => {
             style={{ height: "100%", borderRight: 0 }}
           >
             <SubMenu key="teams" icon={<UserOutlined />} title="Your teams">
-              {teams
-                .filter((team) => !capTeamsIDs.includes(team.id))
-                .map((team) => (
-                  <Menu.Item key={team.id}>
-                    <Link to={"/dashboard/team/" + team.id}>{team.name}</Link>
-                  </Menu.Item>
-                ))}
+              {teams ? (
+                teams
+                  .filter((team) => !capTeamsIDs.includes(team.id))
+                  .map((team) => (
+                    <Menu.Item key={team.id}>
+                      <Link to={"/dashboard/team/" + team.id}>{team.name}</Link>
+                    </Menu.Item>
+                  ))
+              ) : (
+                <Menu.Item key="loading teams">
+                  <Spin />
+                </Menu.Item>
+              )}
             </SubMenu>
             <SubMenu
               key="capteams"
               icon={<LaptopOutlined />}
               title="Teams you lead"
             >
-              {capTeams.map((team) => (
-                <Menu.Item key={team.id}>
-                  <Link to={"/dashboard/team/" + team.id}>{team.name}</Link>
+              {capTeams ? (
+                capTeams.map((team) => (
+                  <Menu.Item key={team.id}>
+                    <Link to={"/dashboard/team/" + team.id}>{team.name}</Link>
+                  </Menu.Item>
+                ))
+              ) : (
+                <Menu.Item key="loading capTeams">
+                  <Spin />
                 </Menu.Item>
-              ))}
+              )}
             </SubMenu>
             <Menu.Item
               key="upcoming"

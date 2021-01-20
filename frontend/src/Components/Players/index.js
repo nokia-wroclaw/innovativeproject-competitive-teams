@@ -64,7 +64,7 @@ const Players = () => {
     <Layout className="list-background">
       <Content className="site-layout-background">
         <Card>
-          <Title> List of players </Title>
+          <Title> Players </Title>
           <Row gutter={[0, 15]}>
             <AutoComplete
               placeholder="Search players"

@@ -19,7 +19,7 @@ const Matches = () => {
   const [err, setErr] = useState(null);
 
   useEffect(() => {
-    Api.get("/matches/?limit=5", { headers: { "firebase-id": fbId } })
+    Api.get("/upcoming_matches/?limit=5", { headers: { "firebase-id": fbId } })
       .then((result) => {
         setMatches(result.data);
       })
