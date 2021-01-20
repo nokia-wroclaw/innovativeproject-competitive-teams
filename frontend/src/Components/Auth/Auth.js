@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { useQuery, useQueryClient } from "react-query";
 import app from "../Base/base";
 import { Api } from "../../Api";
 import { Notification } from "../Util/Notification";
 
 export const AuthContext = React.createContext();
 export const AuthProvider = ({ children }) => {
+  const [userData, setUserData] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
   const [pending, setPending] = useState(true);
-  const [userData, setUserData] = useState(null);
+  const queryClient = useQueryClient();
+
   function update(data) {
     setUserData(data);
     Api.patch(
@@ -17,6 +20,7 @@ export const AuthProvider = ({ children }) => {
     )
       .then(() => {
         Notification("success", "Success.", "Updated successfully.");
+        queryClient.refetchQueries(["userData", currentUser]);
       })
       .catch((error) => {
         Notification(
@@ -28,6 +32,20 @@ export const AuthProvider = ({ children }) => {
         );
       });
   }
+
+  useQuery(
+    ["userData", currentUser],
+    async () => {
+      const res = await Api.get(`/players/firebase_id/${currentUser.uid}`, {
+        headers: { "firebase-id": currentUser.uid },
+      });
+      setUserData(res.data);
+      return res.data;
+    },
+    {
+      enabled: !!currentUser,
+    }
+  );
 
   useEffect(() => {
     app.auth().onAuthStateChanged((user) => {
@@ -42,16 +60,6 @@ export const AuthProvider = ({ children }) => {
           description: user_uid.substr(5),
           firebase_id: user_uid,
           colour: random_color,
-        }).then(() => {
-          Api.get(`/players/firebase_id/${user.uid}`, {
-            headers: { "firebase-id": user.uid },
-          })
-            .then(function (response) {
-              setUserData(response.data);
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
         });
       }
     });

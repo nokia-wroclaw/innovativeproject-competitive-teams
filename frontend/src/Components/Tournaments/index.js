@@ -66,7 +66,7 @@ const Tournaments = () => {
     <Layout className="list-background">
       <Content className="site-layout-background">
         <Card>
-          <Title> List of tournaments </Title>
+          <Title> Tournaments </Title>
           <Row gutter={[0, 15]}>
             <AutoComplete
               placeholder="Search tournaments"

@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Popover, Button, Col, Form, Input, Space, AutoComplete } from "antd";
+import { useQueryClient } from "react-query";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
 import { Notification } from "../Util/Notification";
@@ -18,11 +19,12 @@ const validateMessages = {
 };
 
 const TeamCreator = () => {
-  let { currentUser } = useContext(AuthContext);
+  let { currentUser, userData } = useContext(AuthContext);
   let fbId = currentUser.uid;
   const hdrs = { headers: { "firebase-id": fbId } };
   const [visible, setVisible] = useState(false);
   const [playerIDs, setPlayerIDs] = useState({});
+  const queryClient = useQueryClient();
 
   const onFinish = (values) => {
     // Verify that the player exists
@@ -64,6 +66,8 @@ const TeamCreator = () => {
           "Success.",
           "Team " + values.name + " created successfully."
         );
+        queryClient.refetchQueries(["capTeams", currentUser, userData]);
+        queryClient.refetchQueries(["teams", currentUser, userData]);
       })
       .catch((err) => {
         Notification(

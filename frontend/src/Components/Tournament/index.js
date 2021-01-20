@@ -201,7 +201,7 @@ const Tournament = ({ id }) => {
         >
           <ColumnGroup title="Unfinished matches" align="center">
             <Column title="Match" dataIndex="name" key="matchname" />
-            <Column title="Start time" dataIndex="time" key="time" />
+            <Column title="Date" dataIndex="time" key="time" />
             <Column title="Team A" dataIndex="teama" key="teama" />
             <Column title="Team B" dataIndex="teamb" key="teamb" />
             <Column title="Score (A : B)" dataIndex="score" key="score" />

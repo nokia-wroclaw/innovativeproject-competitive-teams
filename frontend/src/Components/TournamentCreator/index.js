@@ -101,7 +101,7 @@ const CreateTournament = ({ cancel, onFinish }) => (
     <Form.Item name="desc" label="Description">
       <Input />
     </Form.Item>
-    <Form.Item name="starttime" label="Start Time">
+    <Form.Item name="starttime" label="Date">
       <DatePicker showTime format="YYYY-MM-DD HH:mm" />
     </Form.Item>
     <Form.Item

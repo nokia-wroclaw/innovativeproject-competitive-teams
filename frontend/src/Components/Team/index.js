@@ -1,12 +1,14 @@
 import React, { useContext } from "react";
 import { useQuery } from "react-query";
-import { Typography, Card, Table, Spin } from "antd";
+import { Typography, Card, Table, Spin, Space } from "antd";
 import { useParams } from "react-router-dom";
 import "./index.css";
 
 import { AuthContext } from "../Auth/Auth";
 import { Api } from "../../Api";
 import AddPlayer from "./AddPlayer";
+import RemovePlayer from "./RemovePlayer";
+import MakeCaptain from "./MakeCaptain";
 
 const { Title } = Typography;
 const { Column, ColumnGroup } = Table;
@@ -20,12 +22,18 @@ const Team = ({ id }) => {
   const { teamid } = useParams();
   if (id === null || id === undefined) id = teamid;
 
-  const { error: err, data: teamData } = useQuery(["team", id], async () => {
-    const res = await Api.get("/teams/" + id, {
-      headers: { "firebase-id": fbId },
-    });
-    return res.data;
-  });
+  const { isIdle, error: err, data: teamData } = useQuery(
+    ["team", id],
+    async () => {
+      const res = await Api.get("/teams/" + id, {
+        headers: { "firebase-id": fbId },
+      });
+      return res.data;
+    },
+    {
+      enabled: !!id,
+    }
+  );
 
   return teamData ? (
     <div className="team-info">
@@ -42,7 +50,6 @@ const Team = ({ id }) => {
         bordered={true}
       >
         <ColumnGroup title="Captain" align="center">
-          <Column title="Player ID" dataIndex="id" key="playerid" />
           <Column title="Name" dataIndex="name" key="playername" />
           <Column
             title="Description"
@@ -58,12 +65,28 @@ const Team = ({ id }) => {
         bordered={true}
       >
         <ColumnGroup title="Players" align="center">
-          <Column title="Player ID" dataIndex="id" key="playerid" />
           <Column title="Name" dataIndex="name" key="playername" />
           <Column
             title="Description"
             dataIndex="description"
             key="playerdesc"
+          />
+          <Column
+            title="Actions"
+            key="actions"
+            render={(text, record) =>
+              userData &&
+              (teamData.captain_id === userData.id ||
+                userData.role === "admin" ||
+                userData.role === "manager") ? (
+                <Space size="small">
+                  {userData.id === record.id ? null : (
+                    <MakeCaptain teamid={id} playerid={record.id} />
+                  )}
+                  <RemovePlayer teamid={id} playerid={record.id} />
+                </Space>
+              ) : null
+            }
           />
         </ColumnGroup>
       </Table>
@@ -85,6 +108,10 @@ const Team = ({ id }) => {
       <br />
       {err}
     </Title>
+  ) : isIdle ? (
+    <Card>
+      <Table></Table>
+    </Card>
   ) : (
     <Spin />
   );
