@@ -2,7 +2,7 @@
 
 https://github.com/nokia-wroclaw/innovativeproject-competitive-teams
 
-The goal of this project was to create a web application that lets users create/join teams and helps them host tournaments or matches between those teams. It allows for easy tournament matchup generation in round-robin, swiss, and single-elimination style tournaments as well as keeping track of the match results.
+The goal of this project was to create a web application that lets users create/join teams and helps them host tournaments or matches between those teams. It allows for easy tournament matchup generation in round-robin, swiss, and single-elimination style tournaments and provides a quick way to keep track of their results.
 
 Main libraries and technologies used in the development of this project:
 
