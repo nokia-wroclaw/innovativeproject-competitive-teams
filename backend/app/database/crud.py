@@ -185,6 +185,8 @@ def unlink_player_to_team_with_id(db: Session, team_id: int, player_id: int):
 
 def is_player_in_team(db: Session, player_id: int, team_id: int):
     db_team = db.query(models.Team).filter(models.Team.id == team_id).first()
+    if db_team is None:
+        return False
     db_player = db.query(models.Player).filter(models.Player.id == player_id).first()
     return db_player in db_team.players
 
@@ -268,6 +270,13 @@ def get_personal_upcoming_matches(
     return result[skip : limit + skip]
 
 
+def count_personal_upcoming_matches(
+    db: Session, player_id: int
+):
+    matches = get_personal_upcoming_matches(db=db, player_id=player_id, skip=0, limit=1000000)
+    return len(matches)
+
+
 def get_personal_finished_matches(
     db: Session, player_id: int, skip: int = 0, limit: int = 100
 ):
@@ -284,6 +293,13 @@ def get_personal_finished_matches(
         ) or is_player_in_team(db=db, player_id=player_id, team_id=match.team2_id):
             result.append(match)
     return result[skip : limit + skip]
+
+
+def count_personal_finished_matches(
+    db: Session, player_id: int
+):
+    matches = get_personal_finished_matches(db=db, player_id=player_id, skip=0, limit=1000000)
+    return len(matches)
 
 
 def get_match(db: Session, match_id: int):
