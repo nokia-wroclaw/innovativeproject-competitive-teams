@@ -22,6 +22,7 @@ const UpcomingMatches = () => {
   const [matchesOnPage, setMatchesOnPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [err, setErr] = useState(null);
+  const [allMatches, setAllMatches] = useState(0);
   const pageSize = 10;
 
   useEffect(() => {
@@ -43,6 +44,21 @@ const UpcomingMatches = () => {
         });
     }
   }, [fbId, currentPage, userData]);
+
+  useEffect(() => {
+    if (userData) {
+      Api.get(`/count_personal_upcoming_matches/${userData.id}`, {
+        headers: { "firebase-id": fbId },
+      })
+        .then((result) => {
+          setAllMatches(result.data);
+        })
+        .catch((err) => {
+          setMatchesOnPage(null);
+          setErr(err.toString());
+        });
+    }
+  }, [fbId, userData]);
 
   return matchesOnPage ? (
     <Card
@@ -73,6 +89,7 @@ const UpcomingMatches = () => {
           defaultPageSize={pageSize}
           current={currentPage}
           onChange={setCurrentPage}
+          total={allMatches}
         />
       </Row>
     </Card>
