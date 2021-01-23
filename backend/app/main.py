@@ -579,6 +579,31 @@ def read_upcoming_personal_matches(
 
 
 @app.get(
+    "/api/count_personal_upcoming_matches/{player_id}", response_model=int
+)
+def count_upcoming_personal_matches(
+    firebase_id: str = Header(None),
+    player_id: str = Header(None),
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        player = crud.get_player(db=db, player_id=player_id)
+        if player is None:
+            raise HTTPException(status_code=404, detail="Player not found")
+        count = crud.count_personal_upcoming_matches(
+            db, player_id=player_id
+        )
+        return count
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
+
+
+@app.get(
     "/api/personal_finished_matches/{player_id}", response_model=List[schemas.Match]
 )
 def read_finished_personal_matches(
@@ -599,6 +624,31 @@ def read_finished_personal_matches(
             db, player_id=player_id, skip=skip, limit=limit
         )
         return matches
+    else:
+        raise HTTPException(
+            status_code=404, detail="Permission denied, requires at least: player"
+        )
+
+
+@app.get(
+    "/api/count_personal_finished_matches/{player_id}", response_model=int
+)
+def count_finished_personal_matches(
+    firebase_id: str = Header(None),
+    player_id: str = Header(None),
+    db: Session = Depends(get_db),
+):
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance="player"
+    )
+    if access:
+        player = crud.get_player(db=db, player_id=player_id)
+        if player is None:
+            raise HTTPException(status_code=404, detail="Player not found")
+        count = crud.count_personal_finished_matches(
+            db, player_id=player_id
+        )
+        return count
     else:
         raise HTTPException(
             status_code=404, detail="Permission denied, requires at least: player"
