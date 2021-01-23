@@ -76,7 +76,7 @@ const Teams = () => {
           <Card
             bordered={false}
             bodyStyle={{
-              height: 520,
+              height: "70vh",
               overflow: "auto",
             }}
           >

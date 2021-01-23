@@ -9,8 +9,8 @@ import {
   CalendarOutlined,
   HistoryOutlined,
 } from "@ant-design/icons";
-import "./index.css";
 
+import "./index.css";
 import { AuthContext } from "../Auth/Auth";
 import { Api } from "../../Api";
 import Profile from "../Profile";
@@ -19,6 +19,8 @@ import NotFound from "../NotFound";
 import TeamCreator from "../TeamCreator";
 import MatchCreator from "../MatchCreator";
 import TournamentCreator from "../TournamentCreator";
+import UpcomingMatches from "../UpcomingMatches";
+import History from "../History";
 
 const { Content, Sider } = Layout;
 const { SubMenu } = Menu;
@@ -102,12 +104,14 @@ const Dashboard = () => {
                 </Menu.Item>
               )}
             </SubMenu>
-            <SubMenu
+            <Menu.Item
               key="upcoming"
               icon={<CalendarOutlined />}
               title="Upcoming matches"
-            ></SubMenu>
-            <Menu.Item key="history" icon={<HistoryOutlined />}>
+            >
+              <Link to="/dashboard/upcoming">Upcoming Matches</Link>
+            </Menu.Item>
+            <Menu.Item key="history" icon={<HistoryOutlined />} title="history">
               <Link to="/dashboard/history">Match history</Link>
             </Menu.Item>
             <Menu.Item key="profile" icon={<NotificationOutlined />}>
@@ -154,6 +158,12 @@ const Dashboard = () => {
                 </Route>
                 <Route path="/dashboard/profile">
                   <Profile userid={currentUser.uid} />
+                </Route>
+                <Route path="/dashboard/history">
+                  <History userid={currentUser.uid} />
+                </Route>
+                <Route path="/dashboard/upcoming">
+                  <UpcomingMatches userid={currentUser.uid} />
                 </Route>
                 <Route>
                   <NotFound />
