@@ -28,6 +28,8 @@ const RemovePlayer = ({ teamid, playerid }) => {
           "Player has been removed from the team."
         );
         queryClient.refetchQueries(["team", teamid]);
+        queryClient.refetchQueries(["teams", currentUser, userData]);
+        queryClient.refetchQueries(["capTeams", currentUser, userData]);
       })
       .catch((err) => {
         openNotificationWithIcon(

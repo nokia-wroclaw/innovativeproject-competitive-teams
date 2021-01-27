@@ -33,7 +33,7 @@ const openNotificationWithIcon = (type, title, msg) => {
 };
 
 const AddPlayer = ({ teamid }) => {
-  let { currentUser } = useContext(AuthContext);
+  let { currentUser, userData } = useContext(AuthContext);
   let fbId = currentUser.uid;
   const hdrs = { headers: { "firebase-id": fbId } };
   const [visible, setVisible] = useState(false);
@@ -67,6 +67,8 @@ const AddPlayer = ({ teamid }) => {
           "Player " + values.player + " has been added to the team."
         );
         queryClient.refetchQueries(["team", teamid]);
+        queryClient.refetchQueries(["teams", currentUser, userData]);
+        queryClient.refetchQueries(["capTeams", currentUser, userData]);
       })
       .catch((err) => {
         openNotificationWithIcon(
