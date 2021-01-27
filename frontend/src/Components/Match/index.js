@@ -37,7 +37,7 @@ const Match = ({ id }) => {
 
   function color(matchd) {
     if (matchd.finished) {
-      return "#b7eb8f";
+      return "#488c2d";
     }
     return "#8c8c8c";
   }
