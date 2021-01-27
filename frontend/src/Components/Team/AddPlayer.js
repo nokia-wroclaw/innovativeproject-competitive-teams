@@ -38,6 +38,7 @@ const AddPlayer = ({ teamid }) => {
   const hdrs = { headers: { "firebase-id": fbId } };
   const [visible, setVisible] = useState(false);
   const [playerIDs, setPlayerIDs] = useState({});
+  const [playerQueryIDs, setPlayerQueryIDs] = useState({});
 
   const queryClient = useQueryClient();
 
@@ -48,8 +49,14 @@ const AddPlayer = ({ teamid }) => {
         name: value,
       },
     }).then((result) => {
-      setPlayerIDs({
-        ...playerIDs,
+      setPlayerIDs(
+        result.data.reduce((acc, { id, name }) => {
+          acc[name] = id;
+          return acc;
+        }, {})
+      );
+      setPlayerQueryIDs({
+        ...playerQueryIDs,
         ...result.data.reduce((acc, { id, name }) => {
           acc[name] = id;
           return acc;
@@ -59,7 +66,7 @@ const AddPlayer = ({ teamid }) => {
   };
 
   const onFinish = (values) => {
-    values.playerid = playerIDs[values.player];
+    values.playerid = playerQueryIDs[values.player];
     Api.put("/players/" + teamid + "?player_id=" + values.playerid, {}, hdrs)
       .then(() => {
         openNotificationWithIcon(

@@ -33,21 +33,28 @@ const CreateTeams = ({
   isSwiss,
 }) => {
   const [nameToId, setNameToId] = useState({});
+  const [nameToIdQuery, setNameToIdQuery] = useState({});
   const handleSearch = (value) => {
     Api.get("/teams/search/", {
       headers: {
         "firebase-id": fbId,
         name: value,
       },
-    }).then((result) =>
-      setNameToId({
-        ...nameToId,
+    }).then((result) => {
+      setNameToId(
+        result.data.reduce((acc, { id, name }) => {
+          acc[name] = id;
+          return acc;
+        }, {})
+      );
+      setNameToIdQuery({
+        ...nameToIdQuery,
         ...result.data.reduce((acc, { id, name }) => {
           acc[name] = id;
           return acc;
         }, {}),
-      })
-    );
+      });
+    });
   };
   return (
     <Form {...layout} onFinish={onFinish} validateMessages={validateMessages}>
@@ -66,7 +73,7 @@ const CreateTeams = ({
           <AutoComplete
             onSearch={handleSearch}
             placeholder="input here"
-            onSelect={(value) => updateTeamIDs(nameToId[value])}
+            onSelect={(value) => updateTeamIDs(nameToIdQuery[value])}
           >
             {Object.keys(nameToId).map((team) => (
               <Option key={team} value={team}>
