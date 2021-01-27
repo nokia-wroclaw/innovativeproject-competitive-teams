@@ -88,12 +88,13 @@ const TeamCreator = () => {
         name: value,
       },
     }).then((result) => {
-      setPlayerIDs(
-        result.data.reduce((acc, { id, name }) => {
+      setPlayerIDs({
+        ...playerIDs,
+        ...result.data.reduce((acc, { id, name }) => {
           acc[name] = id;
           return acc;
-        }, {})
-      );
+        }, {}),
+      });
     });
   };
 

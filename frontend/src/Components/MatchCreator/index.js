@@ -80,12 +80,13 @@ const MatchCreator = () => {
         name: value,
       },
     }).then((result) => {
-      setTeamIDs(
-        result.data.reduce((acc, { id, name }) => {
+      setTeamIDs({
+        ...teamIDs,
+        ...result.data.reduce((acc, { id, name }) => {
           acc[name] = id;
           return acc;
-        }, {})
-      );
+        }, {}),
+      });
     });
   };
 

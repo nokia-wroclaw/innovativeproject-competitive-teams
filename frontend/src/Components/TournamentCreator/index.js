@@ -40,12 +40,13 @@ const CreateTeams = ({
         name: value,
       },
     }).then((result) =>
-      setNameToId(
-        result.data.reduce((acc, { id, name }) => {
+      setNameToId({
+        ...nameToId,
+        ...result.data.reduce((acc, { id, name }) => {
           acc[name] = id;
           return acc;
-        }, {})
-      )
+        }, {}),
+      })
     );
   };
   return (
