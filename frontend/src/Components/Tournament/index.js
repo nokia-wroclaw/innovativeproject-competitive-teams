@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { useQuery } from "react-query";
-import { Typography, Divider, List, Table, Space, Spin } from "antd";
+import { Typography, Divider, Table, Space, Spin, Card, Row, Col } from "antd";
 import { useParams } from "react-router-dom";
 import "./index.css";
 
@@ -27,7 +27,7 @@ const Tournament = ({ id }) => {
   const { tournamentid } = useParams();
   if (id === null || id === undefined) id = tournamentid;
 
-  const { error: err, data: tournamentData } = useQuery(
+  const { isLoading, error: err, data: tournamentData } = useQuery(
     ["tournament", id],
     async () => {
       const res = await Api.get("/tournaments/" + id, {
@@ -93,43 +93,41 @@ const Tournament = ({ id }) => {
       style={{ overflow: "auto" }}
       className={scoreboard && scoreboard.finished ? "bgFinished" : null}
     >
-      {tournamentData.tournament_type === "single-elimination" ? (
-        <SEGraph id={id} maches={[]} />
-      ) : null}
-      <List
-        header={
-          <div>
-            <strong>{tournamentData.name}</strong>
-          </div>
-        }
-        bordered
-        dataSource={[
-          {
-            title: "Type",
-            desc: tournamentTypes[tournamentData.tournament_type],
-          },
-          { title: "Number of teams", desc: tournamentData.teams.length },
-          {
-            title: "Description",
-            desc: tournamentData.description
-              ? tournamentData.description
-              : "Empty",
-          },
-          {
-            title: "Status",
-            desc:
-              scoreboard && scoreboard.finished
+      <Card title={<strong>{tournamentData.name}</strong>}>
+        <Row gutter={16}>
+          <Col span={6}>
+            <Card title="Type" type="inner">
+              {tournamentTypes[tournamentData.tournament_type]}
+            </Card>
+          </Col>
+          <Col span={6}>
+            <Card title="Number of teams" type="inner">
+              {tournamentData.teams.length}
+            </Card>
+          </Col>
+          <Col span={6}>
+            <Card title="Description" type="inner">
+              {tournamentData.description
+                ? tournamentData.description
+                : "Empty"}
+            </Card>
+          </Col>
+          <Col span={6}>
+            <Card title="Status" type="inner">
+              {scoreboard && scoreboard.finished
                 ? `Finshed. Winner: ${scoreboard.results[0].team.name}!`
-                : "In progress.",
-          },
-        ]}
-        renderItem={(item) => (
-          <List.Item>
-            <List.Item.Meta title={item.title} description={item.desc} />
-          </List.Item>
-        )}
-      />
-      <Divider />
+                : "In progress."}
+            </Card>
+          </Col>
+        </Row>
+      </Card>
+      {tournamentData.tournament_type === "single-elimination" ? (
+        isLoading ? (
+          <Spin />
+        ) : (
+          <SEGraph tournamentData={tournamentData} />
+        )
+      ) : null}
       {scoreboard ? (
         <Table
           dataSource={scoreboard.results.map((team, idx) => ({

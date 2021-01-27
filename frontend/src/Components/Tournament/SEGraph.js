@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Slider } from "antd";
 import "./index.css";
 import G6 from "@antv/g6";
 
@@ -23,105 +22,118 @@ G6.registerEdge("ladder", {
   },
 });
 
-const SEGraph = ({ id, matches }) => {
-  // If no id has been passed, check router params
-  const [graph, setGraph] = useState(null);
-  const [numTeams, setNumTeams] = useState(8);
+const nodeWidth = 250;
+const nodeHeight = 90;
+const padding = 50;
 
-  const onSizeChange = (num) => {
-    if (graph && numTeams !== num) {
-      graph.destroy();
-      setNumTeams(num);
-    }
-  };
+const SEGraph = ({ tournamentData }) => {
+  const [graph, setGraph] = useState(null);
 
   useEffect(() => {
-    const newGraph = new G6.Graph({
-      container: "tournament" + id,
-      width: Math.log2(numTeams) * 300,
-      height: (numTeams / 2 - 1) * 120 + 80 + 30,
-      defaultNode: {
-        type: "modelRect",
-        size: [250, 80],
-        style: {
-          fill: "#3f3f3f",
-          stroke: "#aaa",
-          radius: 3,
-        },
-        labelCfg: {
+    if (graph === null) {
+      const newGraph = new G6.Graph({
+        container: "tournament" + tournamentData.id,
+        width: Math.log2(tournamentData.teams.length) * (nodeWidth + padding),
+        height: (tournamentData.teams.length / 2) * (nodeHeight + padding),
+        defaultNode: {
+          type: "modelRect",
+          size: [nodeWidth, nodeHeight],
           style: {
-            fill: "#fff",
-            fontSize: 20,
+            fill: "#3f3f3f",
+            stroke: "#aaa",
+            radius: 3,
+          },
+          labelCfg: {
+            style: {
+              fill: "#fff",
+              fontSize: 20,
+            },
+          },
+          descriptionCfg: {
+            paddingTop: 10,
           },
         },
-      },
-      defaultEdge: {
-        style: {
-          stroke: "#666",
-          lineWidth: 2,
-        },
-        type: "ladder",
-      },
-    });
-
-    let mock_data = { nodes: [], edges: [] };
-    let matches = Math.floor(numTeams / 2);
-    let stage = 0;
-    while (matches > 0) {
-      // Nodes
-      for (let i = 0; i < matches; i++) {
-        mock_data.nodes.push({
-          id: "node" + (mock_data.nodes.length + 1),
-          label: "TBD",
-          description: "Stage " + (stage + 1),
-          x: 150 + stage * 300,
-          y: i * 120 * Math.pow(2, stage) + Math.pow(2, stage) * 60,
-        });
-      }
-
-      matches = Math.floor(matches / 2);
-
-      // Edges
-      for (let i = 0; i < matches; i++) {
-        mock_data.edges.push(
-          {
-            source:
-              "node" +
-              ((stage > 0 ? mock_data.nodes.length - matches * 2 : 0) +
-                (i + 1) * 2 -
-                1),
-            target: "node" + (mock_data.nodes.length + i + 1),
+        defaultEdge: {
+          style: {
+            stroke: "#666",
+            lineWidth: 2,
           },
-          {
-            source:
-              "node" +
-              ((stage > 0 ? mock_data.nodes.length - matches * 2 : 0) +
-                (i + 1) * 2),
-            target: "node" + (mock_data.nodes.length + i + 1),
-          }
-        );
-      }
-      stage++;
+          type: "ladder",
+        },
+      });
+      setGraph(newGraph);
     }
+  }, [tournamentData, graph]);
 
-    // Team labels
-    for (let i = 1; i <= numTeams / 2; i++)
-      mock_data.nodes[i - 1].label = `Team ${2 * i - 1} vs Team ${2 * i}`;
+  useEffect(() => {
+    if (graph !== null) {
+      let grapahData = { nodes: [], edges: [] };
+      let stageMatches = Math.floor(tournamentData.teams.length / 2);
+      let stage = 0;
+      while (stageMatches > 0) {
+        // Nodes
+        for (let i = 0; i < stageMatches; i++) {
+          grapahData.nodes.push({
+            id: "node" + (grapahData.nodes.length + 1),
+            label: "TBD",
+            description: "Stage " + (stage + 1),
+            x: (nodeWidth + padding) / 2 + stage * (nodeWidth + padding),
+            y:
+              i * (nodeHeight + padding) * Math.pow(2, stage) +
+              (Math.pow(2, stage) * (nodeHeight + padding)) / 2,
+          });
+        }
 
-    newGraph.data(mock_data);
-    newGraph.render();
-    setGraph(newGraph);
-  }, [id, numTeams]);
+        stageMatches = Math.floor(stageMatches / 2);
+
+        // Edges
+        for (let i = 0; i < stageMatches; i++) {
+          grapahData.edges.push(
+            {
+              source:
+                "node" +
+                ((stage > 0 ? grapahData.nodes.length - stageMatches * 2 : 0) +
+                  (i + 1) * 2 -
+                  1),
+              target: "node" + (grapahData.nodes.length + i + 1),
+            },
+            {
+              source:
+                "node" +
+                ((stage > 0 ? grapahData.nodes.length - stageMatches * 2 : 0) +
+                  (i + 1) * 2),
+              target: "node" + (grapahData.nodes.length + i + 1),
+            }
+          );
+        }
+        stage++;
+      }
+
+      // Match data
+      const sortedMatches = tournamentData.matches.sort(
+        (a, b) => a.tournament_place - b.tournament_place
+      );
+      for (let i = 0; i < sortedMatches.length; i++) {
+        const match = sortedMatches[i];
+        const score = match.finished
+          ? `${match.score1} : ${match.score2}`
+          : "TBD";
+        const team1 = match.team1 !== null ? match.team1.name : "TBD";
+        const team2 = match.team2 !== null ? match.team2.name : "TBD";
+        grapahData.nodes[i].label = `${team1} vs ${team2}`;
+        grapahData.nodes[i].description = `${match.name}\nScore: ${score}`;
+        if (!match.finished) grapahData.nodes[i].stateIcon = { show: false };
+      }
+
+      graph.data(grapahData);
+      graph.clear();
+      graph.render();
+    }
+  }, [tournamentData, graph]);
 
   return (
     <div style={{ overflow: "auto" }}>
-      <Slider
-        marks={{ 2: 2, 4: 4, 8: 8, 16: 16, 32: 32, 64: 64 }}
-        step={null}
-        defaultValue={8}
-        onAfterChange={onSizeChange}
-      />
-      <div id={"tournament" + id}></div>
+      <div id={"tournament" + tournamentData.id}></div>
     </div>
   );
 };
