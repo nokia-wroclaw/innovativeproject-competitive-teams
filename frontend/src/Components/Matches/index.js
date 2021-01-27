@@ -78,7 +78,7 @@ const Matches = () => {
           >
             <Collapse>
               {matchesOnPage.map((match) => (
-                <Panel header={`Match ${match.name}`} key={match.id}>
+                <Panel header={match.name} key={match.id}>
                   <Match id={match.id} />
                 </Panel>
               ))}

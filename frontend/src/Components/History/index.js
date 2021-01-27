@@ -77,7 +77,7 @@ const History = () => {
       >
         <Collapse>
           {matchesOnPage.map((match) => (
-            <Panel header={`Match pies${match.name}`} key={match.id}>
+            <Panel header={match.name} key={match.id}>
               <Match id={match.id} />
             </Panel>
           ))}
