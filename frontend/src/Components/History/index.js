@@ -67,7 +67,7 @@ const History = () => {
         height: "80vh",
       }}
     >
-      <Title> List of matches </Title>
+      <Title>Match history</Title>
       <Card
         bordered={false}
         bodyStyle={{
@@ -77,7 +77,7 @@ const History = () => {
       >
         <Collapse>
           {matchesOnPage.map((match) => (
-            <Panel header={`Match pies${match.name}`} key={match.id}>
+            <Panel header={match.name} key={match.id}>
               <Match id={match.id} />
             </Panel>
           ))}

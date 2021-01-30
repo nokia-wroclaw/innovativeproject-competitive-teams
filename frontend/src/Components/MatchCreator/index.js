@@ -31,13 +31,14 @@ const MatchCreator = () => {
   let fbId = currentUser.uid;
   const [visible, setVisible] = useState(false);
   const [teamIDs, setTeamIDs] = useState({});
+  const [teamQueryIDs, setTeamQueryIDs] = useState({});
 
   const onFinish = (values) => {
     const hdrs = {
       headers: {
         "firebase-id": fbId,
-        "team1-id": teamIDs[values.team1name],
-        "team2-id": teamIDs[values.team2name],
+        "team1-id": teamQueryIDs[values.team1name],
+        "team2-id": teamQueryIDs[values.team2name],
       },
     };
 
@@ -86,6 +87,13 @@ const MatchCreator = () => {
           return acc;
         }, {})
       );
+      setTeamQueryIDs({
+        ...teamQueryIDs,
+        ...result.data.reduce((acc, { id, name }) => {
+          acc[name] = id;
+          return acc;
+        }, {}),
+      });
     });
   };
 

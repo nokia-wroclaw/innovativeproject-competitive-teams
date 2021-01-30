@@ -24,11 +24,12 @@ const TeamCreator = () => {
   const hdrs = { headers: { "firebase-id": fbId } };
   const [visible, setVisible] = useState(false);
   const [playerIDs, setPlayerIDs] = useState({});
+  const [playerQueryIDs, setPlayerQueryIDs] = useState({});
   const queryClient = useQueryClient();
 
   const onFinish = (values) => {
     // Verify that the player exists
-    values.capid = playerIDs[values.capname];
+    values.capid = playerQueryIDs[values.capname];
     Api.get("/players/" + values.capid, hdrs)
       // Create the team
       .then(() =>
@@ -94,6 +95,13 @@ const TeamCreator = () => {
           return acc;
         }, {})
       );
+      setPlayerQueryIDs({
+        ...playerQueryIDs,
+        ...result.data.reduce((acc, { id, name }) => {
+          acc[name] = id;
+          return acc;
+        }, {}),
+      });
     });
   };
 

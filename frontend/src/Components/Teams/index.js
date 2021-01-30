@@ -82,7 +82,7 @@ const Teams = () => {
           >
             <Collapse accordion>
               {teamsOnPage.map((team) => (
-                <Panel header={`Team ${team.name}`} key={team.id}>
+                <Panel header={team.name} key={team.id}>
                   <Team id={team.id} />
                 </Panel>
               ))}

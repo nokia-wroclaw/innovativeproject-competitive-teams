@@ -67,7 +67,7 @@ const UpcomingMatches = () => {
         height: "80vh",
       }}
     >
-      <Title> List of matches </Title>
+      <Title>Upcoming matches</Title>
       <Card
         bordered={false}
         bodyStyle={{
@@ -77,7 +77,7 @@ const UpcomingMatches = () => {
       >
         <Collapse>
           {matchesOnPage.map((match) => (
-            <Panel header={`Match pies${match.name}`} key={match.id}>
+            <Panel header={match.name} key={match.id}>
               <Match id={match.id} />
             </Panel>
           ))}

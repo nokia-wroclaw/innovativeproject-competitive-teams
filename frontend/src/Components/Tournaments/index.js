@@ -84,8 +84,8 @@ const Tournaments = () => {
             <Collapse>
               {tournamentsOnPage.map((tournament) => (
                 <Panel
-                  header={`Tournament ${tournament.name} - 
-                   ${tournamentTypes[tournament.tournament_type]} `}
+                  header={`${tournament.name} - 
+                   ${tournamentTypes[tournament.tournament_type]}`}
                   key={tournament.id}
                 >
                   <Tournament id={tournament.id} />

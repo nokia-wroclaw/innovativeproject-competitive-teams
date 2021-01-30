@@ -39,14 +39,14 @@ const CreateTeams = ({
         "firebase-id": fbId,
         name: value,
       },
-    }).then((result) =>
+    }).then((result) => {
       setNameToId(
         result.data.reduce((acc, { id, name }) => {
           acc[name] = id;
           return acc;
         }, {})
-      )
-    );
+      );
+    });
   };
   return (
     <Form {...layout} onFinish={onFinish} validateMessages={validateMessages}>

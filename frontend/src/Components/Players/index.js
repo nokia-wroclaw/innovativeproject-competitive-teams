@@ -81,7 +81,7 @@ const Players = () => {
           >
             <Collapse>
               {playersOnPage.map((player) => (
-                <Panel header={`Player ${player.name}`} key={player.id}>
+                <Panel header={player.name} key={player.id}>
                   <Player id={player.id} />
                 </Panel>
               ))}
