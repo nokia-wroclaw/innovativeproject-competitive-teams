@@ -33,7 +33,6 @@ const CreateTeams = ({
   isSwiss,
 }) => {
   const [nameToId, setNameToId] = useState({});
-  const [nameToIdQuery, setNameToIdQuery] = useState({});
   const handleSearch = (value) => {
     Api.get("/teams/search/", {
       headers: {
@@ -47,13 +46,6 @@ const CreateTeams = ({
           return acc;
         }, {})
       );
-      setNameToIdQuery({
-        ...nameToIdQuery,
-        ...result.data.reduce((acc, { id, name }) => {
-          acc[name] = id;
-          return acc;
-        }, {}),
-      });
     });
   };
   return (
@@ -73,7 +65,7 @@ const CreateTeams = ({
           <AutoComplete
             onSearch={handleSearch}
             placeholder="input here"
-            onSelect={(value) => updateTeamIDs(nameToIdQuery[value])}
+            onSelect={(value) => updateTeamIDs(nameToId[value])}
           >
             {Object.keys(nameToId).map((team) => (
               <Option key={team} value={team}>

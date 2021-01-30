@@ -67,7 +67,7 @@ const History = () => {
         height: "80vh",
       }}
     >
-      <Title> List of matches </Title>
+      <Title>Match history</Title>
       <Card
         bordered={false}
         bodyStyle={{

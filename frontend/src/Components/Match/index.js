@@ -88,7 +88,6 @@ const Match = ({ id }) => {
           </Title>
         </Row>
       </Card>
-      ,
     </div>
   ) : err ? (
     <Title>

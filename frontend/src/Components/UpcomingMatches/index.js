@@ -67,7 +67,7 @@ const UpcomingMatches = () => {
         height: "80vh",
       }}
     >
-      <Title> List of matches </Title>
+      <Title>Upcoming matches</Title>
       <Card
         bordered={false}
         bodyStyle={{
