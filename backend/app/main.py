@@ -540,7 +540,7 @@ def read_upcoming_matches(
     db: Session = Depends(get_db),
 ):
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="player"
+        db=db, firebase_id=firebase_id, clearance="guest"
     )
     if access:
         matches = crud.get_upcoming_matches(db, skip=skip, limit=limit)
