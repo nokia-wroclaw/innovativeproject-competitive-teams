@@ -73,8 +73,9 @@ def update_team(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="admin"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="admin"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         if crud.get_team(db, team_id=team_id) is None:
@@ -88,8 +89,9 @@ def update_team(
 def read_team(
     team_id: int, firebase_id: str = Header(None), db: Session = Depends(get_db)
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         db_team = crud.get_team(db, team_id=team_id)
@@ -107,8 +109,9 @@ def read_teams(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         teams = crud.get_teams(db, skip=skip, limit=limit)
@@ -122,8 +125,9 @@ def count_teams(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         count = crud.count_teams(db)
@@ -140,8 +144,9 @@ def search_teams(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         teams = crud.search_teams_by_name(db, name=name, skip=skip, limit=limit)
@@ -156,8 +161,9 @@ def count_teams_by_search(
     name: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         count = crud.count_teams_by_search(db, name)
@@ -182,8 +188,9 @@ def create_player(player: schemas.PlayerCreate, db: Session = Depends(get_db)):
 def delete_player(
     player_id: int, firebase_id: str = Header(None), db: Session = Depends(get_db)
 ):
+    clearance="admin"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="admin"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         if crud.get_player(db, player_id=player_id) is None:
@@ -200,8 +207,9 @@ def update_player(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="admin"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="admin"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         if crud.get_player(db, player_id=player_id) is None:
@@ -222,8 +230,9 @@ def read_players(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         players = crud.get_players(db, skip=skip, limit=limit)
@@ -237,8 +246,9 @@ def count_players(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         count = crud.count_players(db)
@@ -255,8 +265,9 @@ def search_players(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         players = crud.search_players_by_name(db, name=name, skip=skip, limit=limit)
@@ -271,8 +282,9 @@ def count_players_by_search(
     name: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         count = crud.count_players_by_search(db, name)
@@ -285,8 +297,9 @@ def count_players_by_search(
 def read_player(
     player_id: int, firebase_id: str = Header(None), db: Session = Depends(get_db)
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         db_player = crud.get_player(db, player_id=player_id)
@@ -303,8 +316,9 @@ def read_player_by_firebase_id(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="player"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="player"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         db_player = crud.get_player_by_firebase_id(db, firebase_id=wanted_firebase_id)
@@ -323,8 +337,9 @@ def read_player_teams(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         if crud.get_player(db, player_id=player_id) is None:
@@ -345,8 +360,9 @@ def read_player_captain_teams(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         if crud.get_player(db, player_id=player_id) is None:
@@ -367,8 +383,9 @@ def link_player_to_team(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="admin"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="admin"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         if crud.get_player(db, player_id=player_id) is None:
@@ -390,8 +407,9 @@ def unlink_player_to_team(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="admin"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="admin"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         if crud.get_player(db, player_id=player_id) is None:
@@ -413,8 +431,9 @@ def set_team_captain(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="admin"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="admin"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         if crud.get_player(db, player_id=player_id) is None:
@@ -437,8 +456,9 @@ def create_match(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="moderator"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="moderator"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         db_team1 = crud.get_team(db, team_id=team1_id)
@@ -461,8 +481,9 @@ def read_matches(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         matches = crud.get_matches(db, skip=skip, limit=limit)
@@ -476,8 +497,9 @@ def count_matches(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         count = crud.count_matches(db)
@@ -493,8 +515,9 @@ def read_upcoming_matches(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         matches = crud.get_upcoming_matches(db, skip=skip, limit=limit)
@@ -513,8 +536,9 @@ def read_upcoming_personal_matches(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         player = crud.get_player(db=db, player_id=player_id)
@@ -536,8 +560,9 @@ def count_upcoming_personal_matches(
     player_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         player = crud.get_player(db=db, player_id=player_id)
@@ -561,8 +586,9 @@ def read_finished_personal_matches(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         player = crud.get_player(db=db, player_id=player_id)
@@ -584,8 +610,9 @@ def count_finished_personal_matches(
     player_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         player = crud.get_player(db=db, player_id=player_id)
@@ -607,8 +634,9 @@ def search_matches(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         matches = crud.search_matches_by_name(db, name=name, skip=skip, limit=limit)
@@ -623,8 +651,9 @@ def count_matches_by_search(
     name: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         count = crud.count_matches_by_search(db, name)
@@ -639,8 +668,9 @@ def read_match(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         db_match = crud.get_match(db, match_id=match_id)
@@ -658,8 +688,9 @@ def update_match(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="moderator"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="moderator"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         if crud.get_match(db, match_id=match_id) is None:
@@ -676,8 +707,9 @@ def create_tournament(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="moderator"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="moderator"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         if tournament.tournament_type not in [
@@ -729,8 +761,9 @@ def read_tournaments(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         tournaments = crud.get_tournaments(db, skip=skip, limit=limit)
@@ -744,8 +777,9 @@ def count_tournaments(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         count = crud.count_tournaments(db)
@@ -762,8 +796,9 @@ def search_tournaments(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         tournaments = crud.search_tournaments_by_name(
@@ -780,8 +815,9 @@ def count_tournaments_by_search(
     name: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         count = crud.count_tournaments_by_search(db, name)
@@ -796,8 +832,9 @@ def read_tournament(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         db_tournament = crud.get_tournament(db, tournament_id=tournament_id)
@@ -819,8 +856,9 @@ def update_tournament_match(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="moderator"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="moderator"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         db_tournament = crud.get_tournament(db, tournament_id=tournament_id)
@@ -858,8 +896,9 @@ def read_tournament_matches(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         if crud.get_tournament(db, tournament_id=tournament_id) is None:
@@ -878,8 +917,9 @@ def count_tournament_matches(
     tournament_id: int = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         tournament = crud.get_tournament(db, tournament_id=tournament_id)
@@ -902,8 +942,9 @@ def read_tournament_finished_matches(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         if crud.get_tournament(db, tournament_id=tournament_id) is None:
@@ -927,8 +968,9 @@ def read_tournament_unfinished_matches(
     limit: int = 100,
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         if crud.get_tournament(db, tournament_id=tournament_id) is None:
@@ -950,8 +992,9 @@ def read_tournament_scoreboard(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
+    clearance="guest"
     access = permissions.is_accessible(
-        db=db, firebase_id=firebase_id, clearance="guest"
+        db=db, firebase_id=firebase_id, clearance=clearance
     )
     if access:
         if crud.get_tournament(db, tournament_id=tournament_id) is None:
