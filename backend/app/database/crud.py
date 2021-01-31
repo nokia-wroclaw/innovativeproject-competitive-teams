@@ -270,10 +270,10 @@ def get_personal_upcoming_matches(
     return result[skip : limit + skip]
 
 
-def count_personal_upcoming_matches(
-    db: Session, player_id: int
-):
-    matches = get_personal_upcoming_matches(db=db, player_id=player_id, skip=0, limit=1000000)
+def count_personal_upcoming_matches(db: Session, player_id: int):
+    matches = get_personal_upcoming_matches(
+        db=db, player_id=player_id, skip=0, limit=1000000
+    )
     return len(matches)
 
 
@@ -295,10 +295,10 @@ def get_personal_finished_matches(
     return result[skip : limit + skip]
 
 
-def count_personal_finished_matches(
-    db: Session, player_id: int
-):
-    matches = get_personal_finished_matches(db=db, player_id=player_id, skip=0, limit=1000000)
+def count_personal_finished_matches(db: Session, player_id: int):
+    matches = get_personal_finished_matches(
+        db=db, player_id=player_id, skip=0, limit=1000000
+    )
     return len(matches)
 
 
