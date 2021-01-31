@@ -479,7 +479,7 @@ def unlink_player_to_team(
         if db_player is None:
             permissions.permission_denied(clearance)
         flag = crud.is_player_captain(db, player_id=db_player.id, team_id=team_id)
-        if flag:
+        if flag or player_id == db_player.id:
             unlink()
         else:
             permissions.permission_denied(clearance)
