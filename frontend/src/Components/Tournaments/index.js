@@ -21,7 +21,7 @@ const { Title } = Typography;
 
 const Tournaments = () => {
   let { currentUser } = useContext(AuthContext);
-  let fbId = currentUser.uid;
+  let fbId = currentUser ? currentUser.uid : null;
 
   const [err, setErr] = useState(null);
   const [tournamentsOnPage, setTournamentsOnPage] = useState(null);

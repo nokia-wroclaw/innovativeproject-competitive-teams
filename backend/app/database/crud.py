@@ -103,6 +103,12 @@ def update_player(db: Session, player_id: int, player: schemas.PlayerUpdate):
     db.commit()
 
 
+def change_role(db: Session, player_id: int, player_role: str):
+    db_player = db.query(models.Player).filter(models.Player.id == player_id).first()
+    db_player.role = player_role
+    db.commit()
+
+
 def get_player(db: Session, player_id: int):
     player = db.query(models.Player).filter(models.Player.id == player_id).first()
     return player
@@ -198,6 +204,12 @@ def set_team_captain(db: Session, player_id: int, team_id: int):
     db.commit()
 
 
+def is_player_captain(db: Session, player_id: int, team_id: int):
+    db_team = db.query(models.Team).filter(models.Team.id == team_id).first()
+    db_player = db.query(models.Player).filter(models.Player.id == player_id).first()
+    return db_team.captain_id == db_player.id
+
+
 # Matches
 
 
@@ -270,10 +282,10 @@ def get_personal_upcoming_matches(
     return result[skip : limit + skip]
 
 
-def count_personal_upcoming_matches(
-    db: Session, player_id: int
-):
-    matches = get_personal_upcoming_matches(db=db, player_id=player_id, skip=0, limit=1000000)
+def count_personal_upcoming_matches(db: Session, player_id: int):
+    matches = get_personal_upcoming_matches(
+        db=db, player_id=player_id, skip=0, limit=1000000
+    )
     return len(matches)
 
 
@@ -295,10 +307,10 @@ def get_personal_finished_matches(
     return result[skip : limit + skip]
 
 
-def count_personal_finished_matches(
-    db: Session, player_id: int
-):
-    matches = get_personal_finished_matches(db=db, player_id=player_id, skip=0, limit=1000000)
+def count_personal_finished_matches(db: Session, player_id: int):
+    matches = get_personal_finished_matches(
+        db=db, player_id=player_id, skip=0, limit=1000000
+    )
     return len(matches)
 
 

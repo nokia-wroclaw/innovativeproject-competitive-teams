@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useQueryClient } from "react-query";
 import { Popover, Button, Col, Form, Input, Space, DatePicker } from "antd";
+import moment from "moment";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
 import { Notification } from "../Util/Notification";
@@ -26,7 +27,7 @@ const ModifyTournamentMatch = ({
   score2,
 }) => {
   let { currentUser } = useContext(AuthContext);
-  let fbId = currentUser.uid;
+  let fbId = currentUser ? currentUser.uid : null;
   const hdrs = { headers: { "firebase-id": fbId } };
   const [visible, setVisible] = useState(false);
 
@@ -65,6 +66,7 @@ const ModifyTournamentMatch = ({
       name="nest-messages"
       onFinish={onFinish}
       validateMessages={validateMessages}
+      initialValues={{ name: name, time: moment(time) }}
     >
       <Form.Item name="name" label={`Match name`} rules={[{ required: true }]}>
         <Input />

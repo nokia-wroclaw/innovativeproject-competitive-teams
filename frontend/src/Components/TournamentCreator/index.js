@@ -136,7 +136,7 @@ const CreateTournament = ({ cancel, onFinish }) => (
 );
 const TournamentCreator = () => {
   const { currentUser } = useContext(AuthContext);
-  const fbId = currentUser.uid;
+  let fbId = currentUser ? currentUser.uid : null;
   const [visible, setVisible] = useState(false);
   const [teamIDs, setTeamIDs] = useState([]);
   const [tournamentInfo, setTournamentInfo] = useState({});

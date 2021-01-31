@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Typography, Card, Spin, Col, Row } from "antd";
 import { useParams } from "react-router-dom";
+import moment from "moment";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
 import { Api } from "../../Api";
@@ -9,7 +10,7 @@ const { Title } = Typography;
 
 const Match = ({ id }) => {
   let { currentUser } = useContext(AuthContext);
-  let fbId = currentUser.uid;
+  let fbId = currentUser ? currentUser.uid : null;
 
   // If no id has been passed, check router params
   const { matchid } = useParams();
@@ -84,7 +85,10 @@ const Match = ({ id }) => {
         </Row>
         <Row justify="center">
           <Title level={3}>
-            Date: {new Date(Date.parse(matchdata.start_time)).toGMTString()}
+            {"Date: " +
+              moment(matchdata.start_time).format(
+                "dddd, Do MMM YYYY [at] hh:mm a"
+              )}
           </Title>
         </Row>
       </Card>

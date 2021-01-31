@@ -28,7 +28,7 @@ const validateMessages = {
 
 const MatchCreator = () => {
   let { currentUser } = useContext(AuthContext);
-  let fbId = currentUser.uid;
+  let fbId = currentUser ? currentUser.uid : null;
   const [visible, setVisible] = useState(false);
   const [teamIDs, setTeamIDs] = useState({});
   const [teamQueryIDs, setTeamQueryIDs] = useState({});
