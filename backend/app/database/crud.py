@@ -209,6 +209,7 @@ def is_player_captain(db: Session, player_id: int, team_id: int):
     db_player = db.query(models.Player).filter(models.Player.id == player_id).first()
     return db_team.captain_id == db_player.id
 
+
 # Matches
 
 

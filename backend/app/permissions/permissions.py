@@ -27,5 +27,5 @@ def is_accessible(db, firebase_id, clearance="player"):
 
 
 def permission_denied(clearance):
-    text = "Permission denied. Requires at least: " + str(clearance) + "."
+    text = "Permission denied"
     raise HTTPException(status_code=403, detail=text)

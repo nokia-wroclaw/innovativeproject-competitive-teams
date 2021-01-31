@@ -93,7 +93,6 @@ def update_team(
             crud.update_team(db, team_id=team_id, team=team)
         else:
             permissions.permission_denied(clearance)
-        
 
 
 @app.get("/api/teams/{team_id}", response_model=schemas.Team)
@@ -249,7 +248,9 @@ def change_role(
         if crud.get_player(db, player_id=player_id) is None:
             raise HTTPException(status_code=404, detail="Player not found")
         if player_role not in ["admin", "moderator", "player"]:
-            raise HTTPException(status_code=412, detail="Invalid role: " + str(player_role))
+            raise HTTPException(
+                status_code=412, detail="Invalid role: " + str(player_role)
+            )
         crud.change_role(db, player_id=player_id, player_role=player_role)
     else:
         permissions.permission_denied(clearance)
@@ -419,6 +420,7 @@ def link_player_to_team(
     access = permissions.is_accessible(
         db=db, firebase_id=firebase_id, clearance=clearance
     )
+
     def link():
         if crud.get_player(db, player_id=player_id) is None:
             raise HTTPException(status_code=404, detail="Player not found")
@@ -456,6 +458,7 @@ def unlink_player_to_team(
     access = permissions.is_accessible(
         db=db, firebase_id=firebase_id, clearance=clearance
     )
+
     def unlink():
         if crud.get_player(db, player_id=player_id) is None:
             raise HTTPException(status_code=404, detail="Player not found")
@@ -465,7 +468,7 @@ def unlink_player_to_team(
             crud.unlink_player_to_team_with_id(db, team_id, player_id)
         else:
             raise HTTPException(status_code=404, detail="Player is not in the team")
-    
+
     if access:
         unlink()
     else:
@@ -493,6 +496,7 @@ def set_team_captain(
     access = permissions.is_accessible(
         db=db, firebase_id=firebase_id, clearance=clearance
     )
+
     def set_captain():
         if crud.get_player(db, player_id=player_id) is None:
             raise HTTPException(status_code=404, detail="Player not found")
