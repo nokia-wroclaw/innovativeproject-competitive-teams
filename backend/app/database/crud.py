@@ -103,6 +103,12 @@ def update_player(db: Session, player_id: int, player: schemas.PlayerUpdate):
     db.commit()
 
 
+def change_role(db: Session, player_id: int, player_role: str):
+    db_player = db.query(models.Player).filter(models.Player.id == player_id).first()
+    db_player.role = player_role
+    db.commit()
+
+
 def get_player(db: Session, player_id: int):
     player = db.query(models.Player).filter(models.Player.id == player_id).first()
     return player

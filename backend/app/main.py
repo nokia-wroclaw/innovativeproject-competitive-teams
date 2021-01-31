@@ -223,6 +223,27 @@ def update_player(
         permissions.permission_denied(clearance)
 
 
+@app.patch("/api/change_role/{player_id}")
+def change_role(
+    player_id: int,
+    player_role: str = Header(None),
+    firebase_id: str = Header(None),
+    db: Session = Depends(get_db),
+):
+    clearance = "admin"
+    access = permissions.is_accessible(
+        db=db, firebase_id=firebase_id, clearance=clearance
+    )
+    if access:
+        if crud.get_player(db, player_id=player_id) is None:
+            raise HTTPException(status_code=404, detail="Player not found")
+        if player_role not in ["admin", "moderator", "player"]:
+            raise HTTPException(status_code=412, detail="Invalid role: " + str(player_role))
+        crud.change_role(db, player_id=player_id, player_role=player_role)
+    else:
+        permissions.permission_denied(clearance)
+
+
 @app.get("/api/players/", response_model=List[schemas.Player])
 def read_players(
     firebase_id: str = Header(None),
