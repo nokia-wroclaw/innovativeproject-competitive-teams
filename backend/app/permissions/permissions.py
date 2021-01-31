@@ -24,3 +24,9 @@ def is_accessible(db, firebase_id, clearance="player"):
             raise HTTPException(status_code=404, detail="User not found")
         db_role = db_player.role
     return is_higher_role(db_role, clearance)
+
+def permission_denied(clearance):
+    text = "Permission denied. Requires at least: " + str(clearance) + "."
+    raise HTTPException(
+            status_code=403, detail=text
+        )
