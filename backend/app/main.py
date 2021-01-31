@@ -419,7 +419,7 @@ def link_player_to_team(
     access = permissions.is_accessible(
         db=db, firebase_id=firebase_id, clearance=clearance
     )
-    if access:
+    def link():
         if crud.get_player(db, player_id=player_id) is None:
             raise HTTPException(status_code=404, detail="Player not found")
         if crud.get_team(db, team_id=team_id) is None:
@@ -428,8 +428,21 @@ def link_player_to_team(
             crud.link_player_to_team_with_id(db, team_id, player_id)
         else:
             raise HTTPException(status_code=404, detail="Player already in the team")
+
+    if access:
+        link()
     else:
-        permissions.permission_denied(clearance)
+        db_team = crud.get_team(db, team_id=team_id)
+        if db_team is None:
+            raise HTTPException(status_code=404, detail="Team not found")
+        db_player = crud.get_player_by_firebase_id(db, firebase_id=firebase_id)
+        if db_player is None:
+            permissions.permission_denied(clearance)
+        flag = crud.is_player_captain(db, player_id=db_player.id, team_id=team_id)
+        if flag:
+            link()
+        else:
+            permissions.permission_denied(clearance)
 
 
 @app.put("/api/unlink_player/{team_id}")
@@ -443,7 +456,7 @@ def unlink_player_to_team(
     access = permissions.is_accessible(
         db=db, firebase_id=firebase_id, clearance=clearance
     )
-    if access:
+    def unlink():
         if crud.get_player(db, player_id=player_id) is None:
             raise HTTPException(status_code=404, detail="Player not found")
         if crud.get_team(db, team_id=team_id) is None:
@@ -452,8 +465,21 @@ def unlink_player_to_team(
             crud.unlink_player_to_team_with_id(db, team_id, player_id)
         else:
             raise HTTPException(status_code=404, detail="Player is not in the team")
+    
+    if access:
+        unlink()
     else:
-        permissions.permission_denied(clearance)
+        db_team = crud.get_team(db, team_id=team_id)
+        if db_team is None:
+            raise HTTPException(status_code=404, detail="Team not found")
+        db_player = crud.get_player_by_firebase_id(db, firebase_id=firebase_id)
+        if db_player is None:
+            permissions.permission_denied(clearance)
+        flag = crud.is_player_captain(db, player_id=db_player.id, team_id=team_id)
+        if flag:
+            unlink()
+        else:
+            permissions.permission_denied(clearance)
 
 
 @app.put("/api/teams/{team_id}")
@@ -467,7 +493,7 @@ def set_team_captain(
     access = permissions.is_accessible(
         db=db, firebase_id=firebase_id, clearance=clearance
     )
-    if access:
+    def set_captain():
         if crud.get_player(db, player_id=player_id) is None:
             raise HTTPException(status_code=404, detail="Player not found")
         if crud.get_team(db, team_id=team_id) is None:
@@ -475,8 +501,21 @@ def set_team_captain(
         if not crud.is_player_in_team(db, player_id=player_id, team_id=team_id):
             raise HTTPException(status_code=404, detail="Player not in team")
         crud.set_team_captain(db, player_id=player_id, team_id=team_id)
+
+    if access:
+        set_captain()
     else:
-        permissions.permission_denied(clearance)
+        db_team = crud.get_team(db, team_id=team_id)
+        if db_team is None:
+            raise HTTPException(status_code=404, detail="Team not found")
+        db_player = crud.get_player_by_firebase_id(db, firebase_id=firebase_id)
+        if db_player is None:
+            permissions.permission_denied(clearance)
+        flag = crud.is_player_captain(db, player_id=db_player.id, team_id=team_id)
+        if flag:
+            set_captain()
+        else:
+            permissions.permission_denied(clearance)
 
 
 # matches
