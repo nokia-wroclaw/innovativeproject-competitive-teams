@@ -22,7 +22,7 @@ const { Title } = Typography;
 
 const Teams = () => {
   let { currentUser } = useContext(AuthContext);
-  let fbId = currentUser.uid;
+  let fbId = currentUser ? currentUser.uid : null;
   const [err, setErr] = useState(null);
   const [teamsOnPage, setTeamsOnPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);

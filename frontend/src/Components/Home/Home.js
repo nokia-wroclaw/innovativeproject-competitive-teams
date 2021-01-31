@@ -13,7 +13,7 @@ const { Title } = Typography;
 
 const Matches = () => {
   const { currentUser } = useContext(AuthContext);
-  const fbId = currentUser.uid;
+  const fbId = currentUser ? currentUser.uid : null;
 
   const [matches, setMatches] = useState(null);
   const [err, setErr] = useState(null);

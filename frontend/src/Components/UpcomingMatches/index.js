@@ -18,7 +18,7 @@ const { Panel } = Collapse;
 const { Title } = Typography;
 const UpcomingMatches = () => {
   let { currentUser, userData } = useContext(AuthContext);
-  let fbId = currentUser.uid;
+  let fbId = currentUser ? currentUser.uid : null;
   const [matchesOnPage, setMatchesOnPage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [err, setErr] = useState(null);

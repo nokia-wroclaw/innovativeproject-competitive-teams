@@ -29,7 +29,10 @@ const Dashboard = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [capTeamsIDs, setCapTeamsIDs] = useState([]);
   let { currentUser, userData } = useContext(AuthContext);
-  const hdrs = { headers: { "firebase-id": currentUser.uid } };
+  const fbId = currentUser ? currentUser.uid : null;
+  const hdrs = {
+    headers: { "firebase-id": fbId },
+  };
 
   const { data: capTeams } = useQuery(
     ["capTeams", currentUser, userData],
@@ -157,13 +160,13 @@ const Dashboard = () => {
                   <Team />
                 </Route>
                 <Route path="/dashboard/profile">
-                  <Profile userid={currentUser.uid} />
+                  <Profile userid={fbId} />
                 </Route>
                 <Route path="/dashboard/history">
-                  <History userid={currentUser.uid} />
+                  <History userid={fbId} />
                 </Route>
                 <Route path="/dashboard/upcoming">
-                  <UpcomingMatches userid={currentUser.uid} />
+                  <UpcomingMatches userid={fbId} />
                 </Route>
                 <Route>
                   <NotFound />

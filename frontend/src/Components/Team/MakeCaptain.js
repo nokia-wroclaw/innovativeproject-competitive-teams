@@ -15,7 +15,7 @@ const openNotificationWithIcon = (type, title, msg) => {
 
 const MakeCaptain = ({ teamid, playerid }) => {
   let { currentUser, userData } = useContext(AuthContext);
-  let fbId = currentUser.uid;
+  let fbId = currentUser ? currentUser.uid : null;
   const hdrs = { headers: { "firebase-id": fbId } };
   const queryClient = useQueryClient();
 

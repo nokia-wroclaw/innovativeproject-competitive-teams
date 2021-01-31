@@ -34,7 +34,7 @@ const openNotificationWithIcon = (type, title, msg) => {
 
 const AddPlayer = ({ teamid }) => {
   let { currentUser, userData } = useContext(AuthContext);
-  let fbId = currentUser.uid;
+  let fbId = currentUser ? currentUser.uid : null;
   const hdrs = { headers: { "firebase-id": fbId } };
   const [visible, setVisible] = useState(false);
   const [playerIDs, setPlayerIDs] = useState({});

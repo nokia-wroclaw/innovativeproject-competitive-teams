@@ -9,7 +9,7 @@ const { Title } = Typography;
 
 const Match = ({ id }) => {
   let { currentUser } = useContext(AuthContext);
-  let fbId = currentUser.uid;
+  let fbId = currentUser ? currentUser.uid : null;
 
   // If no id has been passed, check router params
   const { matchid } = useParams();
