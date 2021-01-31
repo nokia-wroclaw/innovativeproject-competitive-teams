@@ -204,6 +204,11 @@ def set_team_captain(db: Session, player_id: int, team_id: int):
     db.commit()
 
 
+def is_player_captain(db: Session, player_id: int, team_id: int):
+    db_team = db.query(models.Team).filter(models.Team.id == team_id).first()
+    db_player = db.query(models.Player).filter(models.Player.id == player_id).first()
+    return db_team.captain_id == db_player.id
+
 # Matches
 
 

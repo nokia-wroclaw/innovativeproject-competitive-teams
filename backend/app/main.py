@@ -82,7 +82,18 @@ def update_team(
             raise HTTPException(status_code=404, detail="Team not found")
         crud.update_team(db, team_id=team_id, team=team)
     else:
-        permissions.permission_denied(clearance)
+        db_team = crud.get_team(db, team_id=team_id)
+        if crud.get_team(db, team_id=team_id) is None:
+            raise HTTPException(status_code=404, detail="Team not found")
+        db_player = crud.get_player_by_firebase_id(db, firebase_id=firebase_id)
+        if db_player is None:
+            permissions.permission_denied(clearance)
+        flag = crud.is_player_captain(db, player_id=db_player.id, team_id=team_id)
+        if flag:
+            crud.update_team(db, team_id=team_id, team=team)
+        else:
+            permissions.permission_denied(clearance)
+        
 
 
 @app.get("/api/teams/{team_id}", response_model=schemas.Team)
