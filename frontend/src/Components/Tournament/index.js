@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { useQuery } from "react-query";
 import { Typography, Divider, Table, Space, Spin, Card, Row, Col } from "antd";
+import moment from "moment";
 import { useParams } from "react-router-dom";
 import "./index.css";
 
@@ -185,7 +186,10 @@ const Tournament = ({ id }) => {
           dataSource={unfinishedMatches.map((match) => ({
             id: match.id,
             name: match.name,
-            time: new Date(Date.parse(match.start_time)).toGMTString(),
+            time: moment(match.start_time).format(
+              "dddd, Do MMM YYYY [at] hh:mm a"
+            ),
+            time_raw: match.start_time,
             desc: match.description,
             teama: match.team1 === null ? "TBD" : match.team1.name,
             teamb: match.team2 === null ? "TBD" : match.team2.name,
@@ -212,7 +216,7 @@ const Tournament = ({ id }) => {
                     tournamentID={tournamentData.id}
                     matchID={record.id}
                     name={record.name}
-                    time={record.time}
+                    time={record.time_raw}
                     description={record.description}
                     score1={record.score1}
                     score2={record.score2}

@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
 import { Layout, Card, Collapse, Typography, Spin } from "antd";
+import moment from "moment";
 import "./index.css";
 
 import { Api } from "../../Api";
@@ -44,8 +45,10 @@ const Matches = () => {
                 header={
                   <Title level={3} align="center">
                     {match.name +
-                      "  " +
-                      new Date(Date.parse(match.start_time)).toGMTString()}
+                      " - " +
+                      moment(match.start_time).format(
+                        "dddd, Do MMM YYYY [at] hh:mm a"
+                      )}
                   </Title>
                 }
                 key={match.id}
