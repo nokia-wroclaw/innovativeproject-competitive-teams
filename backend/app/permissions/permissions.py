@@ -16,7 +16,7 @@ def is_higher_role(role1, role2):
 
 
 def is_accessible(db, firebase_id, clearance="player"):
-    if firebase_id is None:
+    if firebase_id is None or firebase_id == "null":
         db_role = "guest"
     else:
         db_player = crud.get_player_by_firebase_id(db, firebase_id)
