@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
         let user_uid = user.uid;
         const rgb = Math.floor(Math.random() * 16777215);
         const random_color = "#" + rgb.toString(16);
-        Api.post("/players", {
+        Api.post("/players/", {
           name: user_uid.substr(0, 5),
           description: "Empty",
           firebase_id: user_uid,
