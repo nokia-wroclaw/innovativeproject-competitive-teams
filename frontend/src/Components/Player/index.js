@@ -1,13 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Typography, Card, Spin } from "antd";
+import { Typography, Card, Spin, Select } from "antd";
 import { useParams } from "react-router-dom";
 import "./index.css";
 import { AuthContext } from "../Auth/Auth";
 
 import { Api } from "../../Api";
+import { PassThrough } from "stream";
+import { Notification } from "../Util/Notification";
 
 const { Title, Text } = Typography;
-
+const { Option } = Select;
 const Player = ({ id }) => {
   let { currentUser } = useContext(AuthContext);
   let fbId = currentUser ? currentUser.uid : null;
@@ -36,6 +38,30 @@ const Player = ({ id }) => {
     }
   }, [id, fbId]);
 
+  const updateRole = (value) => {
+    console.log(playerdata.id, value);
+    Api.patch(
+      `/change_role/${playerdata.id}`,
+      {},
+      {
+        headers: { "player-role": value, "firebase-id": fbId },
+      }
+    )
+      .then((response) => {
+        Notification(
+          "success",
+          "Success.",
+          `Players role updated successfully`
+        );
+      })
+      .catch((err) => {
+        Notification(
+          "error",
+          "Eror when updating role",
+          "you are not an admin"
+        );
+      });
+  };
   return playerdata ? (
     <div className="player-info">
       <Card title="Player INFO: ">
@@ -52,7 +78,16 @@ const Player = ({ id }) => {
           <Text strong>ID: </Text> {playerdata.id}
         </p>
         <p>
-          <Text strong>Role: </Text> {playerdata.role}
+          <Text strong>Role: </Text>
+          <Select
+            defaultValue={playerdata.role}
+            style={{ width: 120 }}
+            onChange={updateRole}
+          >
+            <Option value="admin">admin</Option>
+            <Option value="moderator">moderator</Option>
+            <Option value="player">player</Option>
+          </Select>
         </p>
       </Card>
     </div>
