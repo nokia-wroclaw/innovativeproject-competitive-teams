@@ -94,6 +94,7 @@ const Players = () => {
               current={currentPage}
               onChange={setCurrentPage}
               total={allPlayers}
+              showSizeChanger={false}
             />
           </Row>
         </Card>

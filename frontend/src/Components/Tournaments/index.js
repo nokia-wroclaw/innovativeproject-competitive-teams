@@ -100,6 +100,7 @@ const Tournaments = () => {
               onChange={setCurrentPage}
               total={allTournaments}
               current={currentPage}
+              showSizeChanger={false}
             />
           </Row>
         </Card>

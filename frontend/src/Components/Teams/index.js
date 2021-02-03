@@ -96,6 +96,7 @@ const Teams = () => {
               onChange={setCurrentPage}
               total={allTeams}
               current={currentPage}
+              showSizeChanger={false}
             />
           </Row>
         </Card>

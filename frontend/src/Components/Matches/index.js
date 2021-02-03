@@ -91,6 +91,7 @@ const Matches = () => {
               current={currentPage}
               onChange={setCurrentPage}
               total={allMatches}
+              showSizeChanger={false}
             />
           </Row>
         </Card>
