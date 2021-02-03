@@ -40,7 +40,7 @@ def create_team(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
-    clearance = "admin"
+    clearance = "moderator"
     access = permissions.is_accessible(
         db=db, firebase_id=firebase_id, clearance=clearance
     )
@@ -54,7 +54,7 @@ def create_team(
 def delete_team(
     team_id: int, firebase_id: str = Header(None), db: Session = Depends(get_db)
 ):
-    clearance = "admin"
+    clearance = "moderator"
     access = permissions.is_accessible(
         db=db, firebase_id=firebase_id, clearance=clearance
     )
@@ -73,7 +73,7 @@ def update_team(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
-    clearance = "admin"
+    clearance = "moderator"
     access = permissions.is_accessible(
         db=db, firebase_id=firebase_id, clearance=clearance
     )
@@ -416,7 +416,7 @@ def link_player_to_team(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
-    clearance = "admin"
+    clearance = "moderator"
     access = permissions.is_accessible(
         db=db, firebase_id=firebase_id, clearance=clearance
     )
@@ -454,7 +454,7 @@ def unlink_player_to_team(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
-    clearance = "admin"
+    clearance = "moderator"
     access = permissions.is_accessible(
         db=db, firebase_id=firebase_id, clearance=clearance
     )
@@ -492,7 +492,7 @@ def set_team_captain(
     firebase_id: str = Header(None),
     db: Session = Depends(get_db),
 ):
-    clearance = "admin"
+    clearance = "moderator"
     access = permissions.is_accessible(
         db=db, firebase_id=firebase_id, clearance=clearance
     )
