@@ -19,7 +19,7 @@ export const AuthProvider = ({ children }) => {
       { headers: { "firebase-id": currentUser.uid } }
     )
       .then(() => {
-        Notification("success", "Success.", "Updated successfully.");
+        Notification("success", "Success", "Updated successfully.");
         queryClient.refetchQueries(["userData", currentUser]);
       })
       .catch((error) => {

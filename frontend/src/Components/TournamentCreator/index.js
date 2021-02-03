@@ -175,7 +175,7 @@ const TournamentCreator = () => {
         setTeamIDs([]);
         Notification(
           "success",
-          "Success.",
+          "Success",
           `Tournament ${tournamentInfo.name} created successfully.`
         );
       })
