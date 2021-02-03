@@ -221,7 +221,7 @@ def update_player(
     access = permissions.is_accessible(
         db=db, firebase_id=firebase_id, clearance=clearance
     )
-    if access:
+    def update():
         if crud.get_player(db, player_id=player_id) is None:
             raise HTTPException(status_code=404, detail="Player not found")
         player_check = crud.get_player_by_name(db, name=player.name)
@@ -229,8 +229,20 @@ def update_player(
         if player_check is not None and old_player.name is not player_check.name:
             raise HTTPException(status_code=404, detail="Name already used")
         crud.update_player(db, player_id=player_id, player=player)
+
+    if access:
+        update()
     else:
-        permissions.permission_denied(clearance)
+        db_player = crud.get_player(db, player_id=player_id)
+        db_user = crud.get_player_by_firebase_id(db, firebase_id=firebase_id)
+        if db_user is None:
+            permissions.permission_denied(clearance)
+        if db_player is None:
+            raise HTTPException(status_code=404, detail="Player not found")
+        if db_user.id == db_player.id:
+            update()
+        else:
+            permissions.permission_denied(clearance)
 
 
 @app.patch("/api/change_role/{player_id}")
