@@ -14,7 +14,7 @@ const { Title } = Typography;
 const { Column, ColumnGroup } = Table;
 const { Meta } = Card;
 
-const Team = ({ id }) => {
+const Team = ({ id, noactions }) => {
   let { currentUser, userData } = useContext(AuthContext);
   let fbId = currentUser ? currentUser.uid : null;
 
@@ -71,29 +71,25 @@ const Team = ({ id }) => {
             dataIndex="description"
             key="playerdesc"
           />
-          <Column
-            title="Actions"
-            key="actions"
-            render={(text, record) =>
-              userData &&
-              (teamData.captain_id === userData.id ||
-                userData.role === "admin" ||
-                userData.role === "manager") ? (
-                <Space size="small">
-                  {record.id === teamData.captain_id ? null : (
-                    <MakeCaptain teamid={id} playerid={record.id} />
-                  )}
-                  <RemovePlayer teamid={id} playerid={record.id} />
-                </Space>
-              ) : null
-            }
-          />
+          {!noactions ? (
+            <Column
+              title="Actions"
+              key="actions"
+              render={(text, record) =>
+                userData ? (
+                  <Space size="small">
+                    {record.id === teamData.captain_id ? null : (
+                      <MakeCaptain teamid={id} playerid={record.id} />
+                    )}
+                    <RemovePlayer teamid={id} playerid={record.id} />
+                  </Space>
+                ) : null
+              }
+            />
+          ) : null}
         </ColumnGroup>
       </Table>
-      {userData &&
-      (teamData.captain_id === userData.id ||
-        userData.role === "admin" ||
-        userData.role === "manager") ? (
+      {userData ? (
         <Card>
           <AddPlayer teamid={id} />
         </Card>

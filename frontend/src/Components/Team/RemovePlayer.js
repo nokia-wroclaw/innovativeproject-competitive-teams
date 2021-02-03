@@ -24,7 +24,7 @@ const RemovePlayer = ({ teamid, playerid }) => {
       .then(() => {
         openNotificationWithIcon(
           "success",
-          "Success.",
+          "Success",
           "Player has been removed from the team."
         );
         queryClient.refetchQueries(["team", teamid]);
@@ -34,11 +34,7 @@ const RemovePlayer = ({ teamid, playerid }) => {
       .catch((err) => {
         openNotificationWithIcon(
           "error",
-          "Error when removing player " +
-            playerid +
-            " from the team " +
-            teamid +
-            ".",
+          "Error when removing player from the team",
           err.response && err.response.data.detail
             ? err.response.data.detail
             : err.message

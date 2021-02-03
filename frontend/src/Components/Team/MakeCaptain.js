@@ -22,11 +22,7 @@ const MakeCaptain = ({ teamid, playerid }) => {
   const handleClick = () => {
     Api.put("/teams/" + teamid + "?player_id=" + playerid, {}, hdrs)
       .then(() => {
-        openNotificationWithIcon(
-          "success",
-          "Success.",
-          "Team captain updated."
-        );
+        openNotificationWithIcon("success", "Success", "Team captain updated.");
         queryClient.refetchQueries(["team", teamid]);
         queryClient.refetchQueries(["teams", currentUser, userData]);
         queryClient.refetchQueries(["capTeams", currentUser, userData]);
@@ -34,7 +30,7 @@ const MakeCaptain = ({ teamid, playerid }) => {
       .catch((err) => {
         openNotificationWithIcon(
           "error",
-          "Error when setting team " + teamid + " captain " + playerid + ".",
+          "Error when setting team captain",
           err.response && err.response.data.detail
             ? err.response.data.detail
             : err.message
