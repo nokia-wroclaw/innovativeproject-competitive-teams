@@ -46,9 +46,6 @@ const LogIn = ({ history }) => {
     });
   };
 
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
-  };
   return (
     <Row
       type="flex"
@@ -69,7 +66,6 @@ const LogIn = ({ history }) => {
             remember: true,
           }}
           onFinish={onFinish}
-          onFinishFailed={onFinishFailed}
         >
           <Form.Item
             label="E-mail"

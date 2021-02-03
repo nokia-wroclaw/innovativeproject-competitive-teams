@@ -61,7 +61,6 @@ const SignUp = ({ history }) => {
             remember: true,
           }}
           onFinish={onFinish}
-          onFinishFailed={console.log("error")}
         >
           <Form.Item
             label="E-mail"
