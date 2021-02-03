@@ -121,9 +121,7 @@ const Dashboard = () => {
               <Link to="/dashboard/profile">Profile</Link>
             </Menu.Item>
 
-            {!collapsed &&
-            userData !== null &&
-            (userData.role === "admin" || userData.role === "manager")
+            {!collapsed && userData !== null
               ? [
                   <Menu.Item
                     disabled

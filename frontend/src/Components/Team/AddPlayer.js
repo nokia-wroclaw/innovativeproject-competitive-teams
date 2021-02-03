@@ -71,7 +71,7 @@ const AddPlayer = ({ teamid }) => {
       .then(() => {
         openNotificationWithIcon(
           "success",
-          "Success.",
+          "Success",
           "Player " + values.player + " has been added to the team."
         );
         queryClient.refetchQueries(["team", teamid]);
@@ -81,11 +81,7 @@ const AddPlayer = ({ teamid }) => {
       .catch((err) => {
         openNotificationWithIcon(
           "error",
-          "Error when adding player " +
-            values.playerid +
-            " to team " +
-            teamid +
-            ".",
+          "Error when adding player to the team",
           err.response && err.response.data.detail
             ? err.response.data.detail
             : err.message

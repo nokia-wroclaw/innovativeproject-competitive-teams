@@ -73,13 +73,13 @@ const Match = ({ id }) => {
         <Row gutter={16}>
           <Col span={12}>
             <Card bordered={false}>
-              <Team id={matchdata.team1_id} />
+              <Team id={matchdata.team1_id} noactions />
             </Card>
           </Col>
 
           <Col span={12}>
             <Card bordered={false}>
-              <Team id={matchdata.team2_id} />
+              <Team id={matchdata.team2_id} noactions />
             </Card>
           </Col>
         </Row>

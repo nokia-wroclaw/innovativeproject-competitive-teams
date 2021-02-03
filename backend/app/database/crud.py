@@ -81,7 +81,7 @@ def create_player(db: Session, player: schemas.PlayerCreate):
         description=player.description,
         firebase_id=player.firebase_id,
         colour=player.colour,
-        role="admin",
+        role="player",
     )
     db.add(db_player)
     db.commit()

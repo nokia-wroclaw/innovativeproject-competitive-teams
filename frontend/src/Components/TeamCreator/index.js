@@ -64,7 +64,7 @@ const TeamCreator = () => {
       .then(() => {
         Notification(
           "success",
-          "Success.",
+          "Success",
           "Team " + values.name + " created successfully."
         );
         queryClient.refetchQueries(["capTeams", currentUser, userData]);
